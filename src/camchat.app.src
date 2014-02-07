@@ -1,14 +1,16 @@
 {application, camchat,
  [
   {description, ""},
-  {vsn, "1"},
+  {vsn, "0.0.1"},
   {registered, []},
   {applications, [
                   kernel,
                   stdlib,
                   cowboy,
                   ranch,
-                  sockjs
+                  sockjs,
+                  compiler,
+                  syntax_tools
                  ]},
   {mod, { camchat_app, []}},
   {env, []}

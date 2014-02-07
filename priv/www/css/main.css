@@ -1,0 +1,23 @@
+#screen {
+    border: solid;
+    border-width: 1px;
+    border-color: black;
+}
+
+#main_video {
+    border: solid;
+    border-width: 1px;
+    border-color: red;
+}
+
+#video_buff {
+    border: solid;
+    border-width: 1px;
+    border-color: blue;
+}
+#control_panel {
+    border: solid;
+    border-width: 1px;
+    border-color: green;
+}
+

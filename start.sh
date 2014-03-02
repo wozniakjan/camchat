@@ -1,1 +1,1 @@
-werl -pa ebin deps/*/ebin -s camchat
+erl -pa ebin deps/*/ebin -s camchat

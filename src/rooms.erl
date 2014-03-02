@@ -1,39 +1,43 @@
 -module(rooms).
--export([start/0, connect/3, disconnect/3, disconnect/2, get_peers/1, get_peers/2, stop/0]).
+-export([start/0, connect/3, disconnect/2, get_peers/1, get_peers/2, stop/0, reload/1]).
 
--record(room, {room_id, user_list}).
--define(ROOM_ID_POS, 2).
--define(USER_LIST_POS, 3).
--record(user, {connection_id, room_id, user_id, username}).
--define(CONNECTION_ID_POS, 2).
+-include("types.hrl").
 
 start() ->
-    ets:new(rooms, [set, named_table, public, {keypos, ?ROOM_ID_POS}]),
-    ets:new(users, [set, named_table, public, {keypos, ?CONNECTION_ID_POS}]).
+    ets:new(rooms, [ordered_set, named_table, public, {keypos, ?ROOM_ID_POS}]),
+    ets:new(users, [ordered_set, named_table, public, {keypos, ?CONNECTION_ID_POS}]).
+
+create_id() ->
+    {_, T} = lists:split(5, erlang:ref_to_list(make_ref())),
+    IdT = lists:delete(62, T), 
+    Id = re:replace(IdT,"\\.","_",[{return, list}, global]),
+    erlang:list_to_bitstring(Id).
 
 create_user(ConnectionId, RoomId) ->
-    UID = "uid",
-    UN = "User Name",
+    UID = create_id(),
+    UN = <<"User Name">>,
     #user{connection_id=ConnectionId, room_id=RoomId, user_id=UID, username=UN}.
 
-connect(RoomId, ConnectionId, Opt) ->
-    case ets:lookup(rooms, RoomId) of
+connect(RoomId, ConnectionId, _Opt) ->
+    RoomStatus = case ets:lookup(rooms, RoomId) of
         [] -> 
             Room = #room{room_id=RoomId, user_list=[ConnectionId]},
             ets:insert(rooms, Room),
-            ets:insert(users, create_user(ConnectionId, RoomId)),
-            {ok, new};
+            new_room;
         [ExistingRoom] ->
             RoomId = ExistingRoom#room.room_id,
             UserList = ExistingRoom#room.user_list,
             ets:update_element(rooms, RoomId, {?USER_LIST_POS, [ConnectionId | UserList]}),
-            ets:insert(users, create_user(ConnectionId, RoomId)),
-            {ok, existing}
-    end.
+            existing_room
+    end,
+    User = create_user(ConnectionId, RoomId),
+    ets:insert(users, User),
+    {ok, RoomStatus, User}.
+        
             
 disconnect(ConnectionId, Opt) ->
     [User] = ets:lookup(users, ConnectionId),
-    disconnect(User#user.room_id, ConnectionId, Opt).
+    {User, disconnect(User#user.room_id, ConnectionId, Opt)}.
     
 disconnect(RoomId, ConnectionId, _Opt) ->
     [Room] = ets:lookup(rooms, RoomId),
@@ -54,7 +58,10 @@ get_peers(ConnectionId) ->
 
 get_peers(ConnectionId, RoomId) ->
     [Room] = ets:lookup(rooms, RoomId),
-    lists:delete(ConnectionId, Room#room.user_list).
+    PeersList = lists:delete(ConnectionId, Room#room.user_list),
+    lists:map(fun(PeerConId)-> [X]=ets:lookup(users, PeerConId), X end, PeersList). 
 
 stop() ->
     ets:delete(rooms).
+
+reload(_Opts) -> reloaded.

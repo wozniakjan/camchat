@@ -21,3 +21,13 @@
     border-color: green;
 }
 
+.small_video_frame {
+    border: solid;
+    border-width: 1px;
+    border-color: purple;
+}
+
+.small_video {
+    width: 100px;
+    height: 80px;
+}

@@ -17,7 +17,7 @@ create_id() ->
 
 create_user(ConnectionId, RoomId) ->
     UID = create_id(),
-    UN = <<"User Name">>,
+    UN = UID,%<<"User Name">>,
     #user{connection_id=ConnectionId, room_id=RoomId, user_id=UID, username=UN}.
 
 connect(RoomId, ConnectionId, _Opt) ->

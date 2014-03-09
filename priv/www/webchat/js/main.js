@@ -1,23 +1,27 @@
 var room = window.location.pathname.replace(/\//g,'');
 var sock = new SockJS('http://localhost:8080/sockjs/camchat');
 var peer_connection = {};
-var remote_stream = {};
 var local_stream;
 var my_id;
+
+var pc_config = webrtcDetectedBrowser === 'firefox' ?
+    {'iceServers':[{'url':'stun:23.21.150.121'}]} : // number IP
+    {'iceServers': [{'url': 'stun:stun.l.google.com:19302'}]};
 
 sock.onopen = function() {
     sock.send(JSON.stringify({'connect': room}));
     init_video();
 };
 sock.onmessage = function(e) {
+    //console.log(e.data);
     var json_msg = jQuery.parseJSON(e.data);
-    console.log(json_msg);
     
     if(json_msg.peer_connected) {
         add_peer(json_msg.peer_connected, json_msg.name);
     }
     else if(json_msg.connected){
         my_id = json_msg.user_id;
+        $("#myself > .label").text(my_id);
         if(json_msg.connected === 'existing_room') {
             $.each(json_msg.peer_list, function(peerId, peerUserName) {
                 add_peer(peerId, peerUserName);
@@ -28,6 +32,8 @@ sock.onmessage = function(e) {
         remove_peer(json_msg.peer_disconnected);
     }
     else if(json_msg.offer){
+        var pc = peer_connection[json_msg.caller];
+        console.log("Got Offer: " + pc);
         pc.setRemoteDescription(new RTCSessionDescription(json_msg.offer), function() {
             pc.createAnswer(function(answer) {
                 pc.setLocalDescription(new RTCSessionDescription(answer), function() {
@@ -35,6 +41,18 @@ sock.onmessage = function(e) {
                 }, error_callback);
             }, error_callback);
         }, error_callback);
+    }
+    else if(json_msg.answer){
+        var pc = peer_connection[json_msg.callee];
+        console.log("Got Answer: " + pc);
+        pc.setRemoteDescription(new RTCSessionDescription(json_msg.answer));
+    }
+    else if(json_msg.ice_candidate){
+        var pc = peer_connection[json_msg.caller];
+        console.log("Got ice candidate: " + pc);
+        var candidate = new RTCIceCandidate({sdpMLineIndex:json_msg.ice_candidate.label,
+                                            candidate:json_msg.ice_candidate.candidate});
+        pc.addIceCandidate(candidate);
     }
 };
 sock.onclose = function() {
@@ -44,7 +62,7 @@ sock.onclose = function() {
 function get_video_callbacks(video_element) {
     function success_callback(local_media_stream) {
         local_stream = local_media_stream
-        video_element.src = window.URL.createObjectURL(local_media_stream);
+        attachMediaStream(video_element, local_stream);
         video_element.play();
         sock.send(JSON.stringify({'ready': room}));
     }
@@ -60,42 +78,48 @@ function init_video() {
 }
 
 function setup_myself() {
-    var div = $("<div>", {id: "myself", class: "small_video_frame", text: "Myself"});
-    var video = $("<video>", {class: "small_video"});
+    var div = $("<div>", {id: "myself", class: "small_video_frame"});
+    var label = $("<div>", {class: "label", text: my_id});
+    var video = $("<video>", {class: "small_video", muted: "true", autoplay: "true"});
     div.append(video);
+    div.append(label);
     $("#video_buff").append(div);
     return video[0];
 }
 
 function add_peer(id, name) {
-    var new_peer = $("<div>", {id: "peer"+id, class: "small_video_frame", text: name});
-    var video = $("<video>", {class: "small_video"});
+    var new_peer = $("<div>", {id: "peer"+id, class: "small_video_frame"});
+    var label = $("<div>", {class: "label", text: name});
+    var video = $("<video>", {class: "small_video", autoplay: "true"});
     new_peer.append(video);
+    new_peer.append(label);
     $("#video_buff").append(new_peer);
-    setup_peer_connection(id, video);
+    setup_peer_connection(id, video[0]);
+    set_main(id);
     return video[0];
 }
 
 function setup_peer_connection(id, remote_video) {
-    pc = peer_connection[id] = new RTCPeerConnection(null);
+    var pc = peer_connection[id] = new RTCPeerConnection(pc_config);
 
     pc.onicecandidate = function(event) {
-        console.log('handleIceCandidate event: ', event);
         if (event.candidate) {
-            sock.send({
-                'message': 'ice_candidate', 
-                type: 'candidate',
-                label: event.candidate.sdpMLineIndex,
-                id: event.candidate.sdpMid,
-                candidate: event.candidate.candidate});
+            sock.send(JSON.stringify({
+                ice_candidate: {
+                    label: event.candidate.sdpMLineIndex,
+                    id: event.candidate.sdpMid,
+                    candidate: event.candidate.candidate
+                },
+                caller: my_id,
+                callee: id}));
         } else {
             console.log('End of candidates.');
         }
     }
     pc.onaddstream = function(event) {
         console.log('Remote stream added.');
-        remote_video.src = window.URL.createObjectURL(event.stream);
-        remote_stream[id] = event.stream;
+        attachMediaStream(remote_video, event.stream);
+        remote_video.play();
     }
     pc.onremovestream = function(event) {
         console.log('Remote stream removed.');
@@ -108,6 +132,7 @@ function setup_peer_connection(id, remote_video) {
 
 function negotiate_connection(remote_id){
     if(my_id > remote_id){
+        var pc = peer_connection[remote_id];
         pc.createOffer(function(offer) {
             pc.setLocalDescription(new RTCSessionDescription(offer), function() {
                 sock.send(JSON.stringify({'offer':offer, 'caller':my_id, 'callee':remote_id}));
@@ -117,10 +142,26 @@ function negotiate_connection(remote_id){
 }
 
 function remove_peer(id) {
-    $("#peer"+id).remove();
+    if( $("#main_video").attr("peer_id") == id ) {
+        //set different main video
+    }
+    $("#peer"+id).hide(1000, function(){$(this).remove();});
     peer_connection[id] = null;
 }
 
 function error_callback(error) {
     console.log(error);
+}
+
+function set_main(id) {
+    var main_video = $("#main_video");
+    var old_peer_id = main_video.attr("peer_id");
+    if(old_peer_id){
+        var peer_div = $("#peer"+old_peer_id);
+        //peer_div.append($("#main_video > .big_video").attr("class","small_video"));
+        peer_div.show(1000);
+    }
+    $("#peer"+id).hide(1000);
+    //main_video.append($("#peer"+id+" > .small_video").attr("class","big_video"));
+    main_video.attr("peer_id", id);
 }

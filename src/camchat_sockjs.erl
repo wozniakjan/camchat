@@ -22,8 +22,8 @@ camchat_sockjs(Conn, {recv, Data}, waiting_for_media) ->
     Msg = jiffy:decode(Data),
     parse_msg(Conn, Msg);
 camchat_sockjs(Conn, {recv, Data}, connected) ->
-    send_peers(Conn, Data),
-    {ok, connected}.
+    Msg = jiffy:decode(Data),
+    parse_msg(Conn, Msg).
 
 parse_msg(_Conn, {[{<<"connect">>, _Room}]}) ->
     {ok, waiting_for_media};
@@ -37,13 +37,19 @@ parse_msg(Conn, {[{<<"ready">>, Room}]}) ->
     {ok, connected};
 parse_msg(_Conn, {[{<<"offer">>, Offer}, {<<"caller">>, Caller}, {<<"callee">>, Callee}]}) ->
     CalleeConn = rooms:get_conn_by_user_id(Callee),
-    CalleeConn:send({[{<<"offer">>, Offer}, {<<"caller">>, Caller}, {<<"callee">>, Callee}]});
+    CalleeConn:send(jiffy:encode({[{<<"offer">>, Offer}, {<<"caller">>, Caller}, {<<"callee">>, Callee}]})),
+    {ok, connected};
 parse_msg(_Conn, {[{<<"answer">>, Answer}, {<<"caller">>, Caller}, {<<"callee">>, Callee}]}) ->
     CallerConn = rooms:get_conn_by_user_id(Caller),
-    CallerConn:send({[{<<"answer">>, Answer}, {<<"caller">>, Caller}, {<<"callee">>, Callee}]});
+    CallerConn:send(jiffy:encode({[{<<"answer">>, Answer}, {<<"caller">>, Caller}, {<<"callee">>, Callee}]})),
+    {ok, connected};
+parse_msg(_Conn, {[{<<"ice_candidate">>, IC}, {<<"caller">>, From}, {<<"callee">>, To}]}) ->
+    ToConn = rooms:get_conn_by_user_id(To),
+    ToConn:send(jiffy:encode({[{<<"ice_candidate">>, IC}, {<<"caller">>, From}, {<<"callee">>, To}]})),
+    {ok, connected};
 
-parse_msg(_Conn, Msg) ->
-    lager:info("Unknown message: ~p", [Msg]),
+parse_msg(_Conn, _Msg) ->
+    lager:info("Unknown message" ),
     {ok, connected}.
 
 gracefully_close(Conn) ->

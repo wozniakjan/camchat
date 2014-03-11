@@ -1,6 +1,7 @@
 var room = window.location.pathname.replace(/\//g,'');
 var sock = new SockJS('http://localhost:8080/sockjs/camchat');
 var peer_connection = {};
+var peer_importance = {};
 var local_stream;
 var my_id;
 
@@ -95,7 +96,8 @@ function add_peer(id, name) {
     new_peer.append(label);
     $("#video_buff").append(new_peer);
     setup_peer_connection(id, video[0]);
-    set_main(id);
+    peer_importance[id] = 0;
+    set_main();
     return video[0];
 }
 
@@ -143,25 +145,54 @@ function negotiate_connection(remote_id){
 
 function remove_peer(id) {
     if( $("#main_video").attr("peer_id") == id ) {
-        //set different main video
+        $("#main_video").attr("peer_id", "");
+        $("#main_video > .big_video").remove();
+        set_main();
     }
     $("#peer"+id).hide(1000, function(){$(this).remove();});
     peer_connection[id] = null;
+    peer_importance[id] = null;
 }
 
 function error_callback(error) {
     console.log(error);
 }
 
-function set_main(id) {
+function switch_main(id) {
     var main_video = $("#main_video");
     var old_peer_id = main_video.attr("peer_id");
     if(old_peer_id){
         var peer_div = $("#peer"+old_peer_id);
-        //peer_div.append($("#main_video > .big_video").attr("class","small_video"));
-        peer_div.show(1000);
+        peer_div.show(1000, function(){
+            var small_video = $("#main_video > .big_video").attr("class","small_video");
+            peer_div.append(small_video);
+            small_video[0].play();
+        });
     }
-    $("#peer"+id).hide(1000);
-    //main_video.append($("#peer"+id+" > .small_video").attr("class","big_video"));
+    $("#peer"+id).hide(1000, function(){
+        var big_video = $("#peer"+id+" > .small_video").attr("class","big_video");
+        main_video.append(big_video);
+        big_video[0].play();
+    });
     main_video.attr("peer_id", id);
 }
+
+function set_main() {
+    var max = get_max(peer_importance);
+    var current_key = $("#main_video").attr("peer_id");
+    if(max.key != undefined && max.key != current_key)
+        switch_main(max.key);
+}
+
+function get_max(hashmap) {
+    var max_val;
+    var max_key;
+    for(i in hashmap) {
+        if(max_val < hashmap[i] || max_val == undefined){
+            max_val = hashmap[i];
+            max_key = i;
+        }
+    }
+    return {key: max_key, val: max_val};
+}
+

@@ -10,18 +10,12 @@ html, body {
     width: 99%;
     padding: 0px;
     margin: 0px;
-    border: solid;
-    border-width: 1px;
-    border-color: black;
     position: relative;
 }
 
 #main_video {
     height: 95%;
     width: 95%;
-    border: solid;
-    border-width: 1px;
-    border-color: red;
     text-align: center;
 }
 
@@ -31,13 +25,19 @@ html, body {
     position: absolute;
 }
 #control_panel {
-    border: solid;
     position: absolute;
     top: 5px;
     left: 5px;
-    border-width: 1px;
-    border-color: green;
     opacity: 0.6;
+}
+
+.icon {
+    float: left;
+    width: 15px;
+    height: 15px;
+}
+
+#control_panel input {
 }
 
 .big_video {
@@ -62,6 +62,16 @@ html, body {
     background-color: white;
     opacity: 0.6;
     z-index: 1;
+    margin: 0px;
+    padding: 2px;
+    outline: 0px;
+    border: none;
+    font: inherit;
+    font-family: monospace;
+    overflow: hidden;
+    /*white-space: nowrap;*/
+    width: auto;
+    max-width: 140px;
 }
 
 .small_video {
@@ -69,4 +79,7 @@ html, body {
     padding: 0px:
     height: 120px;
     z-index: 0;
+    border: solid;
+    border-width: 1px;
+    border-color: black;
 }

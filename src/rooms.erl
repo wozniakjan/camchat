@@ -1,5 +1,6 @@
 -module(rooms).
--export([start/0, connect/3, disconnect/2, get_peers/1, get_peers/2, stop/0, reload/1, get_conn_by_user_id/1]).
+-export([start/0, connect/3, disconnect/2, get_peers/1, get_peers/2, stop/0, reload/1, 
+         get_conn_by_user_id/1, edit_user/3]).
 
 -include("types.hrl").
 
@@ -71,5 +72,8 @@ get_conn_by_user_id(UserId) ->
 
 stop() ->
     ets:delete(rooms).
+
+edit_user(ConnectionId, Attr, Val) ->
+    ets:update_element(users, ConnectionId, {Attr, Val}).
 
 reload(_Opts) -> reloaded.

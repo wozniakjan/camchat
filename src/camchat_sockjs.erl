@@ -47,9 +47,15 @@ parse_msg(_Conn, {[{<<"ice_candidate">>, IC}, {<<"caller">>, From}, {<<"callee">
     ToConn = rooms:get_conn_by_user_id(To),
     ToConn:send(jiffy:encode({[{<<"ice_candidate">>, IC}, {<<"caller">>, From}, {<<"callee">>, To}]})),
     {ok, connected};
-
-parse_msg(_Conn, _Msg) ->
-    lager:info("Unknown message" ),
+parse_msg(Conn, {[{<<"change_name">>, NewName}, {<<"id">>, Id}]}) ->
+    rooms:edit_user(Conn, ?USERNAME_POS, NewName),
+    send_peers(Conn, jiffy:encode({[{<<"change_name">>, NewName}, {<<"id">>, Id}]})),
+    {ok, connected};
+parse_msg(Conn, {[{<<"audio_energy">>, Energy}, {<<"id">>, Id}]}) ->
+    send_peers(Conn, jiffy:encode({[{<<"audio_energy">>, Energy}, {<<"id">>, Id}]})),
+    {ok, connected};
+parse_msg(_Conn, Msg) ->
+    lager:info("Unknown message ~n~p~n", [Msg]),
     {ok, connected}.
 
 gracefully_close(Conn) ->

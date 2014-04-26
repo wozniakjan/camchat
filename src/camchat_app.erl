@@ -13,7 +13,7 @@ start(_StartType, _StartArgs) ->
     rooms:start(),
     Routes       = routes(),
     Dispatch     = cowboy_router:compile(Routes),
-    Port         = 80, 
+    Port         = port(), 
     TransOpts    = [{port, Port}],
     ProtoOpts    = [{env, [{dispatch, Dispatch}]}],
     NumAcceptors = 100,
@@ -42,3 +42,11 @@ routes() ->
         }
     ].
 
+port() ->
+    case os:getenv("PORT") of
+        false ->
+            {ok, Port} = application:get_env(http_port),
+            Port;
+        Other ->
+            list_to_integer(Other)
+    end.

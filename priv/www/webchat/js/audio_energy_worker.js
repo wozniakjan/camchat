@@ -45,12 +45,17 @@ function parse_msg(msg) {
     if(data.audio_energy){
         peer_importance[data.id] = parseFloat(data.audio_energy);
     } else if(data.get_main){
+        console.log("get_main " + data);
         send_main(0);
-    } else if(data.user_disconnected) {
-        peer_importance[data.user_disconnected] = undefined;
+    } else if(data.peer_disconnected) {
+        console.log("peer_disconnected " + data);
+        peer_importance[data.peer_disconnected] = undefined;
+    } else {
+        console.log("else " + data);
     }
 }
-self.addEventListener('message', parse_msg);
+
+self.addEventListener('message', parse_msg, false);
 
 
 set_main();

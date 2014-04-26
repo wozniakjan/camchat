@@ -1,5 +1,5 @@
 var room = window.location.pathname.replace(/\//g,'');
-var sock = new SockJS('http://localhost:8080/sockjs/camchat');
+var sock = new SockJS('http://localhost/sockjs/camchat');
 var peer_connection = {};
 var local_stream;
 var my_id;
@@ -15,18 +15,6 @@ function error_callback(error) {
     console.log(error);
 }
 
-function get_max(hashmap) {
-    var max_val;
-    var max_key;
-    for(i in hashmap) {
-        if(max_val < hashmap[i] || max_val == undefined){
-            max_val = hashmap[i];
-            max_key = i;
-        }
-    }
-    return {key: max_key, val: max_val};
-}
-
 var pc_config = webrtcDetectedBrowser === 'firefox' ?
     {'iceServers':[{'url':'stun:23.21.150.121'}]} : // number IP
     {'iceServers': [{'url': 'stun:stun.l.google.com:19302'}]};
@@ -36,6 +24,10 @@ $.getScript("/webchat/js/video.js");
 
 function send(json_msg){
     sock.send(JSON.stringify(json_msg));
+};
+
+function send_audio_worker(msg){
+    audio_worker.postMessage(msg);
 };
 
 sock.onopen = function() {

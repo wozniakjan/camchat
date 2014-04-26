@@ -1,1 +1,1 @@
-erl -pa ebin deps/*/ebin -s camchat
+erl -pa ebin deps/*/ebin -noshell -noinput -s camchat

@@ -13,7 +13,7 @@ start(_StartType, _StartArgs) ->
     rooms:start(),
     Routes       = routes(),
     Dispatch     = cowboy_router:compile(Routes),
-    Port         = 8080, 
+    Port         = 80, 
     TransOpts    = [{port, Port}],
     ProtoOpts    = [{env, [{dispatch, Dispatch}]}],
     NumAcceptors = 100,

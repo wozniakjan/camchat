@@ -1,27 +1,8 @@
 window.AudioContext = window.AudioContext||window.webkitAudioContext;
 var AUDIO_BUFFER_SIZE = 16384; 
 
-function get_video_callbacks(video_element) {
-    function success_callback(local_media_stream) {
-        local_stream = local_media_stream;
-        // Add stream to div
-        attachMediaStream(video_element, local_stream);
-        // For audio processing
-        var audioContext = new AudioContext();
-        // Create an AudioNode from the stream.
-        var mediaStreamSource = audioContext.createMediaStreamSource( local_stream );
-        // Script processor
-        var scriptProcessor = audioContext.createScriptProcessor(AUDIO_BUFFER_SIZE, 1, 1);
-        scriptProcessor.onaudioprocess = audio_filter;
-        // Connect it to the destination to hear yourself (or any other node for processing!)
-        mediaStreamSource.connect( scriptProcessor );
-        scriptProcessor.connect( audioContext.destination );
-        video_element.play();
-        send({'ready': room});
-    }
-    return {'success' : success_callback};
-}
-
+//filter for automatic directors cut among peers in conference
+//according to audio energy
 function audio_filter(event) {
     var data = event.inputBuffer.getChannelData(0);
     var energy = data[0]*data[0];
@@ -31,13 +12,33 @@ function audio_filter(event) {
     send({'audio_energy': energy, 'id':my_id});
 }
 
+
+//initialize video div
 function init_video() {
     var constraints = {video: true, audio: true};
     var video_elem = setup_myself();
-    var callbacks = get_video_callbacks(video_elem);
-    navigator.getUserMedia(constraints, callbacks.success, error_callback);
+    navigator.getUserMedia(constraints, 
+        function(local_media_stream){
+            local_stream = local_media_stream;
+            // Add stream to div
+            attachMediaStream(video_elem, local_stream);
+            // For audio processing
+            var audioContext = new AudioContext();
+            // Create an AudioNode from the stream.
+            var mediaStreamSource = audioContext.createMediaStreamSource( local_stream );
+            // Script processor
+            var scriptProcessor = audioContext.createScriptProcessor(AUDIO_BUFFER_SIZE, 1, 1);
+            scriptProcessor.onaudioprocess = audio_filter;
+            // Connect it to the destination to hear yourself (or any other node for processing!)
+            mediaStreamSource.connect( scriptProcessor );
+            scriptProcessor.connect( audioContext.destination );
+            video_elem.play();
+            send({'ready': room});
+        }, 
+        error_callback);
 }
 
+//create my own video div
 function setup_myself() {
     var div = $("<div>", {id: "myself", class: "small_video_frame"});
     var label = $("<input>", {class: "label", text: my_id});
@@ -48,6 +49,7 @@ function setup_myself() {
     return video[0];
 }
 
+//when peer connects, create his video div
 function add_peer(id, name) {
     var new_peer = $("<div>", {id: "peer"+id, class: "small_video_frame"});
     var label = $("<div>", {class: "label", text: name});
@@ -56,22 +58,26 @@ function add_peer(id, name) {
     new_peer.append(label);
     $("#video_buff").append(new_peer);
     setup_peer_connection(id, video[0]);
-    audio_worker.postMessage({'get_main': 'audio'});
+    send_audio_worker({'get_main': 'audio'});
     return video[0];
 }
 
+//when peer gets disconnected, remove his video div
+//TODO: just hide and let audio_worker set new main
 function remove_peer(id) {
     peer_connection[id] = null;
-    audio_worker.postMessage({'peer_disconnected': id});
+    console.log('sending to worker');
+    send_audio_worker({'peer_disconnected': id});
     if( $("#main_video").attr("peer_id") == id ) {
         $("#main_video").attr("peer_id", "");
         $("#main_video > .big_video").remove();
-        //audio_worker.postMessage({'get_main': 'audio'});
+        send_audio_worker({'get_main': 'audio'});
     }
     $("#peer"+id).hide(1000, function(){$(this).remove();});
     peer_connection[id] = null;
 }
 
+//switch main video div and small video div with specific id
 function switch_main(id) {
     var main_video = $("#main_video");
     var old_peer_id = main_video.attr("peer_id");
@@ -91,6 +97,8 @@ function switch_main(id) {
     main_video.attr("peer_id", id);
 }
 
+//called during initialization, create divs with video
+//and arrange them on the page
 function setup_videos(id, peer_list, type){
     my_id = id;
     var label = $("#myself > .label").val(my_id);
@@ -111,9 +119,7 @@ function setup_videos(id, peer_list, type){
     }
 }
 
+//change the name label assigned to specific id
 function change_name(name, id){
-    console.log("change name " + id + " " + name);
-    var label = $("#peer"+id+" > .label");
-    console.log(label);
-    label.html(name);
+    $("#peer"+id+" > .label").html(name);
 }

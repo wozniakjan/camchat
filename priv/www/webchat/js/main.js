@@ -1,5 +1,5 @@
 var room = window.location.pathname.replace(/\//g,'');
-var sock = new SockJS('http://localhost/sockjs/camchat');
+var sock = new SockJS('/sockjs/camchat');
 var peer_connection = {};
 var local_stream;
 var my_id;

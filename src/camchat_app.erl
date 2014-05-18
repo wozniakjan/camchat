@@ -33,11 +33,13 @@ routes() ->
                        fun camchat_sockjs:camchat_sockjs/3, init, []),
     [
         {'_', [
-                {"/", camchat_handler, []},
+                {"/", cowboy_static, {file, "priv/www/index.html"}},
                 {string:concat(SockjsPath, "/[...]"), sockjs_cowboy_handler, SockjsState},
-                {"/:chatroom", cowboy_static, {file, "priv/www/index.html"}},
+                {"/:chatroom", cowboy_static, {file, "priv/www/room.html"}},
                 {"/webchat/js/[...]", cowboy_static, {dir, "priv/www/webchat/js/"}},
-                {"/webchat/css/[...]", cowboy_static, {dir, "priv/www/css/"}}
+                {"/webchat/css/[...]", cowboy_static, {dir, "priv/www/css/"}},
+                {"/webchat/images/[...]", cowboy_static, {dir, "priv/www/images/"}},
+                {"/[...]", error_pages, []}
               ]
         }
     ].

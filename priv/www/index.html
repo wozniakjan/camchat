@@ -4,24 +4,131 @@
 
 <meta name='viewport' content='width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1'>
 <base target='_blank'> 
-<title>WebRTC client</title>
-<link rel="stylesheet" type="text/css" href="/webchat/css/main.css">
+<link rel="stylesheet" type="text/css" href="/webchat/css/index.css">
+<title>Camchat</title>
 </head>
 
 <body>
-<div id='screen'>
-    <div id='main_video'></div>
-    <div id='video_buff'></div>
-    <div id='control_panel'>
-        <div class='icon'></div>
-        <input value='apps'>
+<div id="top_panel" onclick="window.location.href = '/'">
+    CAMCHAT
+</div>
+<div id="screen">
+<div class="wrap">
+<div class="panel" style="background-color:#54031C" onclick="window.location.href = '/#chat_with_friends'">
+    <div class="label">
+        <div class="text">
+        chat with friends
+        </div>
+    </div>
+    <div class="inner_panel">
+        <div class="picture">
+        </div>
+    </div>
+    <div class="description">
+        <div class="text">
+            simply create your own room, protect access with password, 
+            allow who can join and who can not. Easiest way to see your buddies
+            over the internet, all you need to do is share the link.
+        </div>
+    </div>
+</div>
+<div class="panel" style="background-color:#652639" onclick="window.location.href = '/#hook_me_up'">
+    <div class="label">
+        <div class="text">
+        hook me up!
+        </div>
+    </div>
+    <div class="inner_panel">
+        <div class="picture">
+        </div>
+    </div>
+    <div class="description">
+        <div class="text">
+            in the mood for getting to know new people? Join random room 
+            and see whats up! No registration required, just get paired with 
+            strangers and make new friends in various conference rooms.
+        </div>
+    </div>
+</div>
+<div class="panel" style="background-color:#910F36" onclick="window.location.href = '/#share_screen'">
+    <div class="label">
+        <div class="text">
+        share screen
+        </div>
+    </div>
+    <div class="inner_panel">
+        <div class="picture">
+        </div>
+    </div>
+    <div class="description">
+        <div class="text">
+            got a tricky problem and know people who could easily solve it, 
+            if they could only see what you see on the computer...
+            share your screen as video and your friend can guide you
+            to success!
+        </div>
+    </div>
+</div>
+<div class="panel" style="background-color:#49900F" onclick="window.location.href = '/#supported_software'">
+    <div class="label">
+        <div class="text">
+        supported software
+        </div>
+    </div>
+    <div class="inner_panel">
+        <div class="picture">
+        </div>
+    </div>
+    <div class="description">
+        <div class="text">
+            this page uses new fancy technology by Google,
+            called WebRTC. Do yourself a favor and get the
+            latest of modern web browsers, it's impossible
+            to support archaic or blind companies.
+        </div>
+    </div>
+</div>
+</div>
+
+<div id="white_panel">
+    Lorem ipsum dolor sit amet, consectetur adipiscing elit. Ut pharetra sed ipsum at molestie. Phasellus sed sollicitudin magna. Ut mollis est leo, et accumsan dui posuere sed. Vivamus vel posuere felis. Pellentesque faucibus tellus at lorem tristique, sed pulvinar mi vehicula. Quisque quis lorem quis velit tempor pretium ut ut mauris. Nunc ultricies dignissim arcu et lacinia. Sed id semper massa.
+</div>
+
+<div id="chat_with_friends" class="detail_description" style="background-color:#54031C">
+</div>
+<div id="hook_me_up" class="detail_description" style="background-color:#652639">
+</div>
+<div id="share_screen" class="detail_description" style="background-color:#910F36">
+</div>
+<div id="supported_software" class="detail_description" style="background-color:#49900F">
+</div>
+
+<div class="bottom_panel">
+</div>
+
+<!--<div id='room_create'>
+    <input id='room_name' 
+           pattern="[A-Za-z]"
+           maxlength="20"
+           onblur="if (this.value == '') {this.value = 'enter room name...';}"
+           onfocus="if (this.value == 'enter room name...') {this.value = '';}" 
+           value='enter room name...'>
+    <div class='box'>
+    <button class='join_button' onclick="enter_room()">join</button>
+    <button class='join_button' onclick="enter_room()">create</button>
+    </div>
+    <div class='box'>
+    <button class='join_button' onclick="enter_room()">join random</button>
+    <button class='join_button' onclick="enter_room()">create random</button>
     </div>
 </div>
 
+<div id="test">
+</div> -->
 
-<script src='/webchat/js/sockjs-0.3.min.js'></script>
+</div>
+
 <script src='/webchat/js/jquery-2.1.0.min.js'></script>
-<script src='/webchat/js/adapter.js'></script>
-<script src='/webchat/js/main.js'></script>
+<script src='/webchat/js/index.js'></script>
 </body>
 </html>

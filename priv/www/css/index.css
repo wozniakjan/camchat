@@ -119,3 +119,19 @@ body {
     border-radius: 15px;
 }
 
+#footer {
+    width: 100%;
+    height: 30px;
+    padding-top: 15px;
+    background-color: #222222;
+    color: #dadada;
+    text-align: center;
+    text-size: 12px;
+    box-shadow:0px 10px 55px #000000; 
+    opacity: 1;
+    transition: all 1s ease;
+}
+
+#footer a {
+    color: #dadada;
+}

@@ -103,6 +103,26 @@
 </div>
 
 <div id="chat_with_friends" class="detail_description" style="background-color:#54031C">
+    <div class="inside">
+        <div class="left">
+            <div class="logo"></div>
+        </div>
+
+        <div class="right">
+            <div id='room_create'>
+                <input id='room_name' 
+                maxlength="20"
+                onblur="if (this.value == '') {this.value = 'enter room name...';}"
+                onfocus="if (this.value == 'enter room name...') {this.value = '';}" 
+                onchange="this.value = this.value.replace(/\W/g, '')"
+                value='enter room name...'>
+                <div class='box'>
+                    <button class='join_button' onclick="enter_room()">join</button>
+                    <button class='join_button' onclick="enter_room()">create</button>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <div id="hook_me_up" class="detail_description" style="background-color:#652639">
 </div>
@@ -117,22 +137,6 @@
     source on <a href="https://bitbucket.org/jan_wozniak/webconf/">bitbucket</a>.
 </div>
 
-<!--<div id='room_create'>
-    <input id='room_name' 
-           pattern="[A-Za-z]"
-           maxlength="20"
-           onblur="if (this.value == '') {this.value = 'enter room name...';}"
-           onfocus="if (this.value == 'enter room name...') {this.value = '';}" 
-           value='enter room name...'>
-    <div class='box'>
-    <button class='join_button' onclick="enter_room()">join</button>
-    <button class='join_button' onclick="enter_room()">create</button>
-    </div>
-    <div class='box'>
-    <button class='join_button' onclick="enter_room()">join random</button>
-    <button class='join_button' onclick="enter_room()">create random</button>
-    </div>
-</div>
 
 <div id="test">
 </div> -->

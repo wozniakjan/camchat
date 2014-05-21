@@ -106,7 +106,53 @@ body {
 .detail_description {
     width: 100%;
     height: 67%;
+    color: #dadada;
+    font-family: "Century Gothic", CenturyGothic, Geneva, AppleGothic, sans-serif;;
+    font-size: 14px;
 }
+
+.detail_description .logo {
+    opacity: 0.1;
+    width: 256px;
+    height: 256px;
+    background-color: white;
+    transition: all 750ms ease;
+    border-radius: 15px;
+}
+
+.detail_description input {
+    font-family: inherit;
+    font-size: inherit;
+}
+
+.detail_description .join_button {
+    background-color: inherit;
+    color: inherit;
+    font-family: inherit;
+    font-size: inherit;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 5px;
+    border-color: #dadada;
+    transition: all 750ms ease;
+}
+
+.inside {
+    padding-top: 45px;
+}
+
+.inside .left {
+    padding-top: 3%;
+    padding-left: 5%;
+    float: left;
+}
+
+.inside .right {
+    padding-top: 3%;
+    padding-left: 5%;
+    float: left;
+}
+
 
 .picture {
     opacity: 0.1;

@@ -104,42 +104,71 @@
 
 <div id="chat_with_friends" class="detail_description" style="background-color:#54031C">
     <div class="inside">
-        <div class="left">
+        <div class="middle_align">
             <div class="logo"></div>
-        </div>
 
-        <div class="right">
-            <div id='room_create'>
+            <div>
+                share the link and talk to each other
+            </div>
+            <div>
                 <input id='room_name' 
                 maxlength="20"
                 onblur="if (this.value == '') {this.value = 'enter room name...';}"
                 onfocus="if (this.value == 'enter room name...') {this.value = '';}" 
                 onchange="this.value = this.value.replace(/\W/g, '')"
                 value='enter room name...'>
-                <div class='box'>
-                    <button class='join_button' onclick="enter_room()">join</button>
-                    <button class='join_button' onclick="enter_room()">create</button>
-                </div>
+            </div>
+            <div id='room_box' class='button_box'>
+                <button onclick="window.location.href = '/'+$('#room_name').val()">join this room</button>
             </div>
         </div>
     </div>
 </div>
 <div id="hook_me_up" class="detail_description" style="background-color:#652639">
+    <div class="inside">
+        <div class="middle_align">
+            <div class="logo"></div>
+
+            <div>
+                talk to random people
+            </div>
+            <div id='random_room_box' class='button_box'>
+                <button onclick="enter_room()">join random room</button>
+                <button onclick="enter_room()">create empty room</button>
+            </div>
+        </div>
+    </div>
 </div>
 <div id="share_screen" class="detail_description" style="background-color:#910F36">
+    <div class="inside">
+        <div class="middle_align">
+            <div class="logo"></div>
+
+            <div>
+                <div>
+                    don't forget to check the flag
+                </div>
+                <div id="flag">
+                    chrome://flags/#enable-usermedia-screen-capture
+                </div>
+                <div>
+                    then use <a href="#chat_with_friends">chat with friends</a> 
+                    or <a href="#hook_me_up">hook me up</a>
+                </div>
+            </div>
+        </div>
+    </div>
 </div>
 <div id="supported_software" class="detail_description" style="background-color:#49900F">
 </div>
 
 <div id="footer" onclick="window.location.href = '/'">
-    author: <a href="mailto:wozniak.jan@gmail.com?subject='camchat'">wj</a> 
+    author: <a href="mailto:wozniak.jan@gmail.com?subject=camchat">wj</a> 
     &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
     source on <a href="https://bitbucket.org/jan_wozniak/webconf/">bitbucket</a>.
 </div>
 
 
-<div id="test">
-</div> -->
 
 </div>
 

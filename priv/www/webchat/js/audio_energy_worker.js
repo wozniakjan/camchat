@@ -3,6 +3,9 @@ var TIMEOUT = 1000;
 var current_audio_stream_key;
 var peer_importance = {};
 
+/*
+ * get max key and value from hashmap
+ */
 function get_max(hashmap) {
     var max_val;
     var max_key;
@@ -15,6 +18,9 @@ function get_max(hashmap) {
     return {key: max_key, val: max_val};
 }
 
+/*
+ * heuristics to prevent switching of video too often
+ */
 function test_main_importance(max, epsilon) {
     if(max.key != undefined && max.key != current_audio_stream_key) {
         if(current_audio_stream_key == undefined)
@@ -25,7 +31,9 @@ function test_main_importance(max, epsilon) {
     return false;
 }
 
-
+/*
+ * send id of new main video to the listener
+ */
 function send_main(epsilon) {
     var max = get_max(peer_importance);
     //add check if has any
@@ -35,27 +43,33 @@ function send_main(epsilon) {
     }
 }
 
+/*
+ * infinite loop that selects main video
+ */
 function set_main() {
     send_main(10);
     setTimeout("set_main()",TIMEOUT);
 }
 
+/*
+ * parsing incomming messages
+ */
 function parse_msg(msg) {
     var data = msg.data;
     if(data.audio_energy){
         peer_importance[data.id] = parseFloat(data.audio_energy);
     } else if(data.get_main){
-        console.log("get_main " + data);
         send_main(0);
     } else if(data.peer_disconnected) {
-        console.log("peer_disconnected " + data);
         peer_importance[data.peer_disconnected] = undefined;
+        if(current_audio_stream_key == data.peer_disconnected)
+            current_audio_stream_key = undefined;
     } else {
-        console.log("else " + data);
     }
 }
 
+/*
+ * run this at load
+ */
 self.addEventListener('message', parse_msg, false);
-
-
 set_main();

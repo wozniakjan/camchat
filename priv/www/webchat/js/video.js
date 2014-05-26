@@ -63,15 +63,12 @@ function add_peer(id, name) {
 }
 
 //when peer gets disconnected, remove his video div
-//TODO: just hide and let audio_worker set new main
 function remove_peer(id) {
     peer_connection[id] = null;
-    console.log('sending to worker');
     send_audio_worker({'peer_disconnected': id});
     if( $("#main_video").attr("peer_id") == id ) {
         $("#main_video").attr("peer_id", "");
         $("#main_video > .big_video").remove();
-        send_audio_worker({'get_main': 'audio'});
     }
     $("#peer"+id).hide(1000, function(){$(this).remove();});
     peer_connection[id] = null;

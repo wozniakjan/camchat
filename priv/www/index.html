@@ -119,7 +119,7 @@
                 value='enter room name...'>
             </div>
             <div id='room_box' class='button_box'>
-                <button onclick="window.location.href = '/'+$('#room_name').val()">join this room</button>
+                <button onclick="join_room()">join this room</button>
             </div>
         </div>
     </div>
@@ -133,8 +133,8 @@
                 talk to random people
             </div>
             <div id='random_room_box' class='button_box'>
-                <button onclick="enter_room()">join random room</button>
-                <button onclick="enter_room()">create empty room</button>
+                <button onclick="random_room()">join random room</button>
+                <button onclick="empty_room()">create empty room</button>
             </div>
         </div>
     </div>

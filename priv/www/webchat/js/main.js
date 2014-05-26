@@ -6,6 +6,7 @@ var my_id;
 var audio_worker = new Worker("/webchat/js/audio_energy_worker.js");
 
 audio_worker.onmessage = function(event) { 
+    console.log("audio worker:" + event.data);
     if(event.data.set_main){
         switch_main(event.data.set_main);
     }

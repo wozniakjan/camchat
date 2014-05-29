@@ -94,7 +94,7 @@ function switch_main(id) {
     main_video.attr("peer_id", id);
 }
 
-//checks previously set user_name
+//checks previously set user_name and saves/loads according
 function get_username(user_name){
     if(localStorage.user_name){
         send({"change_name":localStorage.user_name,"id":my_id})
@@ -102,6 +102,10 @@ function get_username(user_name){
         localStorage.user_name = user_name;
     }
     return localStorage.user_name;
+}
+
+function set_username(user_name) {
+    localStorage.user_name = user_name;
 }
 
 //called during initialization, create divs with video
@@ -113,7 +117,7 @@ function setup_videos(id, user_name, peer_list, type){
     label.attr("size",label.val().length-1);
     label.focus(function(){$(this).css("opacity","0.85")});
     label.focusout(function(){$(this).css("opacity","0.6")});
-    label.change(function(){ send({"change_name":$(this).val(),"id":my_id}) });
+    label.change(function(){ set_username($(this).val()); send({"change_name":$(this).val(),"id":my_id}) });
     label.keyup(function(event){
         if(event.keyCode == 13) { //enter
             $(this).blur();

@@ -18,7 +18,7 @@ create_id() ->
 
 create_user(ConnectionId, RoomId) ->
     UID = create_id(),
-    UN = UID,%<<"User Name">>,
+    UN = name_generator:get_name(),
     #user{connection_id=ConnectionId, room_id=RoomId, user_id=UID, username=UN}.
 
 connect(RoomId, ConnectionId, _Opt) ->

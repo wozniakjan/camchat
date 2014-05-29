@@ -33,7 +33,7 @@ parse_msg(Conn, {[{<<"ready">>, Room}]}) ->
     UN = User#user.username,
     PeerList = send_peers(Conn, jiffy:encode({[{peer_connected, UserId}, {name, UN}]})),
     UsernameList = lists:map(fun(X)-> {X#user.user_id, X#user.username} end, PeerList),
-    Conn:send(jiffy:encode({[{connected, RoomStatus}, {user_id, UserId}, {peer_list, {UsernameList}}]})),
+    Conn:send(jiffy:encode({[{connected, RoomStatus}, {user_id, UserId}, {user_name, UN}, {peer_list, {UsernameList}}]})),
     {ok, connected};
 parse_msg(_Conn, {[{<<"offer">>, Offer}, {<<"caller">>, Caller}, {<<"callee">>, Callee}]}) ->
     CalleeConn = rooms:get_conn_by_user_id(Callee),

@@ -94,11 +94,22 @@ function switch_main(id) {
     main_video.attr("peer_id", id);
 }
 
+//checks previously set user_name
+function get_username(user_name){
+    if(localStorage.user_name){
+        send({"change_name":localStorage.user_name,"id":my_id})
+    } else {
+        localStorage.user_name = user_name;
+    }
+    return localStorage.user_name;
+}
+
 //called during initialization, create divs with video
 //and arrange them on the page
-function setup_videos(id, peer_list, type){
+function setup_videos(id, user_name, peer_list, type){
     my_id = id;
-    var label = $("#myself > .label").val(my_id);
+    var my_name = get_username(user_name);
+    var label = $("#myself > .label").val(my_name);
     label.attr("size",label.val().length-1);
     label.focus(function(){$(this).css("opacity","0.85")});
     label.focusout(function(){$(this).css("opacity","0.6")});

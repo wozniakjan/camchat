@@ -44,7 +44,7 @@ sock.onmessage = function(e) {
     } else if(json_msg.peer_connected) {
         add_peer(json_msg.peer_connected, json_msg.name);
     } else if(json_msg.connected){
-        setup_videos(json_msg.user_id, json_msg.peer_list, json_msg.connected);
+        setup_videos(json_msg.user_id, json_msg.user_name, json_msg.peer_list, json_msg.connected);
     } else if(json_msg.peer_disconnected) {
         remove_peer(json_msg.peer_disconnected);
     } else if(json_msg.offer){

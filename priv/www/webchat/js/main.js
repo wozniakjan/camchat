@@ -4,6 +4,7 @@ var peer_connection = {};
 var local_stream;
 var my_id;
 var audio_worker = new Worker("/webchat/js/audio_energy_worker.js");
+var number_of_peers = 0;
 
 audio_worker.onmessage = function(event) { 
     console.log("audio worker:" + event.data);
@@ -63,7 +64,7 @@ sock.onmessage = function(e) {
 };
 
 sock.onclose = function() {
-    console.log('sockjs close');
+    show_message("Disconnected");
 };
 
 function parse_offer(json_msg){
@@ -113,4 +114,25 @@ function negotiate_connection(remote_id){
             }, error_callback);
         }, error_callback);
     }
+}
+
+//shows message window over the screen with text until it is hidden
+function show_message(text) {
+    $("#message_window").show();
+    $("#message_window > .description").html(text);
+}
+
+//updates message window over the screen with text if is visible
+function update_message(text) {
+    var message_window = $("#message_window > .description");
+    if(message_window.is(':hidden')){
+        message_window.show();
+    }
+    message_window.html(text)
+}
+
+//hide message window
+function hide_message(text) {
+    $("#message_window > .description").html(text);
+    $("#message_window").hide(3000, function(){$(this).hide();});
 }

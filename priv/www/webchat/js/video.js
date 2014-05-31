@@ -12,6 +12,13 @@ function audio_filter(event) {
     send({'audio_energy': energy, 'id':my_id});
 }
 
+function send_ready(){
+    if(localStorage.user_name){
+        send({'ready': room, 'user_name': localStorage.user_name});
+    } else {
+        send({'ready': room});
+    }
+}
 
 //initialize video div
 function init_video() {
@@ -33,7 +40,7 @@ function init_video() {
             mediaStreamSource.connect( scriptProcessor );
             scriptProcessor.connect( audioContext.destination );
             video_elem.play();
-            send({'ready': room});
+            send_ready();
         }, 
         error_callback);
 }
@@ -59,6 +66,8 @@ function add_peer(id, name) {
     $("#video_buff").append(new_peer);
     setup_peer_connection(id, video[0]);
     send_audio_worker({'get_main': 'audio'});
+    hide_message(name + " has connected");
+    number_of_peers += 1;
     return video[0];
 }
 
@@ -72,6 +81,11 @@ function remove_peer(id) {
     }
     $("#peer"+id).hide(1000, function(){$(this).remove();});
     peer_connection[id] = null;
+
+    number_of_peers -= 1;
+    if(number_of_peers == 0){
+        show_message("Last guy disconnected, waiting for others..");
+    }
 }
 
 //switch main video div and small video div with specific id
@@ -96,9 +110,7 @@ function switch_main(id) {
 
 //checks previously set user_name and saves/loads according
 function get_username(user_name){
-    if(localStorage.user_name){
-        send({"change_name":localStorage.user_name,"id":my_id})
-    } else {
+    if( !localStorage.user_name ){
         localStorage.user_name = user_name;
     }
     return localStorage.user_name;
@@ -114,22 +126,27 @@ function setup_videos(id, user_name, peer_list, type){
     my_id = id;
     var my_name = get_username(user_name);
     var label = $("#myself > .label").val(my_name);
-    label.attr("size",label.val().length-1);
+    //set label width
+    label.attr("size",label.val().length);
     label.focus(function(){$(this).css("opacity","0.85")});
     label.focusout(function(){$(this).css("opacity","0.6")});
+    //send changed name to server
     label.change(function(){ set_username($(this).val()); send({"change_name":$(this).val(),"id":my_id}) });
+    //dynamic width of label for user name
     label.keyup(function(event){
         if(event.keyCode == 13) { //enter
             $(this).blur();
         } else{
-            $(this).attr("size",Math.max($(this).val().length-1,1))}
+            $(this).attr("size",Math.max($(this).val().length,1))}
     });
     if(type === 'existing_room') {
         $.each(peer_list, function(peerId, peerUserName) {
             add_peer(peerId, peerUserName);
         });
     }
+    update_message("Waiting for others...");
 }
+
 
 //change the name label assigned to specific id
 function change_name(name, id){

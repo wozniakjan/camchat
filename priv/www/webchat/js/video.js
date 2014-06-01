@@ -64,7 +64,7 @@ function change_stream(type) {
         constraints.audio = true;
         constraints.video = true;
     }
-    local_media_stream.applyConstraints(constraints);
+    local_stream.applyConstraints(constraints);
 }
 
 //create my own video div

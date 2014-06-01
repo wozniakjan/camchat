@@ -1,5 +1,6 @@
 window.AudioContext = window.AudioContext||window.webkitAudioContext;
 var AUDIO_BUFFER_SIZE = 16384; 
+var constraints = {video: true, audio: true};
 
 //filter for automatic directors cut among peers in conference
 //according to audio energy
@@ -20,12 +21,12 @@ function send_ready(){
     }
 }
 
-//initialize video div
-function init_video() {
-    var constraints = {video: true, audio: true};
-    var video_elem = setup_myself();
+//get stream from user media and set to video div
+function set_my_media(video_elem) {
     navigator.getUserMedia(constraints, 
         function(local_media_stream){
+            //TODO delete this
+            change_stream('screen');
             local_stream = local_media_stream;
             // Add stream to div
             attachMediaStream(video_elem, local_stream);
@@ -40,9 +41,32 @@ function init_video() {
             mediaStreamSource.connect( scriptProcessor );
             scriptProcessor.connect( audioContext.destination );
             video_elem.play();
-            send_ready();
         }, 
         error_callback);
+}
+
+//initialize video div
+function init_video() {
+    var video_elem = setup_myself();
+    set_my_media(video_elem);
+    //TODO check return value
+    send_ready();
+}
+
+//change something with my video
+function change_stream(type) {
+    if(type == "mute") {
+        constraints.audio = false;
+    } else if(type == "unmute") {
+        constraints.audio = true;
+    } else if(type == "screen") {
+        constraints.audio = false;
+        constraints.video = {mandatory: { chromeMediaSource: 'screen'}};
+    } else if(type == "camera") {
+        constraints.audio = true;
+        constraints.video = true;
+    }
+    set_my_media($("#myself > video")[0]);
 }
 
 //create my own video div

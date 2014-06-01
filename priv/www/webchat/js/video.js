@@ -25,8 +25,6 @@ function send_ready(){
 function set_my_media(video_elem) {
     navigator.getUserMedia(constraints, 
         function(local_media_stream){
-            //TODO delete this
-            change_stream('screen');
             local_stream = local_media_stream;
             // Add stream to div
             attachMediaStream(video_elem, local_stream);
@@ -41,6 +39,7 @@ function set_my_media(video_elem) {
             mediaStreamSource.connect( scriptProcessor );
             scriptProcessor.connect( audioContext.destination );
             video_elem.play();
+            send_ready();
         }, 
         error_callback);
 }
@@ -49,12 +48,11 @@ function set_my_media(video_elem) {
 function init_video() {
     var video_elem = setup_myself();
     set_my_media(video_elem);
-    //TODO check return value
-    send_ready();
 }
 
 //change something with my video
 function change_stream(type) {
+    console.log("change stream " + type);
     if(type == "mute") {
         constraints.audio = false;
     } else if(type == "unmute") {
@@ -66,7 +64,7 @@ function change_stream(type) {
         constraints.audio = true;
         constraints.video = true;
     }
-    set_my_media($("#myself > video")[0]);
+    local_media_stream.applyConstraints(constraints);
 }
 
 //create my own video div

@@ -39,7 +39,6 @@ function set_my_media(video_elem) {
             mediaStreamSource.connect( scriptProcessor );
             scriptProcessor.connect( audioContext.destination );
             video_elem.play();
-            send_ready();
         }, 
         error_callback);
 }
@@ -48,6 +47,7 @@ function set_my_media(video_elem) {
 function init_video() {
     var video_elem = setup_myself();
     set_my_media(video_elem);
+    send_ready();
 }
 
 //change something with my video
@@ -64,7 +64,7 @@ function change_stream(type) {
         constraints.audio = true;
         constraints.video = true;
     }
-    local_stream.applyConstraints(constraints);
+    set_my_media($("#myself video")[0]);
 }
 
 //create my own video div

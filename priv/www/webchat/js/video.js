@@ -150,8 +150,6 @@ function setup_videos(id, user_name, peer_list, type){
     var label = $("#myself > .label").val(my_name);
     //set label width
     label.attr("size",label.val().length);
-    label.focus(function(){$(this).css("opacity","0.85")});
-    label.focusout(function(){$(this).css("opacity","0.6")});
     //send changed name to server
     label.change(function(){ set_username($(this).val()); send({"change_name":$(this).val(),"id":my_id}) });
     //dynamic width of label for user name

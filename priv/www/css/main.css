@@ -30,15 +30,17 @@ html, body {
     top: 5px;
     left: 5px;
     opacity: 0.6;
+    transition: all 700ms ease;
+}
+
+#control_panel:hover, #control_panel:hover input {
+    opacity: 0.9;
 }
 
 .icon {
     float: left;
     width: 15px;
     height: 15px;
-}
-
-#control_panel input {
 }
 
 .big_video {
@@ -70,9 +72,13 @@ html, body {
     font: inherit;
     font-family: monospace;
     overflow: hidden;
-    /*white-space: nowrap;*/
     width: auto;
     max-width: 140px;
+    transition: all 700ms ease;
+}
+
+#myself .label:hover {
+    opacity: 0.9;
 }
 
 .small_video {

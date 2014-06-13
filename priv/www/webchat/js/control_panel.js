@@ -1,13 +1,19 @@
+//list of all settings widgets
 var settings_widgets = [];
-var MATCH_THRESHOLD = 60;
+//thresholds for matching and making visible/invisible
+var ADD_THRESHOLD = 6;
+var MAX_VISIBLE_WIDGETS = 5;
+//currently visible settings widgets
+var rollout_widgets = []
 
 /*
  * Widget rolling down from settings panel
  */
-function Settings_widget(name, keywords) {
+function Settings_widget(name, keywords, description) {
     this.name = name;
     this.keywords = keywords;
     this.last_matched_keywords = [];
+    this.description = description;
 }
 
 /*
@@ -15,7 +21,9 @@ function Settings_widget(name, keywords) {
  */
 Settings_widget.prototype.match = function(string) {
     // Matching heuristics of string and keyword
-    function str_match(keyword, string) { //Levenshtein distance
+    var MISS_COST = 4; //increased miss cost to prefer some match over short keywords
+    function str_match(keyword, string) { //modified Levenshtein distance
+        if(string=="") return 10;
         if(keyword.length >= string.length){
             str1 = keyword;
             str2 = string;
@@ -33,7 +41,7 @@ Settings_widget.prototype.match = function(string) {
             table[i] = [];
             table[i][0] = i;
             for(var j = 1; j <= len2; j++){
-                cost = (str1[i-1] == str2[j-1]) ? 0:1;
+                cost = (str1[i-1] == str2[j-1]) ? 0:MISS_COST;
                 vals = [table[i-1][j]+1, table[i][j-1]+1, table[i-1][j-1]+cost];
                 table[i][j] = Math.min.apply(Math, vals);
             }
@@ -42,21 +50,31 @@ Settings_widget.prototype.match = function(string) {
     }
 
     //match string to keywords and save results to last_matched_keywords
-    for(var i in this.keywords) {
-        var match = str_match(this.keywords[i], string);
+    for(var i=0; i<this.keywords.length; i++) {
+        var match = str_match(this.keywords[i], string) + i; 
         this.last_matched_keywords[i] = {key: this.keywords[i], val: match};
     }
-
+    //sort from min to max
     var lmk = this.last_matched_keywords.sort(function(a, b) {return a.val-b.val});
-    return lmk[0].val*10 + lmk[1].val*5 + lmk[2].val*2;
+    return lmk[0].val;
 };
 
-function init_settings_widgets() {
-    settings_widgets.push(new Settings_widget("Video", ["video", "screen", "desktop"])); 
-    settings_widgets.push(new Settings_widget("Audio", ["audio", "mute", "volume"])); 
-    settings_widgets.push(new Settings_widget("Record", ["record", "video", "audio"])); 
-    settings_widgets.push(new Settings_widget("Room", ["room", "password", "admin"])); 
-};
+
+function add_rollout_item(widget) {
+    var rollout_item = $("<div>", {class:"rollout_item", id:"rollout_widget"+widget.name});
+    var description = $("<div>", {class: "description"});
+    description.html(widget.description);
+    rollout_item.html(widget.name);
+    rollout_item.append(description);
+    $('#rollout_menu').append(rollout_item);
+}
+
+function redraw_settings_widgets(to_add){
+    $('.rollout_item').remove()
+    for(var i in to_add){
+        add_rollout_item(to_add[i].widget);
+    }
+}
 
 function init_control_panel() {
     init_settings_widgets();
@@ -75,19 +93,21 @@ function init_control_panel() {
         }
     };
     function get_settings_div() {
-        console.log('get_settings_div()');
         $('#control_panel > input').blur();
     };
     function filter_settings(key){
         var str = $('#control_panel > input').val();
-        var filtered = [];
+        var add = [];
         for(var i in settings_widgets){
             var val = settings_widgets[i].match(str);
-            if(val < MATCH_THRESHOLD){
-                console.log(settings_widgets[i].name);
-                this.last_matched_keywords[i] = {key: this.keywords[i], val: match};
+            if(val < ADD_THRESHOLD){
+                add.push({'widget':settings_widgets[i], 'val':val});
             }
         }
+        //sort from min to max and take up to MAX_VISIBLE_WIDGETS and only good matching
+        var to_add = add.sort(function(a, b) {return a.val-b.val})
+            .slice(0,MAX_VISIBLE_WIDGETS);
+        redraw_settings_widgets(to_add);
     };
 
     $("#control_panel > input").blur(on_blur);
@@ -95,10 +115,23 @@ function init_control_panel() {
     $("#control_panel > input").keyup(function(event){
         if(event.keyCode == 13) { //enter
             get_settings_div();
+        } else if(event.keyCode == 40) { //arrow down
+        } else if(event.keyCode == 38) { //arrow up
         } else { //key
             filter_settings(event.keyCode);    
         }
     });
 }
+
+function init_settings_widgets() {
+    settings_widgets.push(new Settings_widget("Video", ["video", "screen", "desktop"],
+        "change video settings, share desktop")); 
+    settings_widgets.push(new Settings_widget("Audio", ["audio", "mute", "volume"],
+        "change volume, mute and audio settings")); 
+    settings_widgets.push(new Settings_widget("Record", ["record", "video", "audio"],
+        "record to file what you hear and see")); 
+    settings_widgets.push(new Settings_widget("Room", ["room", "password", "admin"],
+        "administrate this room, set up password, kick peers")); 
+};
 
 init_control_panel();

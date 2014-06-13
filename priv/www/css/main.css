@@ -43,12 +43,12 @@ html, body {
     border-width: 1px;
     border-color: #222222;
     border-style: solid;
+    width: 150px;
 }
 
 #control_panel input, .rollout_item {
     padding-left: 10px;
     padding-right: 10px;
-    width: 150px;
 }
 
 #rollout_menu {
@@ -58,12 +58,12 @@ html, body {
 
 .rollout_item {
     padding-top: 5px;
+    width: 200px;
     border-top-style: solid;
     border-width: 1px;
     border-color: #666666;
     background-color: #ffffff;
     opacity: 0.6;
-    width: 100%;
     height: 18px;
     transition: all 500ms ease;
     font-size: 12px;
@@ -74,7 +74,8 @@ html, body {
     font-size: 11px;
 }
 
-.rollout_item:hover {
+.active_rollout_item {
+    transition: all 500ms ease;
     opacity: 0.99;
     height: 45px;
 }

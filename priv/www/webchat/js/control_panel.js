@@ -1,10 +1,9 @@
 //list of all settings widgets
 var settings_widgets = [];
+var active_settings_widget_div=false;
 //thresholds for matching and making visible/invisible
 var ADD_THRESHOLD = 6;
 var MAX_VISIBLE_WIDGETS = 5;
-//currently visible settings widgets
-var rollout_widgets = []
 
 /*
  * Widget rolling down from settings panel
@@ -21,7 +20,7 @@ function Settings_widget(name, keywords, description) {
  */
 Settings_widget.prototype.match = function(string) {
     // Matching heuristics of string and keyword
-    var MISS_COST = 4; //increased miss cost to prefer some match over short keywords
+    var MISS_COST = 4; //increased miss cost to prefer match over short keywords
     function str_match(keyword, string) { //modified Levenshtein distance
         if(string=="") return 10;
         if(keyword.length >= string.length){
@@ -59,20 +58,41 @@ Settings_widget.prototype.match = function(string) {
     return lmk[0].val;
 };
 
+function draw_settings_div() {
+    $('#control_panel > input').blur();
+};
+
+function activate_settings_widget_div(div){
+    if(active_settings_widget_div) {
+        active_settings_widget_div.removeClass("active_rollout_item");
+        active_settings_widget_div=false;
+    }
+    active_settings_widget_div = div;
+    div.addClass("active_rollout_item")
+}
 
 function add_rollout_item(widget) {
     var rollout_item = $("<div>", {class:"rollout_item", id:"rollout_widget"+widget.name});
+    rollout_item.mousemove(function(){activate_settings_widget_div($(this))});
     var description = $("<div>", {class: "description"});
     description.html(widget.description);
     rollout_item.html(widget.name);
     rollout_item.append(description);
     $('#rollout_menu').append(rollout_item);
+    return rollout_item;
 }
 
 function redraw_settings_widgets(to_add){
-    $('.rollout_item').remove()
-    for(var i in to_add){
-        add_rollout_item(to_add[i].widget);
+    $('.rollout_item').remove();
+    if(to_add.length>0) {
+        var all_divs = [];
+        var first_div = add_rollout_item(to_add[0].widget);
+        activate_settings_widget_div(first_div);
+        for(var i=1; i<to_add.length; i++){
+            add_rollout_item(to_add[i].widget);
+        }
+    } else {
+        active_settings_widget_div = false;
     }
 }
 
@@ -91,9 +111,6 @@ function init_control_panel() {
         } else {
             $('#control_panel > input').select();
         }
-    };
-    function get_settings_div() {
-        $('#control_panel > input').blur();
     };
     function filter_settings(key){
         var str = $('#control_panel > input').val();
@@ -114,9 +131,15 @@ function init_control_panel() {
     $("#control_panel > input").focus(on_focus);
     $("#control_panel > input").keyup(function(event){
         if(event.keyCode == 13) { //enter
-            get_settings_div();
+            draw_settings_div();
         } else if(event.keyCode == 40) { //arrow down
+            var ri = active_settings_widget_div;
+            if(ri && ri.next().hasClass('rollout_item'))
+                activate_settings_widget_div(active_settings_widget_div.next());
         } else if(event.keyCode == 38) { //arrow up
+            var ri = active_settings_widget_div;
+            if(ri && ri.prev().hasClass('rollout_item'))
+                activate_settings_widget_div(active_settings_widget_div.prev());
         } else { //key
             filter_settings(event.keyCode);    
         }
@@ -131,7 +154,7 @@ function init_settings_widgets() {
     settings_widgets.push(new Settings_widget("Record", ["record", "video", "audio"],
         "record to file what you hear and see")); 
     settings_widgets.push(new Settings_widget("Room", ["room", "password", "admin"],
-        "administrate this room, set up password, kick peers")); 
+        "administrate this room, set up password")); 
 };
 
 init_control_panel();

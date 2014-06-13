@@ -1,6 +1,6 @@
 //list of all settings widgets
-var settings_widgets = [];
-var active_settings_widget_div=false;
+var settings_widgets = {};
+var active_rollout_item=false;
 //thresholds for matching and making visible/invisible
 var ADD_THRESHOLD = 6;
 var MAX_VISIBLE_WIDGETS = 5;
@@ -8,11 +8,12 @@ var MAX_VISIBLE_WIDGETS = 5;
 /*
  * Widget rolling down from settings panel
  */
-function Settings_widget(name, keywords, description) {
+function Settings_widget(name, keywords, description, url) {
     this.name = name;
     this.keywords = keywords;
     this.last_matched_keywords = [];
     this.description = description;
+    this.url = url;
 }
 
 /*
@@ -60,20 +61,25 @@ Settings_widget.prototype.match = function(string) {
 
 function draw_settings_div() {
     $('#control_panel > input').blur();
+    var name = $('.active_rollout_item').attr('id').replace('rollout_item_','');
+    $('#settings_window').css('visibility','visible');
+    $('#settings_window').css('opacity',0.9);
+    console.log(settings_widgets[name].url);
 };
 
-function activate_settings_widget_div(div){
-    if(active_settings_widget_div) {
-        active_settings_widget_div.removeClass("active_rollout_item");
-        active_settings_widget_div=false;
+function activate_rollout_item(div){
+    if(active_rollout_item) {
+        active_rollout_item.removeClass("active_rollout_item");
+        active_rollout_item=false;
     }
-    active_settings_widget_div = div;
+    active_rollout_item = div;
     div.addClass("active_rollout_item")
 }
 
 function add_rollout_item(widget) {
-    var rollout_item = $("<div>", {class:"rollout_item", id:"rollout_widget"+widget.name});
-    rollout_item.mousemove(function(){activate_settings_widget_div($(this))});
+    var rollout_item = $("<div>", {class:"rollout_item", id:"rollout_item_"+widget.name});
+    rollout_item.mousemove(function(){activate_rollout_item($(this))});
+    //TODO: rollout_item.click(function(){console.log("jede");draw_settings_div()});
     var description = $("<div>", {class: "description"});
     description.html(widget.description);
     rollout_item.html(widget.name);
@@ -87,12 +93,12 @@ function redraw_settings_widgets(to_add){
     if(to_add.length>0) {
         var all_divs = [];
         var first_div = add_rollout_item(to_add[0].widget);
-        activate_settings_widget_div(first_div);
+        activate_rollout_item(first_div);
         for(var i=1; i<to_add.length; i++){
             add_rollout_item(to_add[i].widget);
         }
     } else {
-        active_settings_widget_div = false;
+        active_rollout_item = false;
     }
 }
 
@@ -133,13 +139,13 @@ function init_control_panel() {
         if(event.keyCode == 13) { //enter
             draw_settings_div();
         } else if(event.keyCode == 40) { //arrow down
-            var ri = active_settings_widget_div;
+            var ri = active_rollout_item;
             if(ri && ri.next().hasClass('rollout_item'))
-                activate_settings_widget_div(active_settings_widget_div.next());
+                activate_rollout_item(active_rollout_item.next());
         } else if(event.keyCode == 38) { //arrow up
-            var ri = active_settings_widget_div;
+            var ri = active_rollout_item;
             if(ri && ri.prev().hasClass('rollout_item'))
-                activate_settings_widget_div(active_settings_widget_div.prev());
+                activate_rollout_item(active_rollout_item.prev());
         } else { //key
             filter_settings(event.keyCode);    
         }
@@ -147,14 +153,14 @@ function init_control_panel() {
 }
 
 function init_settings_widgets() {
-    settings_widgets.push(new Settings_widget("Video", ["video", "screen", "desktop"],
-        "change video settings, share desktop")); 
-    settings_widgets.push(new Settings_widget("Audio", ["audio", "mute", "volume"],
-        "change volume, mute and audio settings")); 
-    settings_widgets.push(new Settings_widget("Record", ["record", "video", "audio"],
-        "record to file what you hear and see")); 
-    settings_widgets.push(new Settings_widget("Room", ["room", "password", "admin"],
-        "administrate this room, set up password")); 
+    settings_widgets["Video"] = new Settings_widget("Video", ["video", "screen", "desktop"],
+        "change video settings, share desktop", "/settings_widgets/video.html"); 
+    settings_widgets["Audio"] = new Settings_widget("Audio", ["audio", "mute", "volume"],
+        "change volume, mute and audio settings", "/settings_widgets/audio.html"); 
+    settings_widgets["Record"] = new Settings_widget("Record", ["record", "video", "audio"],
+        "record to file what you hear and see", "/settings_widgets/record.html"); 
+    settings_widgets["Admin"] = new Settings_widget("Admin", ["admin", "password", "room"],
+        "administrate this room, set up password", "/settings_widgets/admin.html"); 
 };
 
 init_control_panel();

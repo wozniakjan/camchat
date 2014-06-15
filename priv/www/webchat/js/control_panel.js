@@ -59,14 +59,17 @@ Settings_widget.prototype.match = function(string) {
     return lmk[0].val;
 };
 
+//draws settings window according to sellected rollout item - settings widget
 function draw_settings_div() {
     $('#control_panel > input').blur();
     var name = $('.active_rollout_item').attr('id').replace('rollout_item_','');
-    $('#settings_window').css('visibility','visible');
-    $('#settings_window').css('opacity',0.9);
-    console.log(settings_widgets[name].url);
+    var settings_window = $('#settings_window');
+    settings_window.css('visibility','visible');
+    settings_window.css('opacity',0.9);
+    $('#settings_window > .content').load(settings_widgets[name].url);
 };
 
+//emphasize the actie rollout item
 function activate_rollout_item(div){
     if(active_rollout_item) {
         active_rollout_item.removeClass("active_rollout_item");
@@ -76,10 +79,11 @@ function activate_rollout_item(div){
     div.addClass("active_rollout_item")
 }
 
+//add rollout item to rollout menu
 function add_rollout_item(widget) {
     var rollout_item = $("<div>", {class:"rollout_item", id:"rollout_item_"+widget.name});
     rollout_item.mousemove(function(){activate_rollout_item($(this))});
-    //TODO: rollout_item.click(function(){console.log("jede");draw_settings_div()});
+    rollout_item.click(function(){draw_settings_div()});
     var description = $("<div>", {class: "description"});
     description.html(widget.description);
     rollout_item.html(widget.name);
@@ -88,6 +92,7 @@ function add_rollout_item(widget) {
     return rollout_item;
 }
 
+//draw rollout items in rollout menu
 function redraw_settings_widgets(to_add){
     $('.rollout_item').remove();
     if(to_add.length>0) {
@@ -102,7 +107,12 @@ function redraw_settings_widgets(to_add){
     }
 }
 
+//init function
 function init_control_panel() {
+    $('#settings_window > .button').click(function(){ 
+        var settings_window = $('#settings_window');
+        settings_window.css('opacity', 0.0); 
+        settings_window.css('visibility', 'hidden')});
     init_settings_widgets();
     function on_blur() {
         if(this.value == ''){
@@ -152,6 +162,7 @@ function init_control_panel() {
     });
 }
 
+//sets possible widgets and rollout items
 function init_settings_widgets() {
     settings_widgets["Video"] = new Settings_widget("Video", ["video", "screen", "desktop"],
         "change video settings, share desktop", "/settings_widgets/video.html"); 

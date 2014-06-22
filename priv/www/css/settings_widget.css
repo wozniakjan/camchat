@@ -1,1 +1,48 @@
-.
+
+#settings_window, #message_window {
+    z-index: 10;
+}
+
+#settings_window .content {
+    width: 450px;
+}
+#settings_window {
+    max-height: 80%;
+    position: absolute;
+    top: 10%;
+    left: 15%;
+    opacity: 0.9;
+    transition: all 400ms ease;
+    box-shadow:0px 0px 10px #000000; 
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
+    padding: 20px;
+    padding-bottom: 5px;
+    background-color: white;
+    visibility: hidden;
+    overflow: hidden;
+}
+#settings_window .content {
+    border-style: dotted;
+    border-width: 1px;
+    border-color: black;
+}
+
+.button {
+    border-style: solid;
+    border-color: #222222;
+    border-width: 1px;
+    border-radius: 5px;
+    padding: 2px;
+    margin: 3px;
+    padding-left: 20px;
+    padding-right: 20px;
+    margin-left: 45%;
+    display: inline-block; /*not expand width*/
+    transition: all 500ms ease;
+}
+
+.button:hover {
+    background-color: #AAAAAA;
+}

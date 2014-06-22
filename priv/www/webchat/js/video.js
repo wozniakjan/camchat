@@ -14,6 +14,7 @@ function audio_filter(event) {
 }
 
 function send_ready(){
+    log("send_ready()");
     if(localStorage.user_name){
         send({'ready': room, 'user_name': localStorage.user_name});
     } else {
@@ -23,6 +24,7 @@ function send_ready(){
 
 //get stream from user media and set to video div
 function set_my_media(video_elem) {
+    log("set_my_media()");
     navigator.getUserMedia(constraints, 
         function(local_media_stream){
             local_stream = local_media_stream;
@@ -39,20 +41,21 @@ function set_my_media(video_elem) {
             mediaStreamSource.connect( scriptProcessor );
             scriptProcessor.connect( audioContext.destination );
             video_elem.play();
+            send_ready();
         }, 
         error_callback);
 }
 
 //initialize video div
 function init_video() {
+    log("init_video()");
     var video_elem = setup_myself();
     set_my_media(video_elem);
-    send_ready();
 }
 
 //change something with my video
 function change_stream(type) {
-    console.log("change stream " + type);
+    log("change stream " + type);
     if(type == "mute") {
         constraints.audio = false;
     } else if(type == "unmute") {
@@ -69,6 +72,7 @@ function change_stream(type) {
 
 //create my own video div
 function setup_myself() {
+    log("setup_myself()");
     var div = $("<div>", {id: "myself", class: "small_video_frame"});
     var label = $("<input>", {class: "label", text: my_id});
     var video = $("<video>", {class: "small_video", muted: "true", autoplay: "true"});

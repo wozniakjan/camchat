@@ -5,20 +5,31 @@ var local_stream;
 var my_id;
 var audio_worker = new Worker("/webchat/js/audio_energy_worker.js");
 var number_of_peers = 0;
+var LOG_LEVEL = 0;
+
+function log(string, priority) {
+    if(priority < LOG_LEVEL) {
+        console.log(string);
+    }
+};
 
 audio_worker.onmessage = function(event) { 
-    console.log("audio worker:" + event.data);
+    log("audio_worker.onmessage" + event.data);
     if(event.data.set_main){
         switch_main(event.data.set_main);
     }
 };
 
 function error_callback(error) {
-    console.log(error);
+    if(error.name == "PermissionDeniedError") {
+        show_message("Can't get audio & video", "did you allow your browser to use camera and mic?");        
+    } else {
+        console.log(error);
+    }
 }
 
 var pc_config = webrtcDetectedBrowser === 'firefox' ?
-    {'iceServers':[{'url':'stun:23.21.150.121'}]} : // number IP
+    {'iceServers': [{'url': 'stun:23.21.150.121'}]} : // number IP
     {'iceServers': [{'url': 'stun:stun.l.google.com:19302'}]};
 
 $.getScript("/webchat/js/control_panel.js");
@@ -79,6 +90,7 @@ function parse_offer(json_msg){
 };
 
 function setup_peer_connection(id, remote_video) {
+    log("setup_peer_connection()");
     var pc = peer_connection[id] = new RTCPeerConnection(pc_config);
 
     pc.onicecandidate = function(event) {
@@ -92,15 +104,15 @@ function setup_peer_connection(id, remote_video) {
         } 
     }
     pc.onaddstream = function(event) {
-        console.log('Remote stream added.');
+        log('pc.onaddstream');
         attachMediaStream(remote_video, event.stream);
         remote_video.play();
     }
     pc.onremovestream = function(event) {
-        console.log('Remote stream removed.');
+        log('pc.onremovestream');
     }
 
-    console.log('Adding local stream: ' + id);
+    log('setup_peer_connection() -> addStream(local_stream) ' + id);
     pc.addStream(local_stream);
     negotiate_connection(id);
 }
@@ -117,9 +129,11 @@ function negotiate_connection(remote_id){
 }
 
 //shows message window over the screen with text until it is hidden
-function show_message(text) {
+function show_message(text, hint) {
     $("#message_window").show();
-    $("#message_window > .description").html(text);
+    message = text;
+    if(hint) message += "<br>" + hint;
+    $("#message_window > .description").html(text + "<br>" + hint);
 }
 
 //updates message window over the screen with text if is visible

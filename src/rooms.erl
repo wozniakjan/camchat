@@ -1,5 +1,5 @@
 -module(rooms).
--export([start/0, connect/3, disconnect/2, get_peers/1, get_peers/2, stop/0, reload/1, 
+-export([start/0, connect/3, disconnect/1, get_peers/1, get_peers/2, stop/0, reload/1, 
          edit_user/3]).
 -export([get_conn_by_user_id/1, get_user_id_by_conn/1]).
 
@@ -40,11 +40,11 @@ connect(RoomId, ConnectionId, _Opt) ->
     {ok, RoomStatus, User}.
         
             
-disconnect(ConnectionId, Opt) ->
+disconnect(ConnectionId) ->
     [User] = ets:lookup(users, ConnectionId),
-    {User, disconnect(User#user.room_id, ConnectionId, Opt)}.
+    {User, disconnect(User#user.room_id, ConnectionId)}.
     
-disconnect(RoomId, ConnectionId, _Opt) ->
+disconnect(RoomId, ConnectionId) ->
     [Room] = ets:lookup(rooms, RoomId),
     UpdatedList = lists:delete(ConnectionId, Room#room.user_list),
     case UpdatedList of

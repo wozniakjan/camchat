@@ -1,6 +1,7 @@
 -module(rooms).
 -export([start/0, connect/3, disconnect/2, get_peers/1, get_peers/2, stop/0, reload/1, 
-         get_conn_by_user_id/1, edit_user/3]).
+         edit_user/3]).
+-export([get_conn_by_user_id/1, get_user_id_by_conn/1]).
 
 -include("types.hrl").
 
@@ -69,6 +70,10 @@ get_peers(ConnectionId, RoomId) ->
 get_conn_by_user_id(UserId) ->
     [{UserId, ConnectionId}] = ets:lookup(uid_lookup, UserId),
     ConnectionId.
+
+get_user_id_by_conn(Conn) ->
+    [User] = ets:lookup(users, Conn),
+    User#user.user_id.    
 
 stop() ->
     ets:delete(rooms).

@@ -55,12 +55,18 @@ parse_msg(_Conn, {[{<<"ice_candidate">>, IC}, {<<"caller">>, From}, {<<"callee">
     ToConn = rooms:get_conn_by_user_id(To),
     ToConn:send(jiffy:encode({[{<<"ice_candidate">>, IC}, {<<"caller">>, From}, {<<"callee">>, To}]})),
     {ok, connected};
-parse_msg(Conn, {[{<<"change_name">>, NewName}, {<<"id">>, Id}]}) ->
+parse_msg(Conn, {[{<<"change_name">>, NewName}]}) ->
     rooms:edit_user(Conn, ?USERNAME_POS, NewName),
+    Id = rooms:get_user_id_by_conn(Conn),
     send_peers(Conn, jiffy:encode({[{<<"change_name">>, NewName}, {<<"id">>, Id}]})),
     {ok, connected};
-parse_msg(Conn, {[{<<"audio_energy">>, Energy}, {<<"id">>, Id}]}) ->
+parse_msg(Conn, {[{<<"audio_energy">>, Energy}]}) ->
+    Id = rooms:get_user_id_by_conn(Conn),
     send_peers(Conn, jiffy:encode({[{<<"audio_energy">>, Energy}, {<<"id">>, Id}]})),
+    {ok, connected};
+parse_msg(Conn, {[{<<"select_stream">>, Stream}]}) ->
+    Id = rooms:get_user_id_by_conn(Conn),
+    send_peers(Conn, jiffy:encode({[{<<"select_stream">>, Stream}, {<<"id">>, Id}]})),
     {ok, connected};
 parse_msg(_Conn, Msg) ->
     lager:info("Unknown message ~n~p~n", [Msg]),

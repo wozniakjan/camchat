@@ -4,6 +4,9 @@ var active_rollout_item=false;
 //thresholds for matching and making visible/invisible
 var ADD_THRESHOLD = 6;
 var MAX_VISIBLE_WIDGETS = 5;
+//to make rollout menu clickable
+var rollout_menu_active = false;
+
 
 /*
  * Widget rolling down from settings panel
@@ -107,6 +110,15 @@ function redraw_settings_widgets(to_add){
     }
 }
 
+function try_blur_rollout_menu(i) {
+    if(rollout_menu_active && i > 0){
+        j = i-1;
+        setTimeout('try_blur_rollout_menu(j)', 10);
+    } else {
+        $("#rollout_menu").hide(100);
+    }
+}
+
 //init function
 function init_control_panel() {
     $('#settings_window > .button').click(function(){ 
@@ -115,10 +127,8 @@ function init_control_panel() {
         settings_window.css('visibility', 'hidden')});
     init_settings_widgets();
     function on_blur() {
-        if(this.value == ''){
-            this.value = 'settings..';
-        }
-        $("#rollout_menu").hide(100);
+        this.value = 'settings..';
+        try_blur_rollout_menu(5);
     };
     function on_focus() {
         $("#rollout_menu").show();
@@ -143,6 +153,9 @@ function init_control_panel() {
         redraw_settings_widgets(to_add);
     };
 
+    $("#rollout_menu").hover(
+            function(){rollout_menu_active=true}, 
+            function(){rollout_menu_active=false});
     $("#control_panel > input").blur(on_blur);
     $("#control_panel > input").focus(on_focus);
     $("#control_panel > input").keyup(function(event){

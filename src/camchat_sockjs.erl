@@ -72,7 +72,7 @@ parse_msg(Conn, {[{<<"select_stream">>, Stream}]}, connected) ->
     {ok, connected}.
 
 gracefully_close(Conn) ->
-    {User, Peers} = rooms:disconnect(Conn, []),
+    {User, Peers} = rooms:disconnect(Conn),
     Reply = jiffy:encode({[{peer_disconnected, User#user.user_id}]}),
     lists:map(fun(Peer)-> Peer:send(Reply) end, Peers), ok.
 

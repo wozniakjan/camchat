@@ -10,11 +10,11 @@ function audio_filter(event) {
     for(var e=1; e<AUDIO_BUFFER_SIZE; e++) {
         energy += data[e]*data[e];
     }
-    send({'audio_energy': energy, 'id':my_id});
+    send({'audio_energy': energy});
 }
 
 function send_ready(){
-    log("send_ready()");
+    log("send_ready()", 1);
     if(localStorage.user_name){
         send({'ready': room, 'user_name': localStorage.user_name});
     } else {
@@ -22,24 +22,30 @@ function send_ready(){
     }
 }
 
+function attach_audio_processing(current_constraints) {
+    if(current_constraints.audio){
+        // For audio processing
+        var audioContext = new AudioContext();
+        // Create an AudioNode from the stream.
+        var mediaStreamSource = audioContext.createMediaStreamSource( local_stream );
+        // Script processor
+        var scriptProcessor = audioContext.createScriptProcessor(AUDIO_BUFFER_SIZE, 1, 1);
+        scriptProcessor.onaudioprocess = audio_filter;
+        // Connect it to the destination to hear yourself (or any other node for processing!)
+        mediaStreamSource.connect( scriptProcessor );
+        scriptProcessor.connect( audioContext.destination );
+    }
+}
+
 //get stream from user media and set to video div
-function set_my_media(video_elem) {
-    log("set_my_media()");
-    navigator.getUserMedia(constraints, 
+function set_my_media(video_elem, current_constraints) {
+    log("set_my_media()", 1);
+    navigator.getUserMedia(current_constraints, 
         function(local_media_stream){
             local_stream = local_media_stream;
             // Add stream to div
+            attach_audio_processing(current_constraints);
             attachMediaStream(video_elem, local_stream);
-            // For audio processing
-            var audioContext = new AudioContext();
-            // Create an AudioNode from the stream.
-            var mediaStreamSource = audioContext.createMediaStreamSource( local_stream );
-            // Script processor
-            var scriptProcessor = audioContext.createScriptProcessor(AUDIO_BUFFER_SIZE, 1, 1);
-            scriptProcessor.onaudioprocess = audio_filter;
-            // Connect it to the destination to hear yourself (or any other node for processing!)
-            mediaStreamSource.connect( scriptProcessor );
-            scriptProcessor.connect( audioContext.destination );
             video_elem.play();
             send_ready();
         }, 
@@ -48,31 +54,49 @@ function set_my_media(video_elem) {
 
 //initialize video div
 function init_video() {
-    log("init_video()");
+    log("init_video()", 1);
     var video_elem = setup_myself();
-    set_my_media(video_elem);
+    set_my_media(video_elem, constraints);
 }
 
 //change something with my video
-function change_stream(type) {
-    log("change stream " + type);
+function change_local_stream(type) {
+    log("change stream " + type, 1);
+    current_video = constraints.video;
     if(type == "mute") {
         constraints.audio = false;
     } else if(type == "unmute") {
         constraints.audio = true;
-    } else if(type == "screen") {
-        constraints.audio = false;
-        constraints.video = {mandatory: { chromeMediaSource: 'screen'}};
     } else if(type == "camera") {
-        constraints.audio = true;
         constraints.video = true;
     }
-    set_my_media($("#myself video")[0]);
+    if(type == "screen") { //for screen streaming change local_screen_stream
+
+        local_constraints = {'video': {mandatory: { chromeMediaSource: 'screen'}},
+                             'audio': false};
+        if(local_screen_stream){
+            //applyConstraints
+        } else {
+            set_my_media($("#myself video")[0], local_constraints);
+        }
+        //set video_elems visibility
+    } else { //for mute & camera change local_stream
+        if(local_stream) {
+            //applyConstraints
+        } else {
+            set_my_media($("#myself video")[0], constraints);
+        }
+        //set video_elems visibility
+    }
+    
+    if(type == 'screen' || type == 'camera'){
+        send({'select_stream': type});
+    }
 }
 
 //create my own video div
 function setup_myself() {
-    log("setup_myself()");
+    log("setup_myself()", 1);
     var div = $("<div>", {id: "myself", class: "small_video_frame"});
     var label = $("<input>", {class: "label", text: my_id});
     var video = $("<video>", {class: "small_video", muted: "true", autoplay: "true"});
@@ -94,6 +118,7 @@ function add_peer(id, name) {
     send_audio_worker({'get_main': 'audio'});
     hide_message(name + " has connected");
     number_of_peers += 1;
+    send_audio_worker({'audio_energy': [0], 'id':id});
     return video[0];
 }
 
@@ -155,7 +180,7 @@ function setup_videos(id, user_name, peer_list, type){
     //set label width
     label.attr("size",label.val().length);
     //send changed name to server
-    label.change(function(){ set_username($(this).val()); send({"change_name":$(this).val(),"id":my_id}) });
+    label.change(function(){ set_username($(this).val()); send({"change_name":$(this).val()}) });
     //dynamic width of label for user name
     label.keyup(function(event){
         if(event.keyCode == 13) { //enter

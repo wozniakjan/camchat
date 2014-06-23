@@ -2,10 +2,11 @@ var room = window.location.pathname.replace(/\//g,'');
 var sock = new SockJS('/sockjs/camchat');
 var peer_connection = {};
 var local_stream;
+var local_screen_stream;
 var my_id;
 var audio_worker = new Worker("/webchat/js/audio_energy_worker.js");
 var number_of_peers = 0;
-var LOG_LEVEL = 0;
+var LOG_LEVEL = 1;
 
 function log(string, priority) {
     if(priority < LOG_LEVEL) {
@@ -14,7 +15,7 @@ function log(string, priority) {
 };
 
 audio_worker.onmessage = function(event) { 
-    log("audio_worker.onmessage" + event.data);
+    log("audio_worker.onmessage" + event.data, 3);
     if(event.data.set_main){
         switch_main(event.data.set_main);
     }
@@ -23,8 +24,10 @@ audio_worker.onmessage = function(event) {
 function error_callback(error) {
     if(error.name == "PermissionDeniedError") {
         show_message("Can't get audio & video", "did you allow your browser to use camera and mic?");        
+    } else if(error.name == "DevicesNotFoundError") {
+        show_message("Can't get audio & video", "do you have any camera or mic connected?");
     } else {
-        console.log(error);
+        console.log(error, 0);
     }
 }
 
@@ -52,7 +55,7 @@ sock.onmessage = function(e) {
     var json_msg = jQuery.parseJSON(e.data);
    
     if(json_msg.audio_energy){
-        audio_worker.postMessage(json_msg);
+        send_audio_worker(json_msg);
     } else if(json_msg.peer_connected) {
         add_peer(json_msg.peer_connected, json_msg.name);
     } else if(json_msg.connected){
@@ -90,7 +93,7 @@ function parse_offer(json_msg){
 };
 
 function setup_peer_connection(id, remote_video) {
-    log("setup_peer_connection()");
+    log("setup_peer_connection()", 1);
     var pc = peer_connection[id] = new RTCPeerConnection(pc_config);
 
     pc.onicecandidate = function(event) {
@@ -104,15 +107,15 @@ function setup_peer_connection(id, remote_video) {
         } 
     }
     pc.onaddstream = function(event) {
-        log('pc.onaddstream');
+        log('pc.onaddstream', 2);
         attachMediaStream(remote_video, event.stream);
         remote_video.play();
     }
     pc.onremovestream = function(event) {
-        log('pc.onremovestream');
+        log('pc.onremovestream', 2);
     }
 
-    log('setup_peer_connection() -> addStream(local_stream) ' + id);
+    log('setup_peer_connection() -> addStream(local_stream) ' + id, 1);
     pc.addStream(local_stream);
     negotiate_connection(id);
 }
@@ -132,8 +135,8 @@ function negotiate_connection(remote_id){
 function show_message(text, hint) {
     $("#message_window").show();
     message = text;
-    if(hint) message += "<br>" + hint;
-    $("#message_window > .description").html(text + "<br>" + hint);
+    if(hint != undefined) message += "<br>" + hint;
+    $("#message_window > .description").html(message);
 }
 
 //updates message window over the screen with text if is visible

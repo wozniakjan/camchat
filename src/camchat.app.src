@@ -13,5 +13,5 @@
                   syntax_tools
                  ]},
   {mod, { camchat_app, []}},
-  {env, [{http_port, 80}]}
+  {env, [{http_port, 443}]}
  ]}.

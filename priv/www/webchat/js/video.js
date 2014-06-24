@@ -1,6 +1,8 @@
 window.AudioContext = window.AudioContext||window.webkitAudioContext;
 var AUDIO_BUFFER_SIZE = 16384; 
-var constraints = {video: true, audio: true};
+var constraints = {};
+constraints["camera"] = {video: true, audio: true};
+constraints["screen"] = {video: {mandatory: { chromeMediaSource: 'screen'}}, audio: false};
 
 //filter for automatic directors cut among peers in conference
 //according to audio energy
@@ -22,12 +24,12 @@ function send_ready(){
     }
 }
 
-function attach_audio_processing(current_constraints) {
+function attach_audio_processing(current_constraints, media_stream) {
     if(current_constraints.audio){
         // For audio processing
         var audioContext = new AudioContext();
         // Create an AudioNode from the stream.
-        var mediaStreamSource = audioContext.createMediaStreamSource( local_stream );
+        var mediaStreamSource = audioContext.createMediaStreamSource( media_stream );
         // Script processor
         var scriptProcessor = audioContext.createScriptProcessor(AUDIO_BUFFER_SIZE, 1, 1);
         scriptProcessor.onaudioprocess = audio_filter;
@@ -38,53 +40,58 @@ function attach_audio_processing(current_constraints) {
 }
 
 //get stream from user media and set to video div
-function set_my_media(video_elem, current_constraints) {
-    log("set_my_media()", 1);
-    navigator.getUserMedia(current_constraints, 
-        function(local_media_stream){
-            local_stream = local_media_stream;
-            // Add stream to div
-            attach_audio_processing(current_constraints);
-            attachMediaStream(video_elem, local_stream);
-            video_elem.play();
-            send_ready();
-        }, 
-        error_callback);
+function set_my_media(media_type) {
+    log("set_my_media("+media_type+")", 0);
+    if(local_stream[media_type] == undefined) {
+        var video_elem = $("#myself video")[0];
+        log("set_my_media()", 1);
+        navigator.getUserMedia(constraints[media_type], 
+                function(local_media_stream){
+                    // Add stream to div
+                    attach_audio_processing(constraints[media_type]);
+                    // select apropriate
+                    local_stream[media_type] = local_media_stream;
+                    attachMediaStream(video_elem, local_stream[media_type]);
+                    video_elem.play();
+                    send_ready();
+                }, 
+                error_callback);
+    }
 }
 
 //initialize video div
-function init_video() {
+function init_video(media_type) {
     log("init_video()", 1);
     var video_elem = setup_myself();
-    set_my_media(video_elem, constraints);
+    set_my_media(media_type);
 }
 
 //change something with my video
 function change_local_stream(type) {
     log("change stream " + type, 1);
-    current_video = constraints.video;
     if(type == "mute") {
-        constraints.audio = false;
+        constraints["camera"].audio = false;
     } else if(type == "unmute") {
-        constraints.audio = true;
+        constraints["camera"].audio = true;
     } else if(type == "camera") {
-        constraints.video = true;
+        constraints["camera"].video = true;
     }
-    if(type == "screen") { //for screen streaming change local_screen_stream
-
-        local_constraints = {'video': {mandatory: { chromeMediaSource: 'screen'}},
-                             'audio': false};
-        if(local_screen_stream){
+    if(type == "screen") { 
+        if(local_stream["screen"]){
             //applyConstraints
         } else {
-            set_my_media($("#myself video")[0], local_constraints);
+            log("set local_screen_stream ",0);
+            set_my_media("screen");
+            log("set local_screen_stream "+local_stream["screen"],0);
         }
         //set video_elems visibility
-    } else { //for mute & camera change local_stream
-        if(local_stream) {
+    } else { //change to camera input 
+        if(local_stream["camera"]) {
             //applyConstraints
         } else {
-            set_my_media($("#myself video")[0], constraints);
+            log("set local_stream ",0);
+            set_my_media("camera");
+            log("set local_stream "+local_stream["camera"],0);
         }
         //set video_elems visibility
     }
@@ -114,7 +121,7 @@ function add_peer(id, name) {
     new_peer.append(video);
     new_peer.append(label);
     $("#video_buff").append(new_peer);
-    setup_peer_connection(id, video[0]);
+    setup_peer_connection("screen", id, video[0]);
     send_audio_worker({'get_main': 'audio'});
     hide_message(name + " has connected");
     number_of_peers += 1;

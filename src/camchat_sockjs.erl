@@ -27,7 +27,8 @@ try_parse_msg(Conn, Msg, Status) ->
             lager:error("Unable to process msg: ~p - ~p: ~p",[Msg, TypeOfError, Exception])
     end.
 
-parse_msg(_Conn, {[{<<"connect">>, _Room}]}, init) ->
+parse_msg(Conn, {[{<<"connect">>, _Room}]}, init) ->
+    Conn:send(jiffy:encode({[{<<"init_stream_type">>, <<"screen">>}]})),
     {ok, waiting_for_media};
 parse_msg(Conn, {[{<<"ready">>, Room}]}, waiting_for_media) ->
     {ok, RoomStatus, User} = rooms:connect(Room, Conn, []),

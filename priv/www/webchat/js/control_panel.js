@@ -113,7 +113,7 @@ function redraw_settings_widgets(to_add){
 function try_blur_rollout_menu(i) {
     if(rollout_menu_active && i > 0){
         j = i-1;
-        setTimeout('try_blur_rollout_menu(j)', 10);
+        setTimeout('try_blur_rollout_menu(j)', 5);
     } else {
         $("#rollout_menu").hide(100);
     }
@@ -128,7 +128,7 @@ function init_control_panel() {
     init_settings_widgets();
     function on_blur() {
         this.value = 'settings..';
-        try_blur_rollout_menu(5);
+        try_blur_rollout_menu(20);
     };
     function on_focus() {
         $("#rollout_menu").show();

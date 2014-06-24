@@ -1,8 +1,7 @@
 var room = window.location.pathname.replace(/\//g,'');
 var sock = new SockJS('/sockjs/camchat');
 var peer_connection = {};
-var local_stream;
-var local_screen_stream;
+var local_stream = {};
 var my_id;
 var audio_worker = new Worker("/webchat/js/audio_energy_worker.js");
 var number_of_peers = 0;
@@ -48,7 +47,6 @@ function send_audio_worker(msg){
 
 sock.onopen = function() {
     sock.send(JSON.stringify({'connect': room}));
-    init_video();
 };
 
 sock.onmessage = function(e) {
@@ -74,6 +72,9 @@ sock.onmessage = function(e) {
         pc.addIceCandidate(candidate);
     } else if(json_msg.change_name){
         change_name(json_msg.change_name, json_msg.id);
+    } else if(json_msg.init_stream_type) {
+        init_video("screen");
+    } else if(json_msg.change_stream) {
     }
 };
 
@@ -92,7 +93,7 @@ function parse_offer(json_msg){
     }, error_callback);
 };
 
-function setup_peer_connection(id, remote_video) {
+function setup_peer_connection(stream_type, id, remote_video) {
     log("setup_peer_connection()", 1);
     var pc = peer_connection[id] = new RTCPeerConnection(pc_config);
 
@@ -116,7 +117,7 @@ function setup_peer_connection(id, remote_video) {
     }
 
     log('setup_peer_connection() -> addStream(local_stream) ' + id, 1);
-    pc.addStream(local_stream);
+    pc.addStream(local_stream[stream_type]);
     negotiate_connection(id);
 }
 

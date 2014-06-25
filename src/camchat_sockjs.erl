@@ -39,14 +39,6 @@ parse_msg(Conn, {[{<<"ready">>, Room} | Params]}, waiting_for_media) ->
     UsernameList = lists:map(fun(X)-> {X#user.user_id, X#user.username} end, PeerList),
     Conn:send(jiffy:encode({[{connected, RoomStatus}, {user_id, UserId}, {user_name, UN}, {peer_list, {UsernameList}}]})),
     {ok, connected};
-parse_msg(Conn, {[{<<"ready">>, Room}, {<<"user_name">>, UN}]}, waiting_for_media) ->
-    {ok, RoomStatus, User} = rooms:connect(Room, Conn, []),
-    UserId = User#user.user_id,
-    rooms:edit_user(Conn, ?USERNAME_POS, UN),
-    PeerList = send_peers(Conn, jiffy:encode({[{peer_connected, UserId}, {name, UN}]})),
-    UsernameList = lists:map(fun(X)-> {X#user.user_id, X#user.username} end, PeerList),
-    Conn:send(jiffy:encode({[{connected, RoomStatus}, {user_id, UserId}, {user_name, UN}, {peer_list, {UsernameList}}]})),
-    {ok, connected};
 parse_msg(_Conn, {[{<<"offer">>, Offer}, {<<"caller">>, Caller}, {<<"callee">>, Callee}]}, connected) ->
     CalleeConn = rooms:get_conn_by_user_id(Callee),
     CalleeConn:send(jiffy:encode({[{<<"offer">>, Offer}, {<<"caller">>, Caller}, {<<"callee">>, Callee}]})),

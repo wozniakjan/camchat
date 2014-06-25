@@ -25,7 +25,6 @@ function send_ready(){
     if(sessionStorage.default_media_type) {
         msg.default_stream = sessionStorage.default_media_type;
     }
-    log(msg, 1);
     send(msg);
 }
 
@@ -77,9 +76,22 @@ function init_video(media_type) {
     set_my_media(current_stream);
 }
 
+//get local stream and negotiate connection if needed
+function get_local_stream(type) {
+    if(local_stream){
+        if(local_stream[type] == undefined){
+            //get_local_stream("screen")
+            //foreach id {peer_connection[id].addStream(local_stream["screen"])}
+        }
+        //set video_elems visibility
+    } else {
+        set_my_media(type);
+    }
+}
+
 //change something with my video
 function change_local_stream(type) {
-    log("change stream " + type, 1);
+    log("change_local_stream(" + type + ")", 1);
     if(type == "mute") {
         constraints["camera"].audio = false;
     } else if(type == "unmute") {
@@ -88,23 +100,9 @@ function change_local_stream(type) {
         constraints["camera"].video = true;
     }
     if(type == "screen") { 
-        if(local_stream["screen"]){
-            //applyConstraints
-        } else {
-            log("set local_screen_stream ",0);
-            set_my_media("screen");
-            log("set local_screen_stream "+local_stream["screen"],0);
-        }
-        //set video_elems visibility
+        get_local_stream("screen");
     } else { //change to camera input 
-        if(local_stream["camera"]) {
-            //applyConstraints
-        } else {
-            log("set local_stream ",0);
-            set_my_media("camera");
-            log("set local_stream "+local_stream["camera"],0);
-        }
-        //set video_elems visibility
+        get_local_stream("camera");
     }
     
     if(type == 'screen' || type == 'camera'){
@@ -115,11 +113,11 @@ function change_local_stream(type) {
 
 //switch between cam streaming and screen sharing
 function toggle_local_stream(){
-    if(current_stream = "camera"){
-        log("toggle_local_stream() camera -> screen", 0);
+    if(current_stream == "camera"){
+        log("toggle_local_stream() "+current_stream+" -> screen", 0);
         change_local_stream("screen");
     } else {
-        log("toggle_local_stream() screen -> camera", 0);
+        log("toggle_local_stream() "+current_stream+" -> camera", 0);
         change_local_stream("camera");
     }
 }

@@ -45,6 +45,8 @@ connect(RoomId, ConnectionId, Params) ->
             ets:update_element(rooms, RoomId, {?USER_LIST_POS, [ConnectionId | UserList]}),
             existing_room
     end,
+    %TODO:
+    %rooms:edit_user(Conn, ?USERNAME_POS, UN),
     User = create_user(ConnectionId, RoomId),
     ets:insert(users, User),
     ets:insert(uid_lookup, {User#user.user_id, User#user.connection_id}),

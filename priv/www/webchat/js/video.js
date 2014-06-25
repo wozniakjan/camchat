@@ -3,6 +3,7 @@ var AUDIO_BUFFER_SIZE = 16384;
 var constraints = {};
 constraints["camera"] = {video: true, audio: true};
 constraints["screen"] = {video: {mandatory: { chromeMediaSource: 'screen'}}, audio: false};
+var current_stream;
 
 //filter for automatic directors cut among peers in conference
 //according to audio energy
@@ -44,7 +45,6 @@ function set_my_media(media_type) {
     log("set_my_media("+media_type+")", 0);
     if(local_stream[media_type] == undefined) {
         var video_elem = $("#myself video")[0];
-        log("set_my_media()", 1);
         navigator.getUserMedia(constraints[media_type], 
                 function(local_media_stream){
                     // Add stream to div
@@ -63,7 +63,14 @@ function set_my_media(media_type) {
 function init_video(media_type) {
     log("init_video()", 1);
     var video_elem = setup_myself();
-    set_my_media(media_type);
+    if(media_type == "screen" || media_type == "camera"){
+        current_stream = media_type;
+    } else if(sessionStorage.default_media_type) {
+        current_stream = sessionStorage.default_media_type;
+    } else { 
+        current_stream = "camera";
+    }
+    set_my_media(current_stream);
 }
 
 //change something with my video
@@ -98,6 +105,18 @@ function change_local_stream(type) {
     
     if(type == 'screen' || type == 'camera'){
         send({'select_stream': type});
+    }
+    current_stream = type;
+}
+
+//switch between cam streaming and screen sharing
+function toggle_local_stream(){
+    if(current_stream = "camera"){
+        log("toggle_local_stream() camera -> screen", 0);
+        change_local_stream("screen");
+    } else {
+        log("toggle_local_stream() screen -> camera", 0);
+        change_local_stream("camera");
     }
 }
 

@@ -151,10 +151,17 @@
                 <div id="flag">
                     chrome://flags/#enable-usermedia-screen-capture
                 </div>
-                <div>
-                    then use <a href="#chat_with_friends">chat with friends</a> 
-                    or <a href="#hook_me_up">hook me up</a>
-                </div>
+            </div>
+            <div>
+                <input id='room_name' 
+                maxlength="20"
+                onblur="if (this.value == '') {this.value = 'enter room name...';}"
+                onfocus="if (this.value == 'enter room name...') {this.value = '';}" 
+                onchange="this.value = this.value.replace(/\W/g, '')"
+                value='enter room name...'>
+            </div>
+            <div id='room_box' class='button_box'>
+                <button onclick="join_room()">join this room</button>
             </div>
         </div>
     </div>

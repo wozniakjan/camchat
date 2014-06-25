@@ -1,7 +1,7 @@
 -module(rooms).
 -export([start/0, connect/3, disconnect/1, get_peers/1, get_peers/2, stop/0, reload/1, 
          edit_user/3]).
--export([get_conn_by_user_id/1, get_user_id_by_conn/1]).
+-export([get_conn_by_user_id/1, get_user_id_by_conn/1, get_room_default_stream/1]).
 
 -include("types.hrl").
 
@@ -22,10 +22,19 @@ create_user(ConnectionId, RoomId) ->
     UN = name_generator:get_name(),
     #user{connection_id=ConnectionId, room_id=RoomId, user_id=UID, username=UN}.
 
-connect(RoomId, ConnectionId, _Opt) ->
+get_room_default_stream(Room) ->
+    case ets:lookup(rooms, Room) of
+        [] -> <<"default">>;
+        [ExistingRoom] -> ExistingRoom#room.default_stream
+    end.
+
+connect(RoomId, ConnectionId, Params) ->
     RoomStatus = case ets:lookup(rooms, RoomId) of
         [] -> 
-            Room = #room{room_id=RoomId, user_list=[ConnectionId]},
+            Room = case lists:keyfind(default_stream, 1, Params) of
+                false -> #room{room_id=RoomId, user_list=[ConnectionId], default_stream= <<"any">>};
+                {_, S} -> #room{room_id=RoomId, user_list=[ConnectionId], default_stream=S}
+            end,
             ets:insert(rooms, Room),
             new_room;
         [ExistingRoom] ->

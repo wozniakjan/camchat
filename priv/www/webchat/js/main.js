@@ -5,7 +5,7 @@ var local_stream = {};
 var my_id;
 var audio_worker = new Worker("/webchat/js/audio_energy_worker.js");
 var number_of_peers = 0;
-var LOG_LEVEL = 1;
+var LOG_LEVEL = 9;
 
 function log(string, priority) {
     if(priority < LOG_LEVEL) {
@@ -72,8 +72,8 @@ sock.onmessage = function(e) {
         pc.addIceCandidate(candidate);
     } else if(json_msg.change_name){
         change_name(json_msg.change_name, json_msg.id);
-    } else if(json_msg.init_stream_type) {
-        init_video("screen");
+    } else if(json_msg.init_stream) {
+        init_video(json_msg.init_stream);
     } else if(json_msg.change_stream) {
     }
 };

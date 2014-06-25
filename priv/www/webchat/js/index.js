@@ -1,4 +1,5 @@
-function join_room() {
+function join_room(default_type) {
+    sessionStorage.setItem("default_media_type",default_type)
     address = $("#room_name").val();
     console.log(address);
     window.location.href = address;

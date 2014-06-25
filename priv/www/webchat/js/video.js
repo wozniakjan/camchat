@@ -25,6 +25,7 @@ function send_ready(){
     if(sessionStorage.default_media_type) {
         msg.default_stream = sessionStorage.default_media_type;
     }
+    log(msg, 1);
     send(msg);
 }
 
@@ -64,7 +65,7 @@ function set_my_media(media_type) {
 
 //initialize video div
 function init_video(media_type) {
-    log("init_video()", 1);
+    log("init_video("+media_type+")", 1);
     var video_elem = setup_myself();
     if(media_type == "screen" || media_type == "camera"){
         current_stream = media_type;

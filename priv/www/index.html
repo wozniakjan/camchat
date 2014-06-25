@@ -25,10 +25,13 @@
         </div>
     </div>
     <div class="description">
-        <div class="text">
+        <div class="text full">
             simply create your own room, protect access with password, 
             allow who can join and who can not. Easiest way to see your buddies
             over the internet, all you need to do is share the link.
+        </div>
+        <div class="text short">
+            create own room and share the link with friends.
         </div>
     </div>
 </div>
@@ -43,10 +46,13 @@
         </div>
     </div>
     <div class="description">
-        <div class="text">
+        <div class="text full">
             in the mood for getting to know new people? Join random room 
             and see whats up! No registration required, just get paired with 
             strangers and make new friends in various conference rooms.
+        </div>
+        <div class="text short">
+            join random people in random chat rooms.
         </div>
     </div>
 </div>
@@ -61,11 +67,14 @@
         </div>
     </div>
     <div class="description">
-        <div class="text">
+        <div class="text full">
             got a tricky problem and know people who could easily solve it, 
             if they could only see what you see on the computer...
             share your screen as video and your friend can guide you
             to success!
+        </div>
+        <div class="text short">
+            share the screen easily through the browser.
         </div>
     </div>
 </div>
@@ -80,12 +89,15 @@
         </div>
     </div>
     <div class="description">
-        <div class="text">
+        <div class="text full">
             this page uses technology called WebRTC. 
             Current development team has limited
             it's effort to support only the most convenient.
             In order to get this working you'd need
             latest of one of modern web browsers.
+        </div>
+        <div class="text short">
+            WebRTC compatible browsers are supported.
         </div>
     </div>
 </div>
@@ -148,8 +160,11 @@
                 <div>
                     don't forget to check the flag
                 </div>
-                <div id="flag">
+                <div id="flag" class="full">
                     chrome://flags/#enable-usermedia-screen-capture
+                </div>
+                <div id="flag" class="short">
+                    enable-usermedia-screen-capture
                 </div>
             </div>
             <div>
@@ -160,7 +175,7 @@
                 onchange="this.value = this.value.replace(/\W/g, '')"
                 value='enter room name...'>
             </div>
-            <div id='room_box' class='button_box'>
+            <div class='button_box'>
                 <button onclick="join_room()">join this room</button>
             </div>
         </div>

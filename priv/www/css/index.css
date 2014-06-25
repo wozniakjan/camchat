@@ -1,11 +1,10 @@
-body {
-    /*background-image:url("/webchat/images/index_bg.jpg");*/
+#screen, #top_panel {
+    min-width: 600px;
 }
 
 #screen {
     position:absolute;
     min-height: 500px;
-    min-width: 800px;
     top: 0px;
     left: 0px;
     height: 100%;
@@ -74,7 +73,7 @@ body {
     border-bottom: 1px dotted;
 }
 
-.description{
+.description {
     height:25%;
     display: table;
 }
@@ -87,6 +86,17 @@ body {
     vertical-align: bottom;
 }
 
+.short {
+    display: none !important;
+}
+@media screen and (max-height: 600px), screen and (max-width: 800px) {
+    .full {
+        display: none !important;
+    }
+    .short {
+        display: table-cell !important;
+    }
+}
 
 #white_panel {
     position: relative;
@@ -140,6 +150,9 @@ body {
 #chat_with_friends input {
     background-color: #84334C;
 }
+#share_screen input {
+    background-color: #C13F66;
+}
 #a input {
     background-color: #955669;
 }
@@ -149,9 +162,6 @@ body {
 
 .inside {
     padding-top: 25px;
-    border-width: 1px;
-    border-color: black;
-    border-style: solid;
     display: table-cell;
     vertical-align: middle;
 }
@@ -173,7 +183,7 @@ body {
     border-radius: 5px;
     border-color: #dadada;
     font-size: 17px;
-    width: 550px;
+    width: 500px;
 }
 
 .button_box button {
@@ -195,10 +205,9 @@ body {
 #random_room_box button:hover {
     background-color: #955669;
 }
-#screen_share_box button:hover {
+#share_screen button:hover {
     background-color: #B13F66;
 }
-
 
 .picture {
     opacity: 0.1;

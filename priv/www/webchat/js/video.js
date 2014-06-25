@@ -18,11 +18,14 @@ function audio_filter(event) {
 
 function send_ready(){
     log("send_ready()", 1);
+    msg = {ready: room};
     if(localStorage.user_name){
-        send({'ready': room, 'user_name': localStorage.user_name});
-    } else {
-        send({'ready': room});
+        msg.user_name = localStorage.user_name;
+    } 
+    if(sessionStorage.default_media_type) {
+        msg.default_stream = sessionStorage.default_media_type;
     }
+    send(msg);
 }
 
 function attach_audio_processing(current_constraints, media_stream) {

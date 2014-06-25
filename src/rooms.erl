@@ -32,7 +32,7 @@ connect(RoomId, ConnectionId, Params) ->
     RoomStatus = case ets:lookup(rooms, RoomId) of
         [] -> 
             Room = case lists:keyfind(default_stream, 1, Params) of
-                false -> #room{room_id=RoomId, user_list=[ConnectionId], default_stream= <<"any">>};
+                false -> #room{room_id=RoomId, user_list=[ConnectionId], default_stream= <<"default">>};
                 {_, S} -> #room{room_id=RoomId, user_list=[ConnectionId], default_stream=S}
             end,
             ets:insert(rooms, Room),

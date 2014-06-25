@@ -123,7 +123,7 @@
                 share the link and talk to each other
             </div>
             <div>
-                <input id='room_name' 
+                <input class='room_name' 
                 maxlength="20"
                 onblur="if (this.value == '') {this.value = 'enter room name...';}"
                 onfocus="if (this.value == 'enter room name...') {this.value = '';}" 
@@ -131,7 +131,7 @@
                 value='enter room name...'>
             </div>
             <div id='room_box' class='button_box'>
-                <button onclick="join_room()">join this room</button>
+                <button onclick="join_room('camera')">join this room</button>
             </div>
         </div>
     </div>
@@ -168,7 +168,7 @@
                 </div>
             </div>
             <div>
-                <input id='room_name' 
+                <input class='room_name' 
                 maxlength="20"
                 onblur="if (this.value == '') {this.value = 'enter room name...';}"
                 onfocus="if (this.value == 'enter room name...') {this.value = '';}" 
@@ -176,7 +176,7 @@
                 value='enter room name...'>
             </div>
             <div class='button_box'>
-                <button onclick="join_room()">join this room</button>
+                <button onclick="join_room('screen')">join this room</button>
             </div>
         </div>
     </div>

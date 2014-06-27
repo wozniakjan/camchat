@@ -121,8 +121,8 @@ function try_blur_rollout_menu(i) {
 
 //init function
 function init_control_panel() {
-    $('#settings_window > .button').click(function(){ 
-        var settings_window = $('#settings_window');
+    $('.button').click(function(){ 
+        var settings_window = $(this).parent();
         settings_window.css('opacity', 0.0); 
         settings_window.css('visibility', 'hidden')});
     init_settings_widgets();

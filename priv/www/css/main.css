@@ -74,27 +74,3 @@ html, body {
 }
 
 
-#message_window {
-    text-align: center;
-    position: fixed;
-    top: 50%;
-    left: 50%;
-    margin-top: -60px;
-    margin-left: -140px;
-    width: 240px;
-    border-style: solid;
-    border-width: 1px;
-    border-color: black;
-    padding: 20px;
-    overflow: hidden;
-    opacity: 0.9;
-    transition: all 400ms ease;
-    box-shadow:0px 0px 10px #000000; 
-    background-color: white;
-}
-
-#message_window .description {
-}
-
-#message_widnow .button {
-}

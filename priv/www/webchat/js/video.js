@@ -43,6 +43,29 @@ function attach_audio_processing(current_constraints, media_stream) {
     }
 }
 
+//add additional stream
+function add_my_media(media_type) {
+    log("add_my_media("+media_type+")", 0);
+    if(local_stream[media_type] == undefined) {
+        navigator.getUserMedia(constraints[media_type], 
+                function(local_media_stream){
+                    // Add stream to div
+                    attach_audio_processing(constraints[media_type]);
+                    // select apropriate
+                    local_stream[media_type] = local_media_stream;
+                    // set visible
+                    var video_elem = $("#myself video")[0];
+                    attachMediaStream(video_elem, local_stream[media_type]);
+                    video_elem.play();
+                    // send to peers
+                    for(i in peer_connection) {
+                        peer_connection[i].addStream(local_stream[type]);
+                    }
+                }, 
+                error_callback);
+    }
+}
+
 //get stream from user media and set to video div
 function set_my_media(media_type) {
     log("set_my_media("+media_type+")", 0);
@@ -54,8 +77,10 @@ function set_my_media(media_type) {
                     attach_audio_processing(constraints[media_type]);
                     // select apropriate
                     local_stream[media_type] = local_media_stream;
+                    // select my visible
                     attachMediaStream(video_elem, local_stream[media_type]);
                     video_elem.play();
+                    // negotiate with server
                     send_ready();
                 }, 
                 error_callback);
@@ -78,14 +103,18 @@ function init_video(media_type) {
 
 //get local stream and negotiate connection if needed
 function get_local_stream(type) {
-    if(local_stream){
-        if(local_stream[type] == undefined){
-            //get_local_stream("screen")
-            //foreach id {peer_connection[id].addStream(local_stream["screen"])}
+    if(type != current_stream) {
+        if(local_stream){
+            if(local_stream[type] == undefined){
+                add_my_media(type);
+            } else {
+                var video_elem = $("#myself video")[0];
+                attachMediaStream(video_elem, local_stream[type]);
+                video_elem.play();
+            }
+        } else {
+            set_my_media(type);
         }
-        //set video_elems visibility
-    } else {
-        set_my_media(type);
     }
 }
 

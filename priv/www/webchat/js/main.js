@@ -25,6 +25,8 @@ function error_callback(error) {
         show_message("Can't get audio & video", "did you allow your browser to use camera and mic?");        
     } else if(error.name == "DevicesNotFoundError") {
         show_message("Can't get audio & video", "do you have any camera or mic connected?");
+    } else if(error.name == "InvalidStateError") {
+        show_message("Can't get audio & video", "are you connected via https?");
     } else {
         console.log(error, 0);
     }

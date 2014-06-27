@@ -1,27 +1,36 @@
 
 #settings_window, #message_window {
     z-index: 10;
+    opacity: 0.9;
+    transition: all 400ms ease;
+    box-shadow:0px 0px 10px #000000; 
+    background-color: white;
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
+    text-align: center;
+    position: absolute;
+    overflow: hidden;
 }
 
 #settings_window .content {
     width: 450px;
 }
+#message_window {
+    top: 50%;
+    left: 50%;
+    margin-top: -60px;
+    margin-left: -140px;
+    width: 240px;
+    padding: 20px;
+}
 #settings_window {
     max-height: 80%;
-    position: absolute;
     top: 10%;
     left: 15%;
-    opacity: 0.9;
-    transition: all 400ms ease;
-    box-shadow:0px 0px 10px #000000; 
-    border-style: solid;
-    border-width: 1px;
-    border-color: black;
     padding: 20px;
     padding-bottom: 5px;
-    background-color: white;
     visibility: hidden;
-    overflow: hidden;
 }
 #settings_window .content {
     border-style: dotted;
@@ -38,7 +47,7 @@
     margin: 3px;
     padding-left: 20px;
     padding-right: 20px;
-    margin-left: 45%;
+    left: 50%;
     display: inline-block; /*not expand width*/
     transition: all 500ms ease;
 }

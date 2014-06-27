@@ -17,10 +17,12 @@ create_id() ->
     Id = re:replace(IdT,"\\.","_",[{return, list}, global]),
     erlang:list_to_bitstring(Id).
 
-create_user(ConnectionId, RoomId) ->
+create_user(ConnectionId, RoomId, UN) ->
     UID = create_id(),
-    UN = name_generator:get_name(),
     #user{connection_id=ConnectionId, room_id=RoomId, user_id=UID, username=UN}.
+create_user(ConnectionId, RoomId) ->
+    UserName = name_generator:get_name(),
+    create_user(ConnectionId, RoomId, UserName).
 
 get_room_default_stream(Room) ->
     case ets:lookup(rooms, Room) of
@@ -45,13 +47,13 @@ connect(RoomId, ConnectionId, Params) ->
             ets:update_element(rooms, RoomId, {?USER_LIST_POS, [ConnectionId | UserList]}),
             existing_room
     end,
-    %TODO:
-    %rooms:edit_user(Conn, ?USERNAME_POS, UN),
-    User = create_user(ConnectionId, RoomId),
+    User = case lists:keyfind(<<"user_name">>, 1, Params) of
+        false   -> create_user(ConnectionId, RoomId);
+        {_, UN} -> create_user(ConnectionId, RoomId, UN)
+    end,
     ets:insert(users, User),
     ets:insert(uid_lookup, {User#user.user_id, User#user.connection_id}),
     {ok, RoomStatus, User}.
-        
             
 disconnect(ConnectionId) ->
     [User] = ets:lookup(users, ConnectionId),

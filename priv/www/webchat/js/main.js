@@ -77,6 +77,7 @@ sock.onmessage = function(e) {
     } else if(json_msg.init_stream) {
         init_video(json_msg.init_stream);
     } else if(json_msg.change_stream) {
+        log(json_msg, 1);
     }
 };
 
@@ -136,23 +137,21 @@ function negotiate_connection(remote_id){
 
 //shows message window over the screen with text until it is hidden
 function show_message(text, hint) {
-    $("#message_window").show();
+    $("#message_window").css('opacity', 0.9);
     message = text;
     if(hint != undefined) message += "<br>" + hint;
     $("#message_window > .description").html(message);
 }
 
 //updates message window over the screen with text if is visible
-function update_message(text) {
-    var message_window = $("#message_window > .description");
-    if(message_window.is(':hidden')){
-        message_window.show();
-    }
-    message_window.html(text)
+function update_message(text, hint) {
+    message = text;
+    if(hint != undefined) message += "<br>" + hint;
+    $("#message_window > .description").html(message);
 }
 
 //hide message window
 function hide_message(text) {
     $("#message_window > .description").html(text);
-    $("#message_window").hide(3000, function(){$(this).hide();});
+    $("#message_window").css('opacity', 0.0);
 }

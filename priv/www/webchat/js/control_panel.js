@@ -123,8 +123,7 @@ function try_blur_rollout_menu(i) {
 function init_control_panel() {
     $('.button').click(function(){ 
         var settings_window = $(this).parent();
-        settings_window.css('opacity', 0.0); 
-        settings_window.css('visibility', 'hidden')});
+        settings_window.css('opacity', 0.0)});
     init_settings_widgets();
     function on_blur() {
         this.value = 'settings..';

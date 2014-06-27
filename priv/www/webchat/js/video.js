@@ -47,6 +47,7 @@ function attach_audio_processing(current_constraints, media_stream) {
 function add_my_media(media_type) {
     log("add_my_media("+media_type+")", 0);
     if(local_stream[media_type] == undefined) {
+        log("add_my_media() new local_stream["+media_type+"]", 1);
         navigator.getUserMedia(constraints[media_type], 
                 function(local_media_stream){
                     // Add stream to div
@@ -61,8 +62,11 @@ function add_my_media(media_type) {
                     for(i in peer_connection) {
                         peer_connection[i].addStream(local_stream[type]);
                     }
+                    current_stream = media_type;
                 }, 
                 error_callback);
+    } else {
+        log("add_my_media() already has local_stream["+media_type+"]", 1);
     }
 }
 
@@ -103,17 +107,25 @@ function init_video(media_type) {
 
 //get local stream and negotiate connection if needed
 function get_local_stream(type) {
+    log("get_local_stream("+type+")", 1);
     if(type != current_stream) {
-        if(local_stream){
+        log("get_local_stream() -> local_stream = "+local_stream, 1);
+        log(local_stream, 1);
+        if( jQuery.isEmptyObject(local_stream) ){ 
+            //no previous call to getUserMedia succeeded
+            current_stream = type;
+            set_my_media(type);
+        } else { //has at least one local_stream
             if(local_stream[type] == undefined){
                 add_my_media(type);
-            } else {
+            } else { //has this particular local_stream
                 var video_elem = $("#myself video")[0];
                 attachMediaStream(video_elem, local_stream[type]);
                 video_elem.play();
+                //notify others only here (not when adding new stream to pc)
+                send({'select_stream': type});
+                current_stream = type;
             }
-        } else {
-            set_my_media(type);
         }
     }
 }
@@ -130,14 +142,10 @@ function change_local_stream(type) {
     }
     if(type == "screen") { 
         get_local_stream("screen");
-    } else { //change to camera input 
+    } else if(type == "camera") { 
         get_local_stream("camera");
     }
     
-    if(type == 'screen' || type == 'camera'){
-        send({'select_stream': type});
-    }
-    current_stream = type;
 }
 
 //switch between cam streaming and screen sharing

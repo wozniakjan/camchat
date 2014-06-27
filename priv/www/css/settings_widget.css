@@ -12,10 +12,6 @@
     position: absolute;
     overflow: hidden;
 }
-
-#settings_window .content {
-    width: 450px;
-}
 #message_window {
     top: 50%;
     left: 50%;
@@ -31,6 +27,14 @@
     padding: 20px;
     padding-bottom: 5px;
     visibility: hidden;
+}
+
+#message_window .description {
+    padding-bottom: 10px;
+}
+
+#settings_window .content {
+    width: 450px;
 }
 #settings_window .content {
     border-style: dotted;

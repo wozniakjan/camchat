@@ -1,7 +1,8 @@
 -module(rooms).
--export([start/0, connect/3, disconnect/1, get_peers/1, get_peers/2, stop/0, reload/1, 
+-export([start/0, connect/3, disconnect/1, get_peers/1, get_peers/2, stop/0,  
          edit_user/3]).
 -export([get_conn_by_user_id/1, get_user_id_by_conn/1, get_room_default_stream/1]).
+-export([get_random/0, get_empty/0]).
 
 -include("types.hrl").
 
@@ -30,15 +31,22 @@ get_room_default_stream(Room) ->
         [ExistingRoom] -> ExistingRoom#room.default_stream
     end.
 
+parse_room_params(RoomId, ConnectionId, Params) ->
+    lists:foldl(
+        fun(Param, Room) -> 
+            case Param of
+                {<<"default_stream">>, P} -> Room#room{default_stream = P};
+                {<<"password">>, P} -> Room#room{password = P};
+                {<<"user_name">>, _} -> Room %parsed later
+            end
+        end,
+        #room{room_id=RoomId, user_list=[ConnectionId]},
+        Params).
+
 connect(RoomId, ConnectionId, Params) ->
     RoomStatus = case ets:lookup(rooms, RoomId) of
         [] -> 
-            Room = case lists:keyfind(<<"default_stream">>, 1, Params) of
-                false -> #room{room_id=RoomId, user_list=[ConnectionId], 
-                        default_stream= <<"camera">>};
-                {_, S} -> #room{room_id=RoomId, user_list=[ConnectionId], 
-                        default_stream=S}
-            end,
+            Room = parse_room_params(RoomId, ConnectionId, Params),
             ets:insert(rooms, Room),
             new_room;
         [ExistingRoom] ->
@@ -96,4 +104,20 @@ stop() ->
 edit_user(ConnectionId, Attr, Val) ->
     ets:update_element(users, ConnectionId, {Attr, Val}).
 
-reload(_Opts) -> reloaded.
+get_empty() -> <<"empty">>.
+
+get_nth(N, Prev) when N =< 1 -> Prev;
+get_nth(N, Prev) -> get_nth(N-1, ets:next(rooms, Prev)).
+
+get_random_helper() ->
+    Index = random:uniform(ets:info(rooms, size)),
+    get_nth(Index, ets:first(rooms)).
+
+get_random() ->
+    try get_random_helper() of
+        Room -> Room
+    catch
+        E:X -> 
+            lager:info("room:get_random() ~p:~p",[E,X]),
+            get_empty()
+    end.

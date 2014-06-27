@@ -6,4 +6,4 @@ if [ -n "$NODE" ]; then
     app_params="$app_params -name $NODE"
 fi
 
-erl -pa ebin deps/*/ebin -noshell -noinput $app_params
+erl -pa ebin deps/*/ebin $app_params -noshell -noinput

@@ -119,7 +119,7 @@ function setup_peer_connection(stream_type, id, remote_video) {
         log('pc.onremovestream', 2);
     }
 
-    log('setup_peer_connection() -> addStream(local_stream) ' + id, 1);
+    log('setup_peer_connection() -> addStream(local_stream['+stream_type+']) id:' + id, 1);
     pc.addStream(local_stream[stream_type]);
     negotiate_connection(id);
 }

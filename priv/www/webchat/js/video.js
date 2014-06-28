@@ -28,12 +28,13 @@ function send_ready(){
     send(msg);
 }
 
-function attach_audio_processing(current_constraints, media_stream) {
-    if(current_constraints.audio){
+function attach_audio_processing(media_type) {
+    log("attach_audio_processing("+media_type+")", 1);
+    if(constraints[media_type].audio){
         // For audio processing
         var audioContext = new AudioContext();
         // Create an AudioNode from the stream.
-        var mediaStreamSource = audioContext.createMediaStreamSource( media_stream );
+        var mediaStreamSource = audioContext.createMediaStreamSource( local_stream[media_type] );
         // Script processor
         var scriptProcessor = audioContext.createScriptProcessor(AUDIO_BUFFER_SIZE, 1, 1);
         scriptProcessor.onaudioprocess = audio_filter;
@@ -50,17 +51,17 @@ function add_my_media(media_type) {
         log("add_my_media() new local_stream["+media_type+"]", 1);
         navigator.getUserMedia(constraints[media_type], 
                 function(local_media_stream){
-                    // Add stream to div
-                    attach_audio_processing(constraints[media_type]);
-                    // select apropriate
+                    // set global 
                     local_stream[media_type] = local_media_stream;
+                    // Add stream to div
+                    attach_audio_processing(media_type);
                     // set visible
                     var video_elem = $("#myself video")[0];
                     attachMediaStream(video_elem, local_stream[media_type]);
                     video_elem.play();
                     // send to peers
                     for(i in peer_connection) {
-                        peer_connection[i].addStream(local_stream[type]);
+                        peer_connection[i].addStream(local_stream[media_type]);
                     }
                     current_stream = media_type;
                 }, 
@@ -77,10 +78,10 @@ function set_my_media(media_type) {
         var video_elem = $("#myself video")[0];
         navigator.getUserMedia(constraints[media_type], 
                 function(local_media_stream){
-                    // Add stream to div
-                    attach_audio_processing(constraints[media_type]);
-                    // select apropriate
+                    // set global
                     local_stream[media_type] = local_media_stream;
+                    // Add stream to div
+                    attach_audio_processing(media_type);
                     // select my visible
                     attachMediaStream(video_elem, local_stream[media_type]);
                     video_elem.play();
@@ -130,7 +131,7 @@ function get_local_stream(type) {
     }
 }
 
-//change something with my video
+//change attributes of my video
 function change_local_stream(type) {
     log("change_local_stream(" + type + ")", 1);
     if(type == "mute") {
@@ -179,7 +180,7 @@ function add_peer(id, name) {
     new_peer.append(video);
     new_peer.append(label);
     $("#video_buff").append(new_peer);
-    setup_peer_connection("screen", id, video[0]);
+    setup_peer_connection(current_stream, id, video[0]);
     send_audio_worker({'get_main': 'audio'});
     hide_message(name + " has connected");
     number_of_peers += 1;

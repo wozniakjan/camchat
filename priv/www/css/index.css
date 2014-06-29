@@ -178,13 +178,14 @@
 
 .flag {
     background-color: #C13F66;
+    padding: 2px;
     color: inherit;
     font-family: courier;
     border-style: solid;
     border-width: 1px;
     border-radius: 5px;
     border-color: #dadada;
-    font-size: 17px;
+    font-size: 13px;
 }
 
 .button_box button {

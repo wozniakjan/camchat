@@ -79,6 +79,8 @@ sock.onmessage = function(e) {
         init_video(json_msg.init_stream);
     } else if(json_msg.select_stream) {
         change_peer_stream(json_msg.id, json_msg.select_stream);
+    } else if(json_msg.error == "wrong_password") {
+        ask_password();
     }
 };
 
@@ -162,4 +164,30 @@ function update_message(text, hint) {
 function hide_message(text) {
     $("#message_window > .description").html(text);
     $("#message_window").fadeOut("slow");
+}
+
+//ask for password
+function ask_password(){
+    log("ask_password",0);
+    var ask_password = $("<div>", {id: "ask_password_window"});
+    var description = $("<div>", {class: "description"});
+    description.html("Password needed");
+    var input_div = $("<div>");
+    var input = $("<input>", {id: "ask_password", class: 'password', maxlength:"20"});
+    input.change(function(){this.value = this.value.replace(/\W/g, '')});
+    var button = $("<div>", {class: "button"});
+    button.html("ok");
+    
+    ask_password.append(description);
+    input_div.append(input);
+    ask_password.append(input_div);
+    ask_password.append(button);
+    
+    button.click(function(){
+        sessionStorage.setItem("room_password", $("#ask_password").val());
+        var settings_window = $(this).parent();
+        settings_window.fadeOut("fast", function(){$(this).remove()});
+        send_ready();
+    });
+    $("body").append(ask_password);
 }

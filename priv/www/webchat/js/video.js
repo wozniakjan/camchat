@@ -26,6 +26,9 @@ function send_ready(){
     if(sessionStorage.default_media_type) {
         msg.default_stream = sessionStorage.default_media_type;
     }
+    if(sessionStorage.room_password) {
+        msg.password = sessionStorage.room_password;
+    }
     send(msg);
 }
 
@@ -277,6 +280,7 @@ function set_username(user_name) {
 //called during initialization, create divs with video
 //and arrange them on the page
 function setup_videos(id, user_name, peer_list, type){
+    log("setup_videos()", 0);
     my_id = id;
     var my_name = get_username(user_name);
     var label = $("#myself > .label").val(my_name);
@@ -291,13 +295,14 @@ function setup_videos(id, user_name, peer_list, type){
         } else{
             $(this).attr("size",Math.max($(this).val().length,1))}
     });
-    if(type === 'existing_room') {
+    if(type == 'existing_room') {
         $.each(peer_list, function(peer_id, peer_user_name) {
             add_peer(peer_id, peer_user_name);
         });
     }
     update_message("Waiting for others...");
     //hide curtain
+    log("setup_videos() hide curtain", 1);
     $("#curtain").fadeOut("slow");
 }
 

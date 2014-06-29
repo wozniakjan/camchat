@@ -1,5 +1,5 @@
 
-#settings_window, #message_window {
+#settings_window, #message_window, #ask_password_window {
     z-index: 10;
     opacity: 0.9;
     box-shadow:0px 0px 10px #000000; 
@@ -11,13 +11,17 @@
     position: absolute;
     overflow: hidden;
 }
-#message_window {
+#message_window, #ask_password_window {
     top: 50%;
     left: 50%;
     margin-top: -60px;
     margin-left: -140px;
     width: 240px;
     padding: 20px;
+}
+#ask_password_window input {
+    padding: 2px;
+    margin: 10px;
 }
 #settings_window {
     max-height: 80%;

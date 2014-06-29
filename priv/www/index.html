@@ -129,6 +129,12 @@
                 onfocus="if (this.value == 'enter room name...') {this.value = '';}" 
                 onchange="this.value = this.value.replace(/\W/g, '')"
                 value='enter room name...'>
+                <input class='password' 
+                maxlength="20"
+                onblur="if (this.value == '') {this.value = 'set password...';}"
+                onfocus="if (this.value == 'set password...') {this.value = '';}" 
+                onchange="this.value = this.value.replace(/\W/g, '')"
+                value='set password...'>
             </div>
             <div id='room_box' class='button_box'>
                 <button onclick="join_room('camera')">join this room</button>
@@ -172,6 +178,12 @@
                 onfocus="if (this.value == 'enter room name...') {this.value = '';}" 
                 onchange="this.value = this.value.replace(/\W/g, '')"
                 value='enter room name...'>
+                <input class='password' 
+                maxlength="20"
+                onblur="if (this.value == '') {this.value = 'set password...';}"
+                onfocus="if (this.value == 'set password...') {this.value = '';}" 
+                onchange="this.value = this.value.replace(/\W/g, '')"
+                value='set password...'>
             </div>
             <div class='button_box'>
                 <button onclick="join_room('screen')">join this room</button>

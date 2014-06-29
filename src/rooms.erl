@@ -45,7 +45,7 @@ parse_room_params(RoomId, ConnectionId, Params) ->
 
 match_password(#room{password = Pwd}, _) when Pwd == no_password -> ok;
 match_password(#room{password = Pwd}, Params) ->
-    case lists:keyfind(<<"password">>, Params) of
+    case lists:keyfind(<<"password">>, 1, Params) of
         {_, Pwd} -> ok;
         _ -> throw({error, <<"wrong_password">>})
     end.

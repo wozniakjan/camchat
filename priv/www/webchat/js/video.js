@@ -297,6 +297,8 @@ function setup_videos(id, user_name, peer_list, type){
         });
     }
     update_message("Waiting for others...");
+    //hide curtain
+    $("#curtain").fadeOut("slow");
 }
 
 

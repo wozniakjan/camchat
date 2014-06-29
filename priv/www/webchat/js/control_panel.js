@@ -68,7 +68,7 @@ function draw_settings_div() {
     var name = $('.active_rollout_item').attr('id').replace('rollout_item_','');
     var settings_window = $('#settings_window');
     settings_window.css('visibility','visible');
-    settings_window.css('opacity',0.9);
+    settings_window.fadeIn("fast");
     $('#settings_window > .content').load(settings_widgets[name].url);
 };
 
@@ -123,7 +123,7 @@ function try_blur_rollout_menu(i) {
 function init_control_panel() {
     $('.button').click(function(){ 
         var settings_window = $(this).parent();
-        settings_window.css('opacity', 0.0)});
+        settings_window.fadeOut("fast")});
     init_settings_widgets();
     function on_blur() {
         this.value = 'settings..';

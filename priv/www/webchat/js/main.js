@@ -145,7 +145,7 @@ function negotiate_connection(remote_id, force){
 
 //shows message window over the screen with text until it is hidden
 function show_message(text, hint) {
-    $("#message_window").css('opacity', 0.9);
+    $("#message_window").fadeIn("slow");
     message = text;
     if(hint != undefined) message += "<br>" + hint;
     $("#message_window > .description").html(message);
@@ -161,5 +161,5 @@ function update_message(text, hint) {
 //hide message window
 function hide_message(text) {
     $("#message_window > .description").html(text);
-    $("#message_window").css('opacity', 0.0);
+    $("#message_window").fadeOut("slow");
 }

@@ -112,7 +112,9 @@ stop() ->
 edit_user(ConnectionId, Attr, Val) ->
     ets:update_element(users, ConnectionId, {Attr, Val}).
 
-get_empty() -> <<"empty">>.
+%TODO: check for collisions
+get_empty() -> 
+    name_generator:get_room().
 
 get_nth(N, Prev) when N =< 1 -> Prev;
 get_nth(N, Prev) -> get_nth(N-1, ets:next(rooms, Prev)).

@@ -8,8 +8,7 @@ init(_Transport, Req, []) ->
     {ok, Req, undefined}.
 
 handle(Req, State) ->
-    %TODO: test for collisions
-    RoomId = name_generator:get_room(),
+    RoomId = rooms:get_empty(),
     {ok, Req2} = cowboy_req:reply(200, [], RoomId, Req),
     {ok, Req2, State}.
 

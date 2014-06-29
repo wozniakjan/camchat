@@ -13,12 +13,14 @@ function connect_room(room, default_type) {
     window.location.href = room;
 }
 
-function empty_room() {
-    address = "empty";
-    connect_room(address, "camera");
+function empty_room(default_type) {
+    $("<div>").load("/query/suggest_empty_room", function (address) {
+        connect_room(address, default_type);
+    });
 }
 
 function random_room() {
-    address = "random";
-    connect_room(address, "camera");
+    $("<div>").load("/query/suggest_random_room", function (address) {
+        connect_room(address, "camera");
+    });
 }

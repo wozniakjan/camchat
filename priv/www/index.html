@@ -132,6 +132,7 @@
             </div>
             <div id='room_box' class='button_box'>
                 <button onclick="join_room('camera')">join this room</button>
+                <button onclick="empty_room('camera')">create random room</button>
             </div>
         </div>
     </div>
@@ -146,7 +147,7 @@
             </div>
             <div id='random_room_box' class='button_box'>
                 <button onclick="random_room()">join random room</button>
-                <button onclick="empty_room()">create empty room</button>
+                <button onclick="empty_room('camera')">create random room</button>
             </div>
         </div>
     </div>
@@ -157,14 +158,11 @@
             <div class="logo"></div>
 
             <div>
-                <div>
-                    don't forget to check the flag
-                </div>
-                <div id="flag" class="full">
+                <div class="flag">
                     chrome://flags/#enable-usermedia-screen-capture
                 </div>
-                <div id="flag" class="short">
-                    enable-usermedia-screen-capture
+                <div>
+                    don't forget to check the flag
                 </div>
             </div>
             <div>
@@ -177,6 +175,7 @@
             </div>
             <div class='button_box'>
                 <button onclick="join_room('screen')">join this room</button>
+                <button onclick="empty_room('screen')">create random room</button>
             </div>
         </div>
     </div>

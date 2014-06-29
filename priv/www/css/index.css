@@ -89,7 +89,7 @@
 .short {
     display: none !important;
 }
-@media screen and (max-height: 600px), screen and (max-width: 800px) {
+@media screen and (max-height: 500px), screen and (max-width: 900px) {
     .full {
         display: none !important;
     }
@@ -168,13 +168,15 @@
 
 .middle_align div{
     width: 60%;
+    max-width: 650px;
+    min-width: 420px;
     margin-left: auto;
     margin-right: auto;
     text-align: center;
     margin-top: 10px;
 }
 
-#flag {
+.flag {
     background-color: #C13F66;
     color: inherit;
     font-family: courier;
@@ -183,7 +185,6 @@
     border-radius: 5px;
     border-color: #dadada;
     font-size: 17px;
-    width: 500px;
 }
 
 .button_box button {

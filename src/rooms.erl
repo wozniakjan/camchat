@@ -43,6 +43,13 @@ parse_room_params(RoomId, ConnectionId, Params) ->
         #room{room_id=RoomId, user_list=[ConnectionId]},
         Params).
 
+match_password(#room{password = Pwd}, _) when Pwd == no_password -> ok;
+match_password(#room{password = Pwd}, Params) ->
+    case lists:keyfind(<<"password">>, Params) of
+        {_, Pwd} -> ok;
+        _ -> throw({error, <<"wrong_password">>})
+    end.
+
 connect(RoomId, ConnectionId, Params) ->
     RoomStatus = case ets:lookup(rooms, RoomId) of
         [] -> 
@@ -50,6 +57,7 @@ connect(RoomId, ConnectionId, Params) ->
             ets:insert(rooms, Room),
             new_room;
         [ExistingRoom] ->
+            match_password(ExistingRoom, Params),
             RoomId = ExistingRoom#room.room_id,
             UserList = ExistingRoom#room.user_list,
             ets:update_element(rooms, RoomId, {?USER_LIST_POS, [ConnectionId | UserList]}),

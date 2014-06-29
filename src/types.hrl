@@ -1,4 +1,4 @@
--record(room, {room_id, user_list, default_stream = <<"camera">>, password = no_pass}).
+-record(room, {room_id, user_list, default_stream = <<"camera">>, password = no_password}).
 -define(ROOM_ID_POS, 2).
 -define(USER_LIST_POS, 3).
 -define(DEFAULT_STREAM_POS, 4).

@@ -17,7 +17,7 @@ start(_StartType, _StartArgs) ->
     TransOpts    = [{port, Port}],
     ProtoOpts    = [{env, [{dispatch, Dispatch}]}],
     NumAcceptors = 100,
-    start(http, NumAcceptors, TransOpts, ProtoOpts),
+    start(https, NumAcceptors, TransOpts, ProtoOpts),
     camchat_sup:start_link().
 
 start(http, NumAcceptors, TransOpts, ProtoOpts) ->
@@ -53,6 +53,7 @@ routes() ->
                 {"/webchat/images/[...]", cowboy_static, {dir, "priv/www/images/"}},
                 {"/settings_widgets/[...]", cowboy_static, {dir, "priv/www/settings_widgets/"}},
                 {"/query/suggest_random_room", random_room_handler, []},
+                {"/query/suggest_empty_room", empty_room_handler, []},
                 {"/[...]", error_pages, []}
               ]
         }

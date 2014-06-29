@@ -1,6 +1,7 @@
 var room = window.location.pathname.replace(/\//g,'');
 var sock = new SockJS('/sockjs/camchat');
 var peer_connection = {};
+var peer_last_change_stream = {};
 var local_stream = {};
 var my_id;
 var audio_worker = new Worker("/webchat/js/audio_energy_worker.js");
@@ -76,8 +77,8 @@ sock.onmessage = function(e) {
         change_name(json_msg.change_name, json_msg.id);
     } else if(json_msg.init_stream) {
         init_video(json_msg.init_stream);
-    } else if(json_msg.change_stream) {
-        log(json_msg, 1);
+    } else if(json_msg.select_stream) {
+        change_peer_stream(json_msg.id, json_msg.select_stream);
     }
 };
 
@@ -96,8 +97,8 @@ function parse_offer(json_msg){
     }, error_callback);
 };
 
-function setup_peer_connection(stream_type, id, remote_video) {
-    log("setup_peer_connection()", 1);
+function setup_peer_connection(id, remote_video) {
+    log('setup_peer_connection(' + id + ')', 1);
     var pc = peer_connection[id] = new RTCPeerConnection(pc_config);
 
     pc.onicecandidate = function(event) {
@@ -112,20 +113,27 @@ function setup_peer_connection(stream_type, id, remote_video) {
     }
     pc.onaddstream = function(event) {
         log('pc.onaddstream', 2);
-        attachMediaStream(remote_video, event.stream);
-        remote_video.play();
+        if(peer_last_change_stream[id] == event.stream.id || 
+           peer_last_change_stream[id] == undefined){
+            peer_last_change_stream[id] = event.stream.id;
+            attachMediaStream(remote_video, event.stream);
+            remote_video.play();
+        }
     }
     pc.onremovestream = function(event) {
         log('pc.onremovestream', 2);
     }
 
-    log('setup_peer_connection() -> addStream(local_stream['+stream_type+']) id:' + id, 1);
-    pc.addStream(local_stream[stream_type]);
+    for(var i in local_stream){
+        pc.addStream(local_stream[i]);
+    }
     negotiate_connection(id);
+    send({'select_stream': stream_id[current_stream]});
 }
 
-function negotiate_connection(remote_id){
-    if(my_id > remote_id){
+function negotiate_connection(remote_id, force){
+    log("negotiate_connection("+remote_id+")", 1);
+    if((my_id > remote_id) || (force == true)){
         var pc = peer_connection[remote_id];
         pc.createOffer(function(offer) {
             pc.setLocalDescription(new RTCSessionDescription(offer), function() {

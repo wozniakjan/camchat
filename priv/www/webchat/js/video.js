@@ -4,6 +4,7 @@ var constraints = {};
 constraints["camera"] = {video: true, audio: true};
 constraints["screen"] = {video: {mandatory: { chromeMediaSource: 'screen'}}, audio: false};
 var current_stream;
+var stream_id = {};
 
 //filter for automatic directors cut among peers in conference
 //according to audio energy
@@ -53,6 +54,7 @@ function add_my_media(media_type) {
                 function(local_media_stream){
                     // set global 
                     local_stream[media_type] = local_media_stream;
+                    stream_id[media_type] = local_stream[media_type].label;
                     // Add stream to div
                     attach_audio_processing(media_type);
                     // set visible
@@ -62,8 +64,10 @@ function add_my_media(media_type) {
                     // send to peers
                     for(i in peer_connection) {
                         peer_connection[i].addStream(local_stream[media_type]);
+                        negotiate_connection(i, true);
                     }
                     current_stream = media_type;
+                    send({'select_stream': stream_id[media_type]});
                 }, 
                 error_callback);
     } else {
@@ -80,6 +84,9 @@ function set_my_media(media_type) {
                 function(local_media_stream){
                     // set global
                     local_stream[media_type] = local_media_stream;
+                    stream_id[media_type] = local_stream[media_type].label;
+                    log("local_stream", 1);
+                    log(local_stream[media_type], 1);
                     // Add stream to div
                     attach_audio_processing(media_type);
                     // select my visible
@@ -123,8 +130,8 @@ function get_local_stream(type) {
                 var video_elem = $("#myself video")[0];
                 attachMediaStream(video_elem, local_stream[type]);
                 video_elem.play();
-                //notify others only here (not when adding new stream to pc)
-                send({'select_stream': type});
+                //notify others through server
+                send({'select_stream': stream_id[type]});
                 current_stream = type;
             }
         }
@@ -180,7 +187,7 @@ function add_peer(id, name) {
     new_peer.append(video);
     new_peer.append(label);
     $("#video_buff").append(new_peer);
-    setup_peer_connection(current_stream, id, video[0]);
+    setup_peer_connection(id, video[0]);
     send_audio_worker({'get_main': 'audio'});
     hide_message(name + " has connected");
     number_of_peers += 1;
@@ -203,6 +210,36 @@ function remove_peer(id) {
     if(number_of_peers == 0){
         show_message("Last guy disconnected, waiting for others..");
     }
+}
+
+//returns stream by peer_id and stream_id
+function get_stream_by_id(peer, id) {
+    var streams = peer_connection[peer].getRemoteStreams();
+    for(var i in streams){
+        if(streams[i].id == id){
+            return streams[i];
+        }
+    }
+    return undefined;
+}
+
+
+//switch stream of selected per
+function change_peer_stream(peer_id, stream_id){
+    log("change_peer_stream(" + peer_id + ", " + stream_id+")", 1);
+    var selected_remote_stream = get_stream_by_id(peer_id, stream_id);
+    peer_last_change_stream[peer_id] = stream_id;
+    if(selected_remote_stream != undefined) {
+        var current_main = $("#main_video").attr("peer_id");
+        var video_elem = undefined;
+        if(current_main == peer_id){
+            video_elem = $("#main_video > .big_video")[0];
+        } else {
+            video_elem = $("#peer"+peer_id+" > .small_video")[0];
+        }
+        attachMediaStream(video_elem, selected_remote_stream);
+        video_elem.play();
+    } 
 }
 
 //switch main video div and small video div with specific id
@@ -255,8 +292,8 @@ function setup_videos(id, user_name, peer_list, type){
             $(this).attr("size",Math.max($(this).val().length,1))}
     });
     if(type === 'existing_room') {
-        $.each(peer_list, function(peerId, peerUserName) {
-            add_peer(peerId, peerUserName);
+        $.each(peer_list, function(peer_id, peer_user_name) {
+            add_peer(peer_id, peer_user_name);
         });
     }
     update_message("Waiting for others...");

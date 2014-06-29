@@ -120,6 +120,7 @@ get_nth(N, Prev) when N =< 1 -> Prev;
 get_nth(N, Prev) -> get_nth(N-1, ets:next(rooms, Prev)).
 
 get_random_helper() ->
+    random:seed(now()),
     Index = random:uniform(ets:info(rooms, size)),
     get_nth(Index, ets:first(rooms)).
 

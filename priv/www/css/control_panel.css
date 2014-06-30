@@ -22,12 +22,14 @@
 #control_panel input, .rollout_item {
     padding-left: 10px;
     padding-right: 10px;
+    border-radius: 3px;
 }
 
 #rollout_menu {
     display: none;
     overflow: hidden;
     z-index: 10;
+    border-radius: 3px;
 }
 
 .rollout_item {

@@ -126,12 +126,12 @@ function init_control_panel() {
         settings_window.fadeOut("fast")});
     init_settings_widgets();
     function on_blur() {
-        this.value = 'settings..';
+        this.value = 'search..';
         try_blur_rollout_menu(20);
     };
     function on_focus() {
         $("#rollout_menu").show();
-        if(this.value == 'settings..') {
+        if(this.value == 'search..') {
             this.value = '';
         } else {
             $('#control_panel > input').select();

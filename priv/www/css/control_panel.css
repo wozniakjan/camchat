@@ -10,6 +10,9 @@
 #control_panel:hover {
     opacity: 0.9;
 }
+#control_panel:hover input {
+    width: 200px;
+}
 
 #control_panel input {
     margin: 0px;
@@ -17,6 +20,7 @@
     border-color: #222222;
     border-style: solid;
     width: 150px;
+    transition: all 700ms ease;
 }
 
 #control_panel input, .rollout_item {

@@ -11,12 +11,13 @@ var rollout_menu_active = false;
 /*
  * Widget rolling down from settings panel
  */
-function Settings_widget(name, keywords, description, url) {
+function Settings_widget(name, keywords, description, url, init_callback) {
     this.name = name;
     this.keywords = keywords;
     this.last_matched_keywords = [];
     this.description = description;
     this.url = url;
+    this.init_callback = init_callback;
 }
 
 /*
@@ -69,7 +70,8 @@ function draw_settings_div() {
     var settings_window = $('#settings_window');
     settings_window.css('visibility','visible');
     settings_window.fadeIn("fast");
-    $('#settings_window > .content').load(settings_widgets[name].url);
+    $('#settings_window > .content').load(settings_widgets[name].url,
+            function() {settings_widgets[name].init_callback(); });
 };
 
 //emphasize the actie rollout item
@@ -177,13 +179,22 @@ function init_control_panel() {
 //sets possible widgets and rollout items
 function init_settings_widgets() {
     settings_widgets["Video"] = new Settings_widget("Video", ["video", "screen", "desktop"],
-        "change video settings, share desktop", "/settings_widgets/video.html"); 
+        "change video settings, share desktop", "/settings_widgets/video.html", video_open); 
     settings_widgets["Audio"] = new Settings_widget("Audio", ["audio", "mute", "volume"],
-        "change volume, mute and audio settings", "/settings_widgets/audio.html"); 
+        "change volume, mute and audio settings", "/settings_widgets/audio.html", test_open); 
     settings_widgets["Record"] = new Settings_widget("Record", ["record", "video", "audio"],
-        "record to file what you hear and see", "/settings_widgets/record.html"); 
+        "record to file what you hear and see", "/settings_widgets/record.html", test_open); 
     settings_widgets["Admin"] = new Settings_widget("Admin", ["admin", "password", "room"],
-        "administrate this room, set up password", "/settings_widgets/admin.html"); 
+        "administrate this room, set up password", "/settings_widgets/admin.html", test_open); 
+};
+
+//callbacks
+function video_open() {
+    $('#selected_user').click(function(){ 
+        $('#selected_user').html("awesome");  });
+};
+
+function test_open() {
 };
 
 init_control_panel();

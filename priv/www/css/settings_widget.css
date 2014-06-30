@@ -39,9 +39,9 @@
 
 #settings_window .content {
     width: 450px;
+    text-align: left;
 }
 #settings_window .content {
-    border-style: dotted;
     border-width: 1px;
     border-color: black;
 }
@@ -57,8 +57,35 @@
     padding-right: 20px;
     left: 50%;
     display: inline-block; /*not expand width*/
+    transition: all 500ms ease;
 }
 
 .button:hover {
     background-color: #AAAAAA;
+}
+
+#title {
+    font-size: 18px;
+    border-bottom-style: dotted;
+    padding:7px;
+    margin-bottom:13px;
+    border-bottom-width: 1px;
+}
+
+.select_set {
+    height: 18px;
+    width: 150px;
+    padding-bottom: 2px;
+    padding-left:  5px;
+    padding-right: 5px;
+    margin:5px;
+    border-style: solid;
+    border-width: 1px;
+    border-radius: 3px;
+    overflow: hidden;
+    transition: all 500ms ease;
+}
+.select_set:hover {
+    background-color: #EFFFEF;
+    border-color: #006600;
 }

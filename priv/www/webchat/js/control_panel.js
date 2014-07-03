@@ -178,14 +178,21 @@ function init_control_panel() {
 
 //sets possible widgets and rollout items
 function init_settings_widgets() {
-    settings_widgets["Video"] = new Settings_widget("Video", ["video", "screen", "desktop"],
-        "change video settings, share desktop", "/settings_widgets/video.html", video_open); 
-    settings_widgets["Audio"] = new Settings_widget("Audio", ["audio", "mute", "volume"],
-        "change volume, mute and audio settings", "/settings_widgets/audio.html", test_open); 
-    settings_widgets["Record"] = new Settings_widget("Record", ["record", "video", "audio"],
-        "record to file what you hear and see", "/settings_widgets/record.html", test_open); 
-    settings_widgets["Admin"] = new Settings_widget("Admin", ["admin", "password", "room"],
-        "administrate this room, set up password", "/settings_widgets/admin.html", test_open); 
+    settings_widgets["Video"] = new Settings_widget("Video Settings", 
+            ["video", "screen", "desktop", "record"],
+            "change video settings, share desktop", 
+            "/settings_widgets/video.html", 
+            video_open); 
+    settings_widgets["Audio"] = new Settings_widget("Audio Settings", 
+            ["audio", "mute", "volume", "record"],
+            "change volume, mute and audio settings", 
+            "/settings_widgets/audio.html", 
+            test_open); 
+    settings_widgets["Admin"] = new Settings_widget("Administration", 
+            ["admin", "password", "room"],
+            "administrate this room, set up password", 
+            "/settings_widgets/admin.html", 
+            test_open); 
 };
 
 //callbacks

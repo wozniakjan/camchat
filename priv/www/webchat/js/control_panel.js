@@ -178,17 +178,17 @@ function init_control_panel() {
 
 //sets possible widgets and rollout items
 function init_settings_widgets() {
-    settings_widgets["Video"] = new Settings_widget("Video Settings", 
+    settings_widgets["Video Settings"] = new Settings_widget("Video Settings", 
             ["video", "screen", "desktop", "record"],
             "change video settings, share desktop", 
             "/settings_widgets/video.html", 
             video_open); 
-    settings_widgets["Audio"] = new Settings_widget("Audio Settings", 
+    settings_widgets["Audio Settings"] = new Settings_widget("Audio Settings", 
             ["audio", "mute", "volume", "record"],
             "change volume, mute and audio settings", 
             "/settings_widgets/audio.html", 
             test_open); 
-    settings_widgets["Admin"] = new Settings_widget("Administration", 
+    settings_widgets["Administration"] = new Settings_widget("Administration", 
             ["admin", "password", "room"],
             "administrate this room, set up password", 
             "/settings_widgets/admin.html", 

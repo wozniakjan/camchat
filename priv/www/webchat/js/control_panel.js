@@ -178,31 +178,35 @@ function init_control_panel() {
 
 //sets possible widgets and rollout items
 function init_settings_widgets() {
-    settings_widgets["Video Settings"] = new Settings_widget("Video Settings", 
-            ["video", "screen", "desktop", "record"],
-            "change video settings, share desktop", 
-            "/settings_widgets/video.html", 
-            video_open); 
-    settings_widgets["Audio Settings"] = new Settings_widget("Audio Settings", 
-            ["audio", "mute", "volume", "record"],
-            "change volume, mute and audio settings", 
-            "/settings_widgets/audio.html", 
-            test_open); 
-    settings_widgets["Administration"] = new Settings_widget("Administration", 
-            ["admin", "password", "room"],
+    settings_widgets["Audio & Video Settings"] = new Settings_widget("Audio & Video Settings", 
+            ["settings", "video", "audio", "screen", "desktop", "record", "volume", "mute"],
+            "share desktop, record stream, change volume", 
+            "/settings_widgets/media.html", 
+            media_open); 
+    settings_widgets["Room Settings"] = new Settings_widget("Room Settings", 
+            ["settings", "admin", "password", "room", "kick"],
             "administrate this room, set up password", 
             "/settings_widgets/admin.html", 
             test_open); 
 };
 
 //callbacks
-function video_open() {
-    console.log("video_open()");
-    $('#select_user').children().remove().end().append('<option value="my_settings" selected="selected">my settings</option>');
+function media_open() {
+    function draw_settings(user_id){
+        console.log("media_open() select_user: "+user_id);
+        if(user_id == "myself"){
+
+        } else {
+        }
+    }
+    console.log("media_open()");
+    $('#select_user').children().remove().end().append('<option value="myself" selected="selected">my settings</option>');
     for(var id in peer_name){
         $('#select_user').append('<option value="'+id+'">'+peer_name[id]+'</option>');
     };
-    $('.select_set').chosen({disable_search_threshold: 10, width: '200px'});
+    var select_user = $('#select_user').chosen({disable_search_threshold: 10, width: '200px'});
+    select_user.change(function(){ draw_settings($(this).val()); });
+    draw_settings('myself');
 };
 
 function test_open() {

@@ -208,8 +208,9 @@ function remove_peer(id) {
         $("#main_video > .big_video").remove();
     }
     $("#peer"+id).hide(1000, function(){$(this).remove();});
-    peer_connection[id] = null;
-    peer_name[id] = undefined;
+    delete peer_connection[id];
+    delete peer_name[id];
+    //TODO: remove from active settings widget
 
     number_of_peers -= 1;
     if(number_of_peers == 0){

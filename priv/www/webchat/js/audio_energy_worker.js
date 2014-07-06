@@ -61,7 +61,7 @@ function parse_msg(msg) {
     } else if(data.get_main){
         send_main(0);
     } else if(data.peer_disconnected) {
-        peer_importance[data.peer_disconnected] = undefined;
+        delete peer_importance[data.peer_disconnected];
         if(current_audio_stream_key == data.peer_disconnected)
             current_audio_stream_key = undefined;
     } else {

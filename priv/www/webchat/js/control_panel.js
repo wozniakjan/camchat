@@ -197,8 +197,12 @@ function init_settings_widgets() {
 
 //callbacks
 function video_open() {
-    $('#selected_user').click(function(){ 
-        $('#selected_user').html("awesome");  });
+    console.log("video_open()");
+    $('#select_user').children().remove().end().append('<option value="my_settings" selected="selected">my settings</option>');
+    for(var id in peer_name){
+        $('#select_user').append('<option value="'+id+'">'+peer_name[id]+'</option>');
+    };
+    $('.select_set').chosen({disable_search_threshold: 10, width: '200px'});
 };
 
 function test_open() {

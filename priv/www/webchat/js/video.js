@@ -193,6 +193,7 @@ function add_peer(id, name) {
     setup_peer_connection(id, video[0]);
     send_audio_worker({'get_main': 'audio'});
     hide_message(name + " has connected");
+    peer_name[id] = name;
     number_of_peers += 1;
     send_audio_worker({'audio_energy': [0], 'id':id});
     return video[0];
@@ -208,6 +209,7 @@ function remove_peer(id) {
     }
     $("#peer"+id).hide(1000, function(){$(this).remove();});
     peer_connection[id] = null;
+    peer_name[id] = undefined;
 
     number_of_peers -= 1;
     if(number_of_peers == 0){
@@ -309,5 +311,6 @@ function setup_videos(id, user_name, peer_list, type){
 
 //change the name label assigned to specific id
 function change_name(name, id){
+    peer_name[id] = name;
     $("#peer"+id+" > .label").html(name);
 }

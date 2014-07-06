@@ -2,25 +2,23 @@
     position: absolute;
     top: 5px;
     left: 20px;
-    opacity: 0.6;
     transition: all 700ms ease;
-    box-shadow:0px 0px 10px #000000; 
-}
-
-#control_panel:hover {
-    opacity: 0.9;
-}
-#control_panel:hover input {
-    width: 200px;
+    background-color: transparent;
 }
 
 #control_panel input {
+    opacity: 0.8;
+    box-shadow:0px 0px 10px #000000; 
     margin: 0px;
     border-width: 1px;
     border-color: #222222;
     border-style: solid;
     width: 150px;
     transition: all 700ms ease;
+}
+#control_panel:hover input {
+    opacity: 1.0;
+    width: 200px;
 }
 
 #control_panel input, .rollout_item {
@@ -35,6 +33,9 @@
     z-index: 10;
     border-radius: 3px;
 }
+#rollout_menu:hover {
+    cursor:pointer;
+}
 
 .rollout_item {
     padding-top: 5px;
@@ -43,7 +44,7 @@
     border-width: 1px;
     border-color: #666666;
     background-color: #ffffff;
-    opacity: 0.6;
+    opacity: 0.8;
     height: 18px;
     transition: all 500ms ease;
     font-size: 12px;

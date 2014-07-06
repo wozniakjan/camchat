@@ -194,8 +194,14 @@ function init_settings_widgets() {
 function media_open() {
     function draw_settings(user_id){
         console.log("media_open() select_user: "+user_id);
+        $('.toggler').click(function(){
+            $(this).toggleClass('off');
+        });
         if(user_id == "myself"){
-
+            //1. stream selection button and callbacks
+            //2. recording video and audio
+            //3. volume
+            //4. directors cut
         } else {
         }
     }

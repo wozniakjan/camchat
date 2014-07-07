@@ -17,7 +17,7 @@ start(_StartType, _StartArgs) ->
     TransOpts    = [{port, Port}],
     ProtoOpts    = [{env, [{dispatch, Dispatch}]}],
     NumAcceptors = 100,
-    start(http, NumAcceptors, TransOpts, ProtoOpts),
+    start(https, NumAcceptors, TransOpts, ProtoOpts),
     camchat_sup:start_link().
 
 start(http, NumAcceptors, TransOpts, ProtoOpts) ->
@@ -29,7 +29,7 @@ start(https, NumAcceptors, TransOpts, ProtoOpts) ->
     Cert         = {certfile, PrivDir ++ "/ssl/server.crt"},
     Key          = {keyfile, PrivDir ++ "/ssl/server.key"},
     TransOpts2   = TransOpts ++ [CA, Cert, Key],
-    {ok, _}      = cowboy:start_https(https, NumAcceptors, TransOpts2, ProtoOpts).
+    {ok, _}      = cowboy:start_https(http, NumAcceptors, TransOpts2, ProtoOpts).
 
 
 stop(_State) ->

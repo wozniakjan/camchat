@@ -180,7 +180,7 @@ function init_control_panel() {
 function init_settings_widgets() {
     settings_widgets["Audio & Video Settings"] = new Settings_widget("Audio & Video Settings", 
             ["settings", "video", "audio", "screen", "desktop", "record", "volume", "mute"],
-            "share desktop, record stream, change volume", 
+            "share desktop, record, adjust volume", 
             "/settings_widgets/media.html", 
             media_open); 
     settings_widgets["Room Settings"] = new Settings_widget("Room Settings", 

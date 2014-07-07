@@ -36,9 +36,15 @@ parse_msg(Conn, {[{<<"ready">>, Room} | Params]}, waiting_for_params) ->
         {ok, RoomStatus, User} -> 
             UserId = User#user.user_id,
             UN = User#user.username,
-            PeerList = send_peers(Conn, jiffy:encode({[{peer_connected, UserId}, {name, UN}]})),
-            UsernameList = lists:map(fun(X)-> {X#user.user_id, X#user.username} end, PeerList),
-            Conn:send(jiffy:encode({[{connected, RoomStatus}, {user_id, UserId}, {user_name, UN}, {peer_list, {UsernameList}}]})),
+            Token = User#user.browser_token,
+            PeerMsg = {[{peer_connected, UserId}, {name, UN}, {browser_token, Token}]},
+            PeerList = send_peers(Conn, jiffy:encode(PeerMsg)),
+            UserList = lists:map(fun(X)-> 
+                {X#user.user_id, 
+                    {[{user_name, X#user.username}, {browser_token, X#user.browser_token}]}} 
+            end, PeerList),
+            Reply = [{user_id, UserId}, {user_name, UN}, {peer_list, {UserList}}],
+            Conn:send(jiffy:encode({[{connected, RoomStatus} | Reply]})),
             {ok, connected}
     catch
         {error, Reason} ->

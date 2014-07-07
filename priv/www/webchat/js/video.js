@@ -21,13 +21,20 @@ function send_ready(){
     log("send_ready()", 1);
     msg = {ready: room};
     if(localStorage.user_name){
+        //saved username, don't want to obtain generated
         msg.user_name = localStorage.user_name;
     } 
     if(sessionStorage.default_media_type) {
+        //final decision up to the server
         msg.default_stream = sessionStorage.default_media_type;
     }
     if(sessionStorage.room_password) {
+        //if has been set by previous page
         msg.password = sessionStorage.room_password;
+    }
+    if(localStorage.browser_token) { 
+        //to cancel echo for multiple same computer connections
+        msg.browser_token = localStorage.browser_token;
     }
     send(msg);
 }
@@ -183,7 +190,7 @@ function setup_myself() {
 }
 
 //when peer connects, create his video div
-function add_peer(id, name) {
+function add_peer(id, name, browser_token) {
     var new_peer = $("<div>", {id: "peer"+id, class: "small_video_frame"});
     var label = $("<div>", {class: "label", text: name});
     var video = $("<video>", {class: "small_video", autoplay: "true"});
@@ -299,8 +306,12 @@ function setup_videos(id, user_name, peer_list, type){
             $(this).attr("size",Math.max($(this).val().length,1))}
     });
     if(type == 'existing_room') {
-        $.each(peer_list, function(peer_id, peer_user_name) {
-            add_peer(peer_id, peer_user_name);
+        log("setup_videos() peer_list:", 2);
+        log(peer_list, 2);
+        $.each(peer_list, function(peer_id, attr) {
+            log("setup_videos() peer_id:"+peer_id+" username:"+
+                attr.user_name+ " browser_token:"+attr.browser_token, 2);
+            add_peer(peer_id, attr.user_name, attr.browser_token);
         });
     }
     update_message("Waiting for others...");

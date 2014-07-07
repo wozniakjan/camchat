@@ -18,12 +18,19 @@ create_id() ->
     Id = re:replace(IdT,"\\.","_",[{return, list}, global]),
     erlang:list_to_bitstring(Id).
 
-create_user(ConnectionId, RoomId, UN) ->
+create_user(ConnectionId, RoomId, Params) ->
+    UN = name_generator:get_name(),
     UID = create_id(),
-    #user{connection_id=ConnectionId, room_id=RoomId, user_id=UID, username=UN}.
-create_user(ConnectionId, RoomId) ->
-    UserName = name_generator:get_name(),
-    create_user(ConnectionId, RoomId, UserName).
+    lists:foldl(
+        fun(Param, User) -> 
+            case Param of
+                {<<"browser_token">>, P} -> User#user{browser_token = P};
+                {<<"user_name">>, P} -> User#user{username = P};
+                _ -> User  % unknown user parameter
+            end
+        end,
+        #user{connection_id=ConnectionId, room_id=RoomId, user_id=UID, username=UN},
+        Params).
 
 get_room_default_stream(Room) ->
     case ets:lookup(rooms, Room) of
@@ -37,7 +44,7 @@ parse_room_params(RoomId, ConnectionId, Params) ->
             case Param of
                 {<<"default_stream">>, P} -> Room#room{default_stream = P};
                 {<<"password">>, P} -> Room#room{password = P};
-                {<<"user_name">>, _} -> Room %parsed later
+                _ -> Room  % unknown room parameter
             end
         end,
         #room{room_id=RoomId, user_list=[ConnectionId]},
@@ -63,10 +70,7 @@ connect(RoomId, ConnectionId, Params) ->
             ets:update_element(rooms, RoomId, {?USER_LIST_POS, [ConnectionId | UserList]}),
             existing_room
     end,
-    User = case lists:keyfind(<<"user_name">>, 1, Params) of
-        false   -> create_user(ConnectionId, RoomId);
-        {_, UN} -> create_user(ConnectionId, RoomId, UN)
-    end,
+    User = create_user(ConnectionId, RoomId, Params),
     ets:insert(users, User),
     ets:insert(uid_lookup, {User#user.user_id, User#user.connection_id}),
     {ok, RoomStatus, User}.

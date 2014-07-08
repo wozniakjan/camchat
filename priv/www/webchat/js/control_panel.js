@@ -196,14 +196,17 @@ function media_open() {
     function process_change(toggler){
         log('process_change()', 3);
         if(toggler.context.id == 'stream_switch') {
-            toggle_local_stream();
+            var on_success = function(){
+                log("media_open() -> on_success() callback");
+                toggler.children().toggleClass('toggler_on')
+            };
+            toggle_local_stream(on_success);
         }
     }
     function draw_settings(user_id){
         log('draw_settings('+user_id+')', 3);
         $('.toggler').click(function(){
             if( !$(this).hasClass('disabled') ){
-                $(this).children().toggleClass('toggler_on');
                 process_change($(this));
             }
         });

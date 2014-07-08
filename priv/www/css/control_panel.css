@@ -4,6 +4,7 @@
     left: 20px;
     transition: all 700ms ease;
     background-color: transparent;
+    z-index: 10;
 }
 
 #control_panel input {

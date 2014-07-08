@@ -61,7 +61,7 @@ function attach_audio_processing(media_type) {
 }
 
 //add additional stream
-function add_my_media(media_type) {
+function add_my_media(media_type, on_success) {
     log("add_my_media("+media_type+")", 0);
     if(local_stream[media_type] == undefined) {
         log("add_my_media() new local_stream["+media_type+"]", 1);
@@ -83,6 +83,7 @@ function add_my_media(media_type) {
                     }
                     current_stream = media_type;
                     send({'select_stream': stream_id[media_type]});
+                    if(on_success){ on_success();}
                 }, 
                 error_callback);
     } else {
@@ -91,7 +92,7 @@ function add_my_media(media_type) {
 }
 
 //get stream from user media and set to video div
-function set_my_media(media_type) {
+function set_my_media(media_type, on_success) {
     log("set_my_media("+media_type+")", 0);
     if(local_stream[media_type] == undefined) {
         var video_elem = $("#myself video")[0];
@@ -109,6 +110,7 @@ function set_my_media(media_type) {
                     video_elem.play();
                     // negotiate with server
                     send_ready();
+                    if(on_success) { on_success();}
                 }, 
                 error_callback);
     }
@@ -129,7 +131,7 @@ function init_video(media_type) {
 }
 
 //get local stream and negotiate connection if needed
-function get_local_stream(type) {
+function get_local_stream(type, on_success) {
     log("get_local_stream("+type+")", 1);
     if(type != current_stream) {
         log("get_local_stream() -> local_stream = "+local_stream, 1);
@@ -137,10 +139,10 @@ function get_local_stream(type) {
         if( jQuery.isEmptyObject(local_stream) ){ 
             //no previous call to getUserMedia succeeded
             current_stream = type;
-            set_my_media(type);
+            set_my_media(type, on_success);
         } else { //has at least one local_stream
             if(local_stream[type] == undefined){
-                add_my_media(type);
+                add_my_media(type, on_success);
             } else { //has this particular local_stream
                 var video_elem = $("#myself video")[0];
                 attachMediaStream(video_elem, local_stream[type]);
@@ -148,13 +150,14 @@ function get_local_stream(type) {
                 //notify others through server
                 send({'select_stream': stream_id[type]});
                 current_stream = type;
+                if(on_success) {on_success();};
             }
         }
     }
 }
 
 //change attributes of my video
-function change_local_stream(type) {
+function change_local_stream(type, on_success) {
     log("change_local_stream(" + type + ")", 1);
     if(type == "mute") {
         constraints["camera"].audio = false;
@@ -164,21 +167,21 @@ function change_local_stream(type) {
         constraints["camera"].video = true;
     }
     if(type == "screen") { 
-        get_local_stream("screen");
+        get_local_stream("screen", on_success);
     } else if(type == "camera") { 
-        get_local_stream("camera");
+        get_local_stream("camera", on_success);
     }
     
 }
 
 //switch between cam streaming and screen sharing
-function toggle_local_stream(){
+function toggle_local_stream(on_success){
     if(current_stream == "camera"){
         log("toggle_local_stream() "+current_stream+" -> screen", 0);
-        change_local_stream("screen");
+        change_local_stream("screen", on_success);
     } else {
         log("toggle_local_stream() "+current_stream+" -> camera", 0);
-        change_local_stream("camera");
+        change_local_stream("camera", on_success);
     }
 }
 

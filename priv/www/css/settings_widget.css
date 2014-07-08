@@ -58,7 +58,7 @@
     padding-right: 20px;
     left: 50%;
     display: inline-block; /*not expand width*/
-    transition: all 500ms ease;
+    transition: background-color 500ms ease;
 }
 
 .button:hover {
@@ -89,19 +89,33 @@
 }
 
 .toggler {
-    background: green;
+    background: #999999;
     cursor: pointer;
     border: 1px solid #666666;
-    border-right-width: 25px;
     border-radius: 5px;
-    transition: all 500ms ease;
-    width: 20px;
-    height: 10px;
+    width: 60px;
+    height: 15px;
+    overflow: hidden;
 }
 
-.toggler.off {
-    background: red;
-    border-right-width: 1px;
-    border-left-width: 25px;
-    transition: all 500ms ease;
+.toggler_left, .toggler_right {
+    text-align: center;
+    height: 100%;
+    float: left;
+    overflow: hidden;
+    transition: width 500ms ease;
+    width: 0px;
+}
+.toggler_left {
+    background: #DDFFDD;
+    margin-right: 15px;
+}
+.toggler_right {
+    background: #FFDDDD;
+}
+.toggler_on {
+    width: 45px;
+}
+#audio_video_settings td {
+    padding-right: 10px;
 }

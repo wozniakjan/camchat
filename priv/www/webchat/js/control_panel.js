@@ -192,21 +192,38 @@ function init_settings_widgets() {
 
 //callbacks
 function media_open() {
+    log('media_open()', 3);
+    function process_change(toggler){
+        log('process_change()', 3);
+        if(toggler.context.id == 'stream_switch') {
+            toggle_local_stream();
+        }
+    }
     function draw_settings(user_id){
-        console.log("media_open() select_user: "+user_id);
+        log('draw_settings('+user_id+')', 3);
         $('.toggler').click(function(){
-            $(this).toggleClass('off');
+            if( !$(this).hasClass('disabled') ){
+                $(this).children().toggleClass('toggler_on');
+                process_change($(this));
+            }
         });
         if(user_id == "myself"){
-            //1. stream selection button and callbacks
+            //1. stream selection 
+            if(current_stream == "camera"){
+                $('#stream_switch > .toggler_left').toggleClass('toggler_on');
+            } else {
+                $('#stream_switch > .toggler_right').toggleClass('toggler_on');
+            }
             //2. recording video and audio
+            $('#record_switch > .toggler_right').toggleClass('toggler_on');
             //3. volume
             //4. directors cut
+            $('#auto_cut > .toggler_left').toggleClass('toggler_on');
         } else {
         }
     }
-    console.log("media_open()");
-    $('#select_user').children().remove().end().append('<option value="myself" selected="selected">my settings</option>');
+    $('#select_user').children().remove().end()
+        .append('<option value="myself" selected="selected">my settings</option>');
     for(var id in peer_name){
         $('#select_user').append('<option value="'+id+'">'+peer_name[id]+'</option>');
     };

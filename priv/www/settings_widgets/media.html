@@ -1,13 +1,39 @@
 <div>
     <div id='title'>audio &amp; video settings</div> 
     <select id='select_user' class='select_set'></select>
-    <table>
-        <tr><td>camera</td><td><div id="stream_switch" class="toggler"></div></td><td>screen</td></tr>
-        <tr><td>recording</td><td><div id="record_swith" class="toggler"></div></td></tr>
-    </table>
-    <table>
-        <tr><td>volume</td><td>X --------</td></tr>
-        <tr><td>auto cut</td><td><div id="record_swith" class="toggler"></div></td></tr>
+    <table id='audio_video_settings'>
+        <tr>
+            <td>stream</td>
+            <td>
+                <div id="stream_switch" class="toggler">
+                    <div class="toggler_left">camera</div>
+                    <div class="toggler_right">screen</div>
+                </div>
+            </td>
+        </tr>
+        <tr>
+            <td>recording</td>
+            <td>
+                <div id="record_switch" class="toggler disabled">
+                    <div class="toggler_left">yes</div>
+                    <div class="toggler_right">no</div>
+                </div>
+            </td>
+        </tr>
+        <tr><td>&nbsp;</td></tr>
+        <tr>
+            <td>volume</td>
+            <td>X --------</td>
+        </tr>
+        <tr>
+            <td>auto cut</td>
+            <td>
+                <div id="auto_cut" class="toggler disabled">
+                    <div class="toggler_left">yes</div>
+                    <div class="toggler_right">no</div>
+                </div>
+            </td>
+        </tr>
     </table>
 </div>
 

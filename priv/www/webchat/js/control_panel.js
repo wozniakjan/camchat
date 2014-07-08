@@ -215,18 +215,19 @@ function media_open() {
                 process_change($(this));
             }
         });
+        $('.toggler_on').removeClass('toggler_on');
         if(user_id == "myself"){
             //1. stream selection 
             if(current_stream == "camera"){
-                $('#stream_switch > .toggler_left').toggleClass('toggler_on');
+                $('#stream_switch > .toggler_left').addClass('toggler_on');
             } else {
-                $('#stream_switch > .toggler_right').toggleClass('toggler_on');
+                $('#stream_switch > .toggler_right').addClass('toggler_on');
             }
             //2. recording video and audio
-            $('#record_switch > .toggler_right').toggleClass('toggler_on');
+            $('#record_switch > .toggler_right').addClass('toggler_on');
             //3. volume
             //4. directors cut
-            $('#auto_cut > .toggler_left').toggleClass('toggler_on');
+            $('#auto_cut > .toggler_left').addClass('toggler_on');
         } else {
         }
     }

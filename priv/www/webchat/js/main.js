@@ -24,16 +24,16 @@ audio_worker.onmessage = function(event) {
 };
 
 function error_callback(error) {
+    var click_settings = '<div class="click_link" onclick="draw_settings_div(\'Audio & Video Settings\')">see settings</div>';
     if(error.name == "PermissionDeniedError") {
-        var click = '<div class="click_link" onclick="draw_settings_div(\'Audio & Video Settings\')">see settings</div>';
-        var hint = "did you allow your browser to use camera and mic?";        
-        show_message("Can't get audio & video", hint + click);
+        var hint = "did you allow your browser to use camera and mic?<br>";        
+        show_message("Can't get audio & video", hint + click_settings);
     } else if(error.name == "DevicesNotFoundError") {
-        var click = '<div class="click_link" onclick="draw_settings_div(\'Audio & Video Settings\')">see settings</div>';
-        var hint = "do you have any camera or mic connected?";
-        show_message("Can't get audio & video", hint + click);
+        var hint = "do you have any camera or mic connected?<br>";
+        show_message("Can't get audio & video", hint + click_settings);
     } else if(error.name == "InvalidStateError") {
-        show_message("Can't get audio & video", "are you connected via https?");
+        var hint = "are you connected via https?<br>";
+        show_message("Can't get audio & video", hint + click_settings);
     } else {
         console.log(error, 0);
     }
@@ -175,9 +175,11 @@ function show_message(text, hint) {
 
 //updates message window over the screen with text if is visible
 function update_message(text, hint) {
-    message = text;
-    if(hint) {message += "<br>" + hint};
-    $("#message_window > .description").html(message);
+    if(hint){
+        $("#message_window > .description").html('<b>'+text+'</b> <br>' + hint);
+    } else {
+        $("#message_window > .description").html(text);
+    }
     bring_to_front($('#message_window'));
 }
 

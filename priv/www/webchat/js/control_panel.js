@@ -76,9 +76,10 @@ function draw_settings_div(name) {
     settings_window.css('visibility','visible');
     settings_window.fadeIn("fast");
     $('#settings_window > .content').load(settings_widgets[name].url,
-            function() {settings_widgets[name].init_callback(); });
-    //pop front
-    bring_to_front(settings_window);
+            function() {
+                settings_widgets[name].init_callback(); 
+                bring_to_front(settings_window);
+            });
 }
 
 //emphasize the actie rollout item

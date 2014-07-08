@@ -8,6 +8,7 @@ var my_id;
 var audio_worker = new Worker("/webchat/js/audio_energy_worker.js");
 var number_of_peers = 0;
 var LOG_LEVEL = 9;
+var front_window;
 
 function log(string, priority) {
     if(priority < LOG_LEVEL) {
@@ -24,7 +25,9 @@ audio_worker.onmessage = function(event) {
 
 function error_callback(error) {
     if(error.name == "PermissionDeniedError") {
-        show_message("Can't get audio & video", "did you allow your browser to use camera and mic?");        
+        var click = '<div class="click_link" onclick="draw_settings_div(\'Audio & Video Settings\')">see settings</div>';
+        var hint = "did you allow your browser to use camera and mic?";        
+        show_message("Can't get audio & video", hint + click);
     } else if(error.name == "DevicesNotFoundError") {
         var click = '<div class="click_link" onclick="draw_settings_div(\'Audio & Video Settings\')">see settings</div>';
         var hint = "do you have any camera or mic connected?";
@@ -49,6 +52,18 @@ function send(json_msg){
 
 function send_audio_worker(msg){
     audio_worker.postMessage(msg);
+};
+
+//bring popups to front on click
+$('#settings_window, #message_window, #ask_password_window').click(function(){
+    bring_to_front($(this));
+});
+
+function bring_to_front(window_div) {
+    if( !window_div.is(front_window) ){
+        front_window = window_div;
+        window_div.parent().append(window_div);
+    }
 };
 
 sock.onopen = function() {
@@ -154,7 +169,7 @@ function negotiate_connection(remote_id, force){
 
 //shows message window over the screen with text until it is hidden
 function show_message(text, hint) {
-    $("#message_window").fadeIn("slow");
+    $('#message_window').fadeIn('slow');
     update_message(text, hint);
 }
 
@@ -163,6 +178,7 @@ function update_message(text, hint) {
     message = text;
     if(hint) {message += "<br>" + hint};
     $("#message_window > .description").html(message);
+    bring_to_front($('#message_window'));
 }
 
 //hide message window

@@ -26,7 +26,9 @@ function error_callback(error) {
     if(error.name == "PermissionDeniedError") {
         show_message("Can't get audio & video", "did you allow your browser to use camera and mic?");        
     } else if(error.name == "DevicesNotFoundError") {
-        show_message("Can't get audio & video", "do you have any camera or mic connected?");
+        var click = '<div class="click_link" onclick="draw_settings_div(\'Audio & Video Settings\')">see settings</div>';
+        var hint = "do you have any camera or mic connected?";
+        show_message("Can't get audio & video", hint + click);
     } else if(error.name == "InvalidStateError") {
         show_message("Can't get audio & video", "are you connected via https?");
     } else {
@@ -153,22 +155,20 @@ function negotiate_connection(remote_id, force){
 //shows message window over the screen with text until it is hidden
 function show_message(text, hint) {
     $("#message_window").fadeIn("slow");
-    message = text;
-    if(hint != undefined) message += "<br>" + hint;
-    $("#message_window > .description").html(message);
+    update_message(text, hint);
 }
 
 //updates message window over the screen with text if is visible
 function update_message(text, hint) {
     message = text;
-    if(hint != undefined) message += "<br>" + hint;
+    if(hint) {message += "<br>" + hint};
     $("#message_window > .description").html(message);
 }
 
 //hide message window
-function hide_message(text) {
+function hide_message(text, time) {
     $("#message_window > .description").html(text);
-    $("#message_window").fadeOut("slow");
+    $("#message_window").fadeOut(time);
 }
 
 //ask for password

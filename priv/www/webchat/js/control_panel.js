@@ -64,21 +64,26 @@ Settings_widget.prototype.match = function(string) {
 };
 
 //draws settings window according to sellected rollout item - settings widget
-function draw_settings_div() {
+function draw_active_settings_div() {
     $('#control_panel > input').blur();
     var name = $('.active_rollout_item').attr('id').replace('rollout_item_','');
+    draw_settings_div(name);
+};
+
+//draws settings window according to argument
+function draw_settings_div(name) {
     var settings_window = $('#settings_window');
     settings_window.css('visibility','visible');
     settings_window.fadeIn("fast");
     $('#settings_window > .content').load(settings_widgets[name].url,
             function() {settings_widgets[name].init_callback(); });
-};
+}
 
 //emphasize the actie rollout item
 function activate_rollout_item(div){
     if(active_rollout_item) {
         active_rollout_item.removeClass("active_rollout_item");
-        active_rollout_item=false;
+        active_rollout_item = false;
     }
     active_rollout_item = div;
     div.addClass("active_rollout_item")
@@ -88,7 +93,7 @@ function activate_rollout_item(div){
 function add_rollout_item(widget) {
     var rollout_item = $("<div>", {class:"rollout_item", id:"rollout_item_"+widget.name});
     rollout_item.mousemove(function(){activate_rollout_item($(this))});
-    rollout_item.click(function(){draw_settings_div()});
+    rollout_item.click(function(){draw_active_settings_div()});
     var description = $("<div>", {class: "description"});
     description.html(widget.description);
     rollout_item.html(widget.name);
@@ -161,7 +166,7 @@ function init_control_panel() {
     $("#control_panel > input").focus(on_focus);
     $("#control_panel > input").keyup(function(event){
         if(event.keyCode == 13) { //enter
-            draw_settings_div();
+            draw_active_settings_div();
         } else if(event.keyCode == 40) { //arrow down
             var ri = active_rollout_item;
             if(ri && ri.next().hasClass('rollout_item'))

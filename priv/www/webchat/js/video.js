@@ -213,7 +213,7 @@ function add_peer(id, name, browser_token) {
     $("#video_buff").append(new_peer);
     setup_peer_connection(id, video[0]);
     send_audio_worker({'get_main': 'audio'});
-    hide_message(name + " has connected");
+    hide_message(name + " has connected", 2000);
     peer_name[id] = name;
     number_of_peers += 1;
     send_audio_worker({'audio_energy': [0], 'id':id});

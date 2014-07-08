@@ -81,4 +81,12 @@ html, body {
     border-color: black;
 }
 
+.click_link {
+    padding-top: 10px;
+    border-bottom: 1px black dotted;
+    display: inline-block; /*not expand width*/
+}
 
+.click_link:hover {
+    cursor:pointer;
+}

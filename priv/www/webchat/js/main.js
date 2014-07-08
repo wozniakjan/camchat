@@ -59,7 +59,7 @@ sock.onmessage = function(e) {
     if(json_msg.audio_energy){
         send_audio_worker(json_msg);
     } else if(json_msg.peer_connected) {
-        add_peer(json_msg.peer_connected, json_msg.name);
+        add_peer(json_msg.peer_connected, json_msg.name, json_msg.browser_token);
     } else if(json_msg.connected){
         setup_videos(json_msg.user_id, json_msg.user_name, 
                 json_msg.peer_list, json_msg.connected);
@@ -83,6 +83,9 @@ sock.onmessage = function(e) {
         change_peer_stream(json_msg.id, json_msg.select_stream);
     } else if(json_msg.error == "wrong_password") {
         ask_password();
+    } else {
+        log("sock.onmessage() -- unknown message",2);
+        log(json_msg,2);
     }
 };
 

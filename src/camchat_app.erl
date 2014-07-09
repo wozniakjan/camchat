@@ -42,7 +42,7 @@ stop(_State) ->
 routes() ->
     SockjsPath = "/sockjs/camchat",
     SockjsState = sockjs_handler:init_state(list_to_binary(SockjsPath), 
-                       fun camchat_sockjs:camchat_sockjs/3, init, []),
+        fun camchat_sockjs:camchat_sockjs/3, init, []),
     [
         {'_', [
                 {"/", cowboy_static, {file, "priv/www/index.html"}},
@@ -55,7 +55,7 @@ routes() ->
                 {"/query/suggest_random_room", random_room_handler, []},
                 {"/query/suggest_empty_room", empty_room_handler, []},
                 {"/[...]", error_pages, []}
-              ]
+            ]
         }
     ].
 

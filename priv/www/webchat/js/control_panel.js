@@ -201,21 +201,24 @@ function init_settings_widgets() {
 //callbacks
 function media_open() {
     log('media_open()', 3);
-    function process_change(toggler){
-        log('process_change()', 3);
-        if(toggler.context.id == 'stream_switch') {
+    function process_change(div){
+        log('process_change(' + div.context.id + ')', 3);
+        if(div.context.id == 'stream_switch') {
             var on_success = function(){
                 log("media_open() -> on_success() callback");
-                toggler.children().toggleClass('toggler_on')
+                div.children().toggleClass('toggler_on')
             };
             toggle_local_stream(on_success);
-        } else if(toggler.context.id == 'auto_cut') {
-            if(toggler.children('.toggler_on').hasClass('toggler_left')){
+        } else if(div.context.id == 'auto_cut') {
+            if(div.children('.toggler_on').hasClass('toggler_left')){
                 send_audio_worker({'work': false});
             } else {
                 send_audio_worker({'work': true});
             }
-            toggler.children().toggleClass('toggler_on');
+            div.children().toggleClass('toggler_on');
+        } else if(div.context.id == 'record_switch'){
+            show_message("Not yet implemented");
+            div.children().toggleClass('toggler_on');
         }
     }
     function draw_settings(user_id){

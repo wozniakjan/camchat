@@ -2,6 +2,7 @@ var TIMEOUT = 1000;
 
 var current_audio_stream_key;
 var peer_importance = {};
+var work = true;
 
 /*
  * get max key and value from hashmap
@@ -35,11 +36,13 @@ function test_main_importance(max, epsilon) {
  * send id of new main video to the listener
  */
 function send_main(epsilon) {
-    var max = get_max(peer_importance);
-    //add check if has any
-    if(test_main_importance(max, epsilon)){
-        current_audio_stream_key = max.key;
-        postMessage({'set_main': max.key});
+    if(work){
+        var max = get_max(peer_importance);
+        //add check if has any
+        if(test_main_importance(max, epsilon)){
+            current_audio_stream_key = max.key;
+            postMessage({'set_main': max.key});
+        }
     }
 }
 
@@ -64,6 +67,9 @@ function parse_msg(msg) {
         delete peer_importance[data.peer_disconnected];
         if(current_audio_stream_key == data.peer_disconnected)
             current_audio_stream_key = undefined;
+    } else if(data.work != undefined) {
+        console.log("audio_worker "+data.work);
+        work = data.work;
     } else {
     }
 }

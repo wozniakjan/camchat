@@ -209,6 +209,13 @@ function media_open() {
                 toggler.children().toggleClass('toggler_on')
             };
             toggle_local_stream(on_success);
+        } else if(toggler.context.id == 'auto_cut') {
+            if(toggler.children('.toggler_on').hasClass('toggler_left')){
+                send_audio_worker({'work': false});
+            } else {
+                send_audio_worker({'work': true});
+            }
+            toggler.children().toggleClass('toggler_on');
         }
     }
     function draw_settings(user_id){

@@ -50,6 +50,7 @@ routes() ->
                 {"/:chatroom", cowboy_static, {file, "priv/www/room.html"}},
                 {"/webchat/js/[...]", cowboy_static, {dir, "priv/www/webchat/js/"}},
                 {"/webchat/css/[...]", cowboy_static, {dir, "priv/www/css/"}},
+                {"/webchat/font/[...]", cowboy_static, {dir, "priv/www/font/"}},
                 {"/webchat/images/[...]", cowboy_static, {dir, "priv/www/images/"}},
                 {"/settings_widgets/[...]", cowboy_static, {dir, "priv/www/settings_widgets/"}},
                 {"/query/suggest_random_room", random_room_handler, []},

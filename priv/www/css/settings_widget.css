@@ -17,30 +17,33 @@
     left: 50%;
     margin-top: -60px;
     margin-left: -140px;
-    width: 240px;
-    padding: 20px;
+    width: 280px;
+}
+#ask_password_window {
+    padding-top: 10px;
 }
 #ask_password_window input {
     padding: 2px;
     margin: 10px;
 }
 #settings_window {
-    max-height: 80%;
     top: 10%;
     left: 15%;
-    padding: 20px;
-    padding-top: 5px;
-    padding-bottom: 5px;
     visibility: hidden;
 }
 
-#message_window .description {
+#message_window > .description {
     padding-bottom: 10px;
+    padding-left: 10px;
+    padding-right: 10px;
 }
 
 #settings_window .content {
     width: 450px;
     text-align: left;
+    padding-left: 20px;
+    padding-right: 20px;
+    padding-bottom: 5px;
 }
 #settings_window .content {
     border-width: 1px;
@@ -54,6 +57,7 @@
     border-radius: 5px;
     padding: 2px;
     margin: 3px;
+    margin-bottom: 10px;
     padding-left: 20px;
     padding-right: 20px;
     left: 50%;

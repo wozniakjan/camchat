@@ -7,10 +7,11 @@ html, body {
 }
 
 #screen {
-    height: 99%;
-    width: 99%;
+    height: 100%;
+    width: 100%;
     padding: 0px;
     margin: 0px;
+    border: 0px;
     position: relative;
 }
 
@@ -23,7 +24,7 @@ html, body {
 }
 
 #main_video {
-    height: 95%;
+    height: 100%;
     width: 95%;
     text-align: center;
 }
@@ -92,5 +93,11 @@ html, body {
 }
 
 .click_link:hover {
-    cursor:pointer;
+    cursor: pointer;
+}
+
+.draggable {
+    height: 10px;
+    width: 100%;
+    cursor: move;
 }

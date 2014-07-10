@@ -23,6 +23,35 @@ audio_worker.onmessage = function(event) {
     }
 };
 
+$(document).ready(function() {
+    var target = undefined;
+    var x, y;
+
+    $('.draggable').mousedown(function(e) {
+        target = $(this).parent()
+        if(e.offsetX==undefined){
+            x = e.pageX-target.offset().left;
+            y = e.pageY-target.offset().top;
+        }else{
+            x = e.offsetX;
+            y = e.offsetY;
+        };
+    });
+
+    $('body').mouseup(function(e) {
+        target = undefined;
+    });
+
+    $('body').mousemove(function(e) {
+        if (target) {
+            target.offset({
+                top: e.pageY  - y,
+                left: e.pageX - x
+            });
+        };     
+    });
+
+});
 function error_callback(error) {
     var click_settings = '<div class="click_link" onclick="draw_settings_div(\'Audio & Video Settings\')">see settings</div>';
     if(error.name == "PermissionDeniedError") {
@@ -55,7 +84,7 @@ function send_audio_worker(msg){
 };
 
 //bring popups to front on click
-$('#settings_window, #message_window, #ask_password_window').click(function(){
+$('#settings_window, #message_window, #ask_password_window').mousedown(function(){
     bring_to_front($(this));
 });
 

@@ -77,8 +77,8 @@ function add_my_media(media_type, on_success) {
                     attachMediaStream(video_elem, local_stream[media_type]);
                     video_elem.play();
                     // send to peers
-                    for(i in peer_connection) {
-                        peer_connection[i].addStream(local_stream[media_type]);
+                    for(i in peer) {
+                        peer[i].connection.addStream(local_stream[media_type]);
                         negotiate_connection(i, true);
                     }
                     current_stream = media_type;
@@ -208,13 +208,13 @@ function add_peer(id, name, browser_token) {
         peer_attr.muted = "muted";
     }
     var video = $("<video>", peer_attr);
+    peer[id] = {'name': name, 'video': video[0], 'label': label, 'attr': peer_attr};
     new_peer.append(video);
     new_peer.append(label);
     $("#video_buff").append(new_peer);
     setup_peer_connection(id, video[0]);
     send_audio_worker({'get_main': 'audio'});
     hide_message(name + " has connected", 2000);
-    peer_name[id] = name;
     number_of_peers += 1;
     send_audio_worker({'audio_energy': [0], 'id':id});
     return video[0];
@@ -222,16 +222,13 @@ function add_peer(id, name, browser_token) {
 
 //when peer gets disconnected, remove his video div
 function remove_peer(id) {
-    peer_connection[id] = null;
     send_audio_worker({'peer_disconnected': id});
     if( $("#main_video").attr("peer_id") == id ) {
         $("#main_video").attr("peer_id", "");
         $("#main_video > .big_video").remove();
     }
     $("#peer"+id).hide(1000, function(){$(this).remove();});
-    delete peer_connection[id];
-    delete peer_name[id];
-    //TODO: remove from active settings widget
+    delete peer[id];
 
     number_of_peers -= 1;
     if(number_of_peers == 0){
@@ -240,8 +237,8 @@ function remove_peer(id) {
 }
 
 //returns stream by peer_id and stream_id
-function get_stream_by_id(peer, id) {
-    var streams = peer_connection[peer].getRemoteStreams();
+function get_stream_by_id(peer_id, id) {
+    var streams = peer[peer_id].connection.getRemoteStreams();
     for(var i in streams){
         if(streams[i].id == id){
             return streams[i];
@@ -252,8 +249,8 @@ function get_stream_by_id(peer, id) {
 
 function toggle_peer_stream(peer_id, on_success) {
     log("toggle_peer_stream("+peer_id+")", 1);
-    var streams = peer_connection[peer_id].getRemoteStreams();
-    var id= peer_last_change_stream[peer_id];
+    var streams = peer[peer_id].connection.getRemoteStreams();
+    var id= peer[id].last_change_stream;
     var new_stream = undefined;
     for(var i in streams){
         //select different stream since we support only 2
@@ -262,7 +259,7 @@ function toggle_peer_stream(peer_id, on_success) {
         }
     }
     if(new_stream){
-        if(peer_stream_name[user_id] == 'camera'){
+        if(peer[user_id].stream_name == 'camera'){
             change_peer_stream(peer_id, new_stream, 'screen');
         } else {
             change_peer_stream(peer_id, new_stream, 'camera');
@@ -277,7 +274,8 @@ function toggle_peer_stream(peer_id, on_success) {
 function change_peer_stream(peer_id, stream_id, stream_type){
     log("change_peer_stream(" + peer_id + ", " + stream_id+")", 1);
     var selected_remote_stream = get_stream_by_id(peer_id, stream_id);
-    peer_last_change_stream[peer_id] = stream_id;
+
+    peer[peer_id].last_change_stream = stream_id;
     if(selected_remote_stream != undefined) {
         var current_main = $("#main_video").attr("peer_id");
         var video_elem = undefined;
@@ -288,7 +286,7 @@ function change_peer_stream(peer_id, stream_id, stream_type){
         }
         attachMediaStream(video_elem, selected_remote_stream);
         video_elem.play();
-        peer_stream_name[peer_id] = stream_type; 
+        peer[peer_id].stream_name = stream_type;
     } 
 }
 
@@ -342,12 +340,12 @@ function setup_videos(id, user_name, peer_list, type){
         } else{
             $(this).attr("size",Math.max($(this).val().length,1))}
     });
+    update_message("Waiting for others...");
     if(type == 'existing_room') {
         $.each(peer_list, function(peer_id, attr) {
             add_peer(peer_id, attr.user_name, attr.browser_token);
         });
     }
-    update_message("Waiting for others...");
     //hide curtain
     log("setup_videos() hide curtain", 1);
     $("#curtain").fadeOut("slow");
@@ -356,6 +354,6 @@ function setup_videos(id, user_name, peer_list, type){
 
 //change the name label assigned to specific id
 function change_name(name, id){
-    peer_name[id] = name;
+    peer[id].name = name;
     $("#peer"+id+" > .label").html(name);
 }

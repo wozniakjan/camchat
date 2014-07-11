@@ -248,10 +248,10 @@ function media_open() {
     }
     function draw_user_settings(user_id){
         //1. stream selection
-        if(peer_connection[user_id].getRemoteStreams().length < 2){
+        if(peer[user_id].connection.getRemoteStreams().length < 2){
             $('#stream_switch').addClass('disabled');
         }
-        if(peer_stream_name[user_id] == "camera"){
+        if(peer[user_id].stream_name == "camera"){
             $('#stream_switch > .toggler_left').addClass('toggler_on');
         } else {
             $('#stream_switch > .toggler_right').addClass('toggler_on');
@@ -282,8 +282,8 @@ function media_open() {
     }
     $('#select_user').children().remove().end()
         .append('<option value="myself" selected="selected">my settings</option>');
-    for(var id in peer_name){
-        $('#select_user').append('<option value="'+id+'">'+peer_name[id]+'</option>');
+    for(var id in peer){
+        $('#select_user').append('<option value="'+id+'">'+peer[id].name+'</option>');
     };
     var select_user = $('#select_user').chosen({disable_search_threshold: 10, width: '200px'});
     select_user.change(function(){ draw_settings($(this).val()); });

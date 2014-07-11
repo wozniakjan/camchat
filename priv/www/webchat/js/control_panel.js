@@ -221,6 +221,37 @@ function media_open() {
             div.children().toggleClass('toggler_on');
         }
     }
+    function draw_my_settings(){
+        //1. stream selection 
+        if(current_stream == "camera"){
+            $('#stream_switch > .toggler_left').addClass('toggler_on');
+        } else {
+            $('#stream_switch > .toggler_right').addClass('toggler_on');
+        }
+        //2. recording video & audio
+        $('#record_switch > .toggler_right').addClass('toggler_on');
+        $('#record_switch').addClass('disabled');
+        //3. volume
+        $('#volume').addClass('disabled');
+        //4. directors cut
+        $('#auto_cut > .toggler_left').addClass('toggler_on');
+    }
+    function draw_user_settings(user_id){
+        //1. stream selection
+        if(peer_connection[user_id].getRemoteStreams() > 1){
+            //stream switching
+        } else {
+            $('#stream_switch').addClass('disabled');
+        }
+        //2. recording video & audio
+        $('#record_switch > .toggler_right').addClass('toggler_on');
+        $('#record_switch').addClass('disabled');
+        //3. volume
+        $('#volume').addClass('disabled');
+        //4. directors cut
+        $('#auto_cut > .toggler_left').addClass('toggler_on');
+        $('#auto_cut').addClass('disabled');
+    }
     function draw_settings(user_id){
         log('draw_settings('+user_id+')', 3);
         $('.toggler').mousedown(function(){
@@ -229,19 +260,11 @@ function media_open() {
             }
         });
         $('.toggler_on').removeClass('toggler_on');
+        $('.disabled').removeClass('disabled');
         if(user_id == "myself"){
-            //1. stream selection 
-            if(current_stream == "camera"){
-                $('#stream_switch > .toggler_left').addClass('toggler_on');
-            } else {
-                $('#stream_switch > .toggler_right').addClass('toggler_on');
-            }
-            //2. recording video and audio
-            $('#record_switch > .toggler_right').addClass('toggler_on');
-            //3. volume
-            //4. directors cut
-            $('#auto_cut > .toggler_left').addClass('toggler_on');
+            draw_my_settings();
         } else {
+            draw_user_settings(user_id);
         }
     }
     $('#select_user').children().remove().end()

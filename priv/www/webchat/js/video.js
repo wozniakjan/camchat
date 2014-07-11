@@ -5,6 +5,7 @@ constraints["camera"] = {video: true, audio: true};
 constraints["screen"] = {video: {mandatory: { chromeMediaSource: 'screen'}}, audio: false};
 var current_stream;
 var stream_id = {};
+var gainNode = null;
 
 //filter for automatic directors cut among peers in conference
 //according to audio energy
@@ -44,19 +45,42 @@ function send_ready(){
     send(msg);
 }
 
+// audio processing
+// -> gain -> audio_worker -> destination
 function attach_audio_processing(media_type) {
     log("attach_audio_processing("+media_type+")", 1);
     if(constraints[media_type].audio){
         // For audio processing
         var audioContext = new AudioContext();
         // Create an AudioNode from the stream.
-        var mediaStreamSource = audioContext.createMediaStreamSource( local_stream[media_type] );
+        var mediaStreamSource = audioContext.createMediaStreamSource(local_stream[media_type]);
         // Script processor
         var scriptProcessor = audioContext.createScriptProcessor(AUDIO_BUFFER_SIZE, 1, 1);
+        gainNode = audioContext.createGain();
         scriptProcessor.onaudioprocess = audio_filter;
         // Connect it to the destination to hear yourself (or any other node for processing!)
-        mediaStreamSource.connect( scriptProcessor );
+        mediaStreamSource.connect( gain );
+        gain.connect( scriptProcessor );
         scriptProcessor.connect( audioContext.destination );
+    }
+}
+
+//sets video volume to all peers
+function set_volume(val) {
+    $('video').each(function() {
+        this.volume = val;
+    });
+}
+
+//set peer video volume
+function set_peer_volume(peer_id, val) {
+    $('#peer'+peer_id).volume = val;
+}
+
+//sets my microfon gain
+function set_gain(val){
+    if(gainNode){
+        gainNode.gain.value = val;
     }
 }
 

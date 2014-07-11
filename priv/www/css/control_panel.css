@@ -33,6 +33,10 @@
     overflow: hidden;
     z-index: 10;
     border-radius: 3px;
+    border-style: solid;
+    border-width: 1px;
+    border-color: black;
+    box-shadow:0px 0px 10px #000000; 
 }
 #rollout_menu:hover {
     cursor:pointer;

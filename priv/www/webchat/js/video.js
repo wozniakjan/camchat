@@ -82,7 +82,7 @@ function add_my_media(media_type, on_success) {
                         negotiate_connection(i, true);
                     }
                     current_stream = media_type;
-                    send({'select_stream': stream_id[media_type]});
+                    send({'select_stream': stream_id[media_type], 'stream_name':media_type});
                     if(on_success){ on_success();}
                 }, 
                 error_callback);
@@ -148,7 +148,7 @@ function get_local_stream(type, on_success) {
                 attachMediaStream(video_elem, local_stream[type]);
                 video_elem.play();
                 //notify others through server
-                send({'select_stream': stream_id[type]});
+                send({'select_stream': stream_id[type], 'stream_name':type});
                 current_stream = type;
                 if(on_success) {on_success();};
             }
@@ -250,9 +250,31 @@ function get_stream_by_id(peer, id) {
     return undefined;
 }
 
+function toggle_peer_stream(peer_id, on_success) {
+    log("toggle_peer_stream("+peer_id+")", 1);
+    var streams = peer_connection[peer_id].getRemoteStreams();
+    var id= peer_last_change_stream[peer_id];
+    var new_stream = undefined;
+    for(var i in streams){
+        //select different stream since we support only 2
+        if(streams[i].id != id){
+            new_stream = streams[i];
+        }
+    }
+    if(new_stream){
+        if(peer_stream_name[user_id] == 'camera'){
+            change_peer_stream(peer_id, new_stream, 'screen');
+        } else {
+            change_peer_stream(peer_id, new_stream, 'camera');
+        }
+        on_success(); 
+    } else {
+        log("toggle_peer_stream() failed",1);
+    }
+}
 
 //switch stream of selected per
-function change_peer_stream(peer_id, stream_id){
+function change_peer_stream(peer_id, stream_id, stream_type){
     log("change_peer_stream(" + peer_id + ", " + stream_id+")", 1);
     var selected_remote_stream = get_stream_by_id(peer_id, stream_id);
     peer_last_change_stream[peer_id] = stream_id;
@@ -266,6 +288,7 @@ function change_peer_stream(peer_id, stream_id){
         }
         attachMediaStream(video_elem, selected_remote_stream);
         video_elem.play();
+        peer_stream_name[peer_id] = stream_type; 
     } 
 }
 

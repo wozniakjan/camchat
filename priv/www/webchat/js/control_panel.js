@@ -201,24 +201,34 @@ function init_settings_widgets() {
 //callbacks
 function media_open() {
     log('media_open()', 3);
-    function process_change(div){
-        log('process_change(' + div.context.id + ')', 3);
-        if(div.context.id == 'stream_switch') {
-            var on_success = function(){
-                log("media_open() -> on_success() callback");
-                div.children().toggleClass('toggler_on')
-            };
-            toggle_local_stream(on_success);
-        } else if(div.context.id == 'auto_cut') {
-            if(div.children('.toggler_on').hasClass('toggler_left')){
-                send_audio_worker({'work': false});
-            } else {
-                send_audio_worker({'work': true});
+    function process_change(user_id, div){
+        log('process_change('+user_id+', '+div.context.id+')', 3);
+        if(user_id == 'myself'){
+            if(div.context.id == 'stream_switch') {
+                var on_success = function(){
+                    log("media_open() -> on_success() callback");
+                    div.children().toggleClass('toggler_on')
+                };
+                toggle_local_stream(on_success);
+            } else if(div.context.id == 'auto_cut') {
+                if(div.children('.toggler_on').hasClass('toggler_left')){
+                    send_audio_worker({'work': false});
+                } else {
+                    send_audio_worker({'work': true});
+                }
+                div.children().toggleClass('toggler_on');
+            } else if(div.context.id == 'record_switch'){
+                show_message("Not yet implemented");
+                div.children().toggleClass('toggler_on');
             }
-            div.children().toggleClass('toggler_on');
-        } else if(div.context.id == 'record_switch'){
-            show_message("Not yet implemented");
-            div.children().toggleClass('toggler_on');
+        } else {
+            if(div.context.id == 'stream_switch') {
+                var on_success = function(){
+                    log("media_open() -> on_success() callback");
+                    div.children().toggleClass('toggler_on')
+                };
+                toggle_peer_stream(user_id, on_success);
+            }
         }
     }
     function draw_my_settings(){
@@ -238,10 +248,13 @@ function media_open() {
     }
     function draw_user_settings(user_id){
         //1. stream selection
-        if(peer_connection[user_id].getRemoteStreams() > 1){
-            //stream switching
-        } else {
+        if(peer_connection[user_id].getRemoteStreams().length < 2){
             $('#stream_switch').addClass('disabled');
+        }
+        if(peer_stream_name[user_id] == "camera"){
+            $('#stream_switch > .toggler_left').addClass('toggler_on');
+        } else {
+            $('#stream_switch > .toggler_right').addClass('toggler_on');
         }
         //2. recording video & audio
         $('#record_switch > .toggler_right').addClass('toggler_on');
@@ -254,9 +267,9 @@ function media_open() {
     }
     function draw_settings(user_id){
         log('draw_settings('+user_id+')', 3);
-        $('.toggler').mousedown(function(){
+        $('.toggler').unbind('mousedown').mousedown(function(){
             if( !$(this).hasClass('disabled') ){
-                process_change($(this));
+                process_change(user_id, $(this));
             }
         });
         $('.toggler_on').removeClass('toggler_on');

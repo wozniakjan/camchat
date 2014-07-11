@@ -3,6 +3,7 @@ var sock = new SockJS('/sockjs/camchat');
 var peer_connection = {};
 var peer_name = {};
 var peer_last_change_stream = {};
+var peer_stream_name = {};
 var local_stream = {};
 var my_id;
 var audio_worker = new Worker("/webchat/js/audio_energy_worker.js");
@@ -126,7 +127,7 @@ sock.onmessage = function(e) {
     } else if(json_msg.init_stream) {
         init_video(json_msg.init_stream);
     } else if(json_msg.select_stream) {
-        change_peer_stream(json_msg.id, json_msg.select_stream);
+        change_peer_stream(json_msg.id, json_msg.select_stream, json_msg.stream_name);
     } else if(json_msg.error == "wrong_password") {
         ask_password();
     } else {
@@ -181,7 +182,7 @@ function setup_peer_connection(id, remote_video) {
         pc.addStream(local_stream[i]);
     }
     negotiate_connection(id);
-    send({'select_stream': stream_id[current_stream]});
+    send({'select_stream': stream_id[current_stream], 'stream_name':current_stream});
 }
 
 function negotiate_connection(remote_id, force){

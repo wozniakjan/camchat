@@ -131,7 +131,7 @@ function try_blur_rollout_menu(i) {
 
 //init function
 function init_control_panel() {
-    $('.button').click(function(){ 
+    $('.button').mousedown(function(){ 
         var settings_window = $(this).parent();
         settings_window.fadeOut("fast")});
     init_settings_widgets();
@@ -223,7 +223,7 @@ function media_open() {
     }
     function draw_settings(user_id){
         log('draw_settings('+user_id+')', 3);
-        $('.toggler').click(function(){
+        $('.toggler').mousedown(function(){
             if( !$(this).hasClass('disabled') ){
                 process_change($(this));
             }

@@ -59,8 +59,8 @@ function attach_audio_processing(media_type) {
         gainNode = audioContext.createGain();
         scriptProcessor.onaudioprocess = audio_filter;
         // Connect it to the destination to hear yourself (or any other node for processing!)
-        mediaStreamSource.connect( gain );
-        gain.connect( scriptProcessor );
+        mediaStreamSource.connect( gainNode );
+        gainNode.connect( scriptProcessor );
         scriptProcessor.connect( audioContext.destination );
     }
 }

@@ -144,12 +144,14 @@
     border: solid;
     border-width: 1px;
     border-color: #dadada;
-    color: #dadada;
     border-radius: 5px;
     transition: all 750ms ease;
+    color: #aaaaaa;
+    color: rgba(200, 200, 200, 0.5);
 }
-.detail_description input:hover {
+.detail_description input:hover, .detail_description input:focus {
     box-shadow:0px 0px 10px #FFFFFF; 
+    color: #dadada;
 }
 
 #chat_with_friends input {
@@ -171,7 +173,7 @@
     vertical-align: middle;
 }
 
-.middle_align div{
+.middle_align > div{
     width: 60%;
     max-width: 650px;
     min-width: 420px;

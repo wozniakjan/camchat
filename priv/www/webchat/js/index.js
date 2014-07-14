@@ -63,13 +63,6 @@ function write_random(elem_input) {
     }
 }
 
-$(window).scroll(function(){
-    $(".room_name").each(function() {
-        if(is_scroll_visible($(this))){
-            write_random($(this));
-        }
-    })
-});
 
 $(document).ready (function(){
     var room_name = $(".room_name");
@@ -83,5 +76,13 @@ $(document).ready (function(){
     password.blur(function() {if ($(this).val('')) {$(this).val('set..');}});
     password.focus(function() {if ($(this).val('set..')) {$(this).val('');}});
     password.change(function() {$(this).val($(this).val().replace(/\W/g, ''))});
+    
+    $(window).scroll(function(){
+        $(".room_name").each(function() {
+            if(is_scroll_visible($(this))){
+                write_random($(this));
+            }
+        })
+    });
 });
 

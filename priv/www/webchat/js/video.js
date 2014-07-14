@@ -274,7 +274,7 @@ function get_stream_by_id(peer_id, id) {
 function toggle_peer_stream(peer_id, on_success) {
     log("toggle_peer_stream("+peer_id+")", 1);
     var streams = peer[peer_id].connection.getRemoteStreams();
-    var id= peer[id].last_change_stream;
+    var id = peer[peer_id].last_change_stream;
     var new_stream = undefined;
     for(var i in streams){
         //select different stream since we support only 2
@@ -283,10 +283,10 @@ function toggle_peer_stream(peer_id, on_success) {
         }
     }
     if(new_stream){
-        if(peer[user_id].stream_name == 'camera'){
-            change_peer_stream(peer_id, new_stream, 'screen');
+        if(peer[peer_id].stream_name == 'camera'){
+            change_peer_stream(peer_id, new_stream.id, 'screen');
         } else {
-            change_peer_stream(peer_id, new_stream, 'camera');
+            change_peer_stream(peer_id, new_stream.id, 'camera');
         }
         on_success(); 
     } else {

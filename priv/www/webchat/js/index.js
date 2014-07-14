@@ -1,4 +1,4 @@
-var slow_show_lock = 0;
+var slow_show_lock = false;
 
 function join_room(default_type) {
     var address = "";
@@ -50,23 +50,24 @@ function is_scroll_visible(elem) {
             && (elem_bottom <= view_bottom) &&  (elem_top >= view_top) );
 }
 
-function slow_show(elem, message, i, lock_i) {
-    if(lock_i == 0){
-        if(i < message.length) {
-            elem.val(elem.val() + message[i++]);
-            setTimeout(function() {slow_show(elem, message, i, lock_i)},100);
-        } else {
-            slow_show_lock--;
-        }
+function slow_show(elem, message, i) {
+    if(i < message.length) {
+        elem.val(elem.val() + message[i++]);
+        setTimeout(function() {slow_show(elem, message, i)},100);
     } else {
-        slow_show_lock--;
+        slow_show_lock = false;
     }
 }
 
 function write_random(elem_input) {
     if(elem_input.val() == '' && !elem_input.hasClass("active")){
         $("<div>").load("/query/suggest_empty_room", 
-                function (rand){slow_show(elem_input,rand,0,slow_show_lock++);})
+                function (rand){
+                    if(!slow_show_lock){
+                        slow_show_lock = true;
+                        slow_show(elem_input,rand,0);
+                    }
+                })
     }
 }
 

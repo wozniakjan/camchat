@@ -81,8 +81,8 @@ $(document).ready (function(){
     room_name.focus(function() {$(this).addClass("active"), $(this).val('');});
     room_name.change(function() {this.value = this.value.replace(/\W/g, '');});
     var password = $(".password");
-    password.blur(function() {if ($(this).val('')) {$(this).val('set..');}});
-    password.focus(function() {if ($(this).val('set..')) {$(this).val('');}});
+    password.blur(function() {if ($(this).val('')) {$(this).val('set password...');}});
+    password.focus(function() {if ($(this).val('set password...')) {$(this).val('');}});
     password.change(function() {$(this).val($(this).val().replace(/\W/g, ''))});
     
     $(window).scroll(function(){

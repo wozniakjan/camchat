@@ -8,6 +8,12 @@ var number_of_peers = 0;
 var LOG_LEVEL = 9;
 var front_window;
 
+//drag & drop
+var drag = undefined;
+var slide = undefined;
+var x, y;
+
+
 function log(string, priority) {
     if(priority < LOG_LEVEL) {
         console.log(string);
@@ -22,11 +28,8 @@ audio_worker.onmessage = function(event) {
 };
 
 $(document).ready(function() {
-    var target = undefined;
-    var x, y;
-
     $('.draggable').mousedown(function(e) {
-        target = $(this).parent()
+        drag = $(this).parent()
         if(e.offsetX==undefined){
             x = e.pageX-target.offset().left;
             y = e.pageY-target.offset().top;
@@ -37,16 +40,19 @@ $(document).ready(function() {
     });
 
     $('body').mouseup(function(e) {
-        target = undefined;
+        drag = undefined;
+        slide = undefined;
     });
-
     $('body').mousemove(function(e) {
-        if (target) {
-            target.offset({
+        if (drag) {
+            drag.offset({
                 top: e.pageY  - y,
                 left: e.pageX - x
             });
-        };     
+        } 
+        if(slide) {
+            change_slider(slide, e);
+        }
     });
 
 });

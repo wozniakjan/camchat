@@ -92,6 +92,21 @@
     border-color: #006600;
 }
 
+.slider {
+    cursor: pointer;
+    border: 1px solid #666666;
+    border-radius: 5px;
+    width: 90px;
+    height: 15px;
+    background: #FFDDDD;
+    overflow: hidden;
+}
+.slider .control {
+    border-right: 1px solid #666666;
+    height: 15px;
+    background: #DDFFDD;
+}
+
 .toggler {
     background: #999999;
     cursor: pointer;

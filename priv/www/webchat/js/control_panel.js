@@ -198,6 +198,23 @@ function init_settings_widgets() {
             test_open); 
 };
 
+//set slider and change its effective value
+function change_slider(slider, e) {
+    slide = slider;
+    var left = slide.parent().offset().left;
+    var right = left+slide.parent().width();
+    var x = Math.min(right, Math.max(left, e.pageX));
+    slide.width(x - left);
+    var val = (x-left) / (right-left);
+    console.log(val);
+    //TODO: change volume attribute according to slider
+}
+
+//set slider width
+function set_slider(slider, val) {
+    slider.width(slider.parent().width()*val);
+}
+
 //callbacks
 function media_open() {
     log('media_open()', 3);
@@ -242,7 +259,8 @@ function media_open() {
         $('#record_switch > .toggler_right').addClass('toggler_on');
         $('#record_switch').addClass('disabled');
         //3. volume
-        $('#volume').addClass('disabled');
+        set_slider($('#volume > .control'), 0.7);
+        set_slider($('#microphone > .control'), 0.5);
         //4. directors cut
         $('#auto_cut > .toggler_left').addClass('toggler_on');
     }
@@ -260,7 +278,8 @@ function media_open() {
         $('#record_switch > .toggler_right').addClass('toggler_on');
         $('#record_switch').addClass('disabled');
         //3. volume
-        $('#volume').addClass('disabled');
+        set_slider($('#volume > .control'), 0.3);
+        $('#microphone').addClass('disabled');
         //4. directors cut
         $('#auto_cut > .toggler_left').addClass('toggler_on');
         $('#auto_cut').addClass('disabled');
@@ -274,6 +293,11 @@ function media_open() {
         });
         $('.toggler_on').removeClass('toggler_on');
         $('.disabled').removeClass('disabled');
+        $('.slider').unbind('mousedown').mousedown(function(e) {
+            if( !$(this).hasClass('disabled') ){
+                change_slider($(this).children('.control'), e);
+            }
+        });
         if(user_id == "myself"){
             draw_my_settings();
         } else {

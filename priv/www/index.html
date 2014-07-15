@@ -119,16 +119,22 @@
         <div class="middle_align">
             <div class="logo"></div>
 
-            <div>
+            <div class="padded">
                 share the link and talk to each other
             </div>
-            <div>
-                <input class='room_name' maxlength="30">
-                <input class='password' 
-                maxlength="20"
-                value='set password...'>
+            <div class="middle_align padded">
+                <div class='input_wrap'>
+                    <input class='room_name' maxlength="30">
+                    <div class='input_label'>room</div>
+                </div>
+                <div class='input_wrap'>
+                    <input class='password' 
+                    maxlength="20"
+                    value='set password...'>
+                    <div class='input_label'>pass</div>
+                </div>
             </div>
-            <div id='room_box' class='button_box'>
+            <div id='room_box' class='button_box padded'>
                 <button onclick="join_room('camera')">join this room</button>
             </div>
         </div>
@@ -139,10 +145,10 @@
         <div class="middle_align">
             <div class="logo"></div>
 
-            <div>
+            <div class="padded">
                 talk to random people
             </div>
-            <div id='random_room_box' class='button_box'>
+            <div id='random_room_box' class='button_box padded'>
                 <button onclick="random_room()">join random room</button>
                 <button onclick="empty_room('camera')">create random room</button>
             </div>
@@ -154,21 +160,27 @@
         <div class="middle_align">
             <div class="logo"></div>
 
-            <div>
-                <div class="flag">
+            <div class="padded middle_align">
+                <div class="flag padded">
                     chrome://flags/#enable-usermedia-screen-capture
                 </div>
                 <div>
                     don't forget to check the flag
                 </div>
             </div>
-            <div>
-                <input class='room_name' maxlength="30">
-                <input class='password' 
-                maxlength="20"
-                value='set password...'>
+            <div class="middle_align padded">
+                <div class='input_wrap'>
+                    <input class='room_name' maxlength="30">
+                    <div class='input_label'>room</div>
+                </div>
+                <div class='input_wrap'>
+                    <input class='password' 
+                    maxlength="20"
+                    value='set password...'>
+                    <div class='input_label'>pass</div>
+                </div>
             </div>
-            <div class='button_box'>
+            <div class='button_box padded'>
                 <button onclick="join_room('screen')">join this room</button>
             </div>
         </div>

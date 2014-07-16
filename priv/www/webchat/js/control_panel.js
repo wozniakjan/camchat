@@ -212,7 +212,16 @@ function change_slider(slider, e, user_id) {
     slide.width(x - left);
     var val = (x-left) / (right-left);
     console.log(val);
-    set_volume(slider_user_id, val);
+    switch(slider.parent()[0].id){
+        case 'volume':
+            set_volume(slider_user_id, val);
+            break;
+        case 'microphone':
+            set_gain(val);
+            break;
+        default:
+            log("setting wrong slider",3);
+    }
 }
 
 //set slider width

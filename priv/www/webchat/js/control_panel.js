@@ -57,7 +57,7 @@ Settings_widget.prototype.match = function(string) {
 
     //match string to keywords and save results to last_matched_keywords
     for(var i=0; i<this.keywords.length; i++) {
-        var match = str_match(this.keywords[i], string) + i; 
+        var match = str_match(this.keywords[i], string); 
         this.last_matched_keywords[i] = {key: this.keywords[i], val: match};
     }
     //sort from min to max

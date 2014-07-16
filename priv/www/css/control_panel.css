@@ -17,6 +17,9 @@
     width: 150px;
     transition: all 700ms ease;
 }
+#control_panel:hover {
+    z-index: 11;
+}
 #control_panel:hover input {
     opacity: 1.0;
     width: 200px;

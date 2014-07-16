@@ -6,6 +6,7 @@ constraints["screen"] = {video: {mandatory: { chromeMediaSource: 'screen'}}, aud
 var current_stream;
 var stream_id = {};
 var gainNode = null;
+var master_volume = 1.0;
 
 //filter for automatic directors cut among peers in conference
 //according to audio energy
@@ -65,22 +66,53 @@ function attach_audio_processing(media_type) {
     }
 }
 
-//sets video volume to all peers
-function set_volume(val) {
-    $('video').each(function() {
-        this.volume = val;
-    });
+//returns video element by peer id
+function get_video_div(peer_id) {
+    if( $("#main_video").attr("peer_id") == peer_id ) {
+        return $("#main_video > video")[0];
+    } else {
+        return $('#peer'+peer_id+' > video')[0];
+    }
 }
 
 //set peer video volume
-function set_peer_volume(peer_id, val) {
-    $('#peer'+peer_id).volume = val;
+function set_volume(peer_id, val) {
+    log("set_volume("+peer_id+", "+val+")",3);
+    if(peer_id == 'myself'){
+        $('video').each(function() {
+            this.volume = val;
+        });
+        master_volume = val;
+    } else {
+        get_video_div(peer_id).volume = val;
+    }
 }
 
-//sets my microfon gain
+//get video volume of all or any peer
+function get_volume(peer_id) {
+    if(peer_id == 'myself'){
+        log("get_volume("+peer_id+") -> "+master_volume,3);
+        return master_volume;
+    } else {
+        var volume = get_video_div(peer_id).volume;
+        log("get_volume("+peer_id+") -> "+volume,3);
+        return volume;
+    }
+}
+
+//sets my microphone gain
 function set_gain(val){
     if(gainNode){
         gainNode.gain.value = val;
+    }
+}
+
+//gets my microphone gain
+function get_gain(){
+    if(gainNode){
+        return gainNode.gain.value;
+    } else {
+        return -1;
     }
 }
 

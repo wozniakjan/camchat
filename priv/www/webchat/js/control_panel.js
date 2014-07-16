@@ -197,7 +197,7 @@ function init_settings_widgets() {
             ["settings", "admin", "password", "room", "kick"],
             "administrate this room, set up password", 
             "/settings_widgets/admin.html", 
-            test_open); 
+            room_open); 
 };
 
 //set slider and change its effective value
@@ -340,7 +340,21 @@ function media_open() {
     draw_settings('myself');
 };
 
-function test_open() {
+function room_open() {
+    function process_change(div){
+        log('process_change('+div.context.id+')', 3);
+        if(div.context.id == 'lock_switch') {
+            div.children().toggleClass('toggler_on');
+        }
+    }
+    $('.toggler').unbind('mousedown').mousedown(function(){
+        if( !$(this).hasClass('disabled') ){
+            process_change($(this));
+        }
+    });
+    $('.toggler_on').removeClass('toggler_on');
+    $('.disabled').removeClass('disabled');
+    $('#lock_switch > .toggler_left').addClass('toggler_on');
 };
 
 init_control_panel();

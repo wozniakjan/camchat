@@ -102,6 +102,7 @@ function get_volume(peer_id) {
 
 //sets my microphone gain
 function set_gain(val){
+    log("set_gain("+val+") -> "+gainNode,3);
     if(gainNode){
         gainNode.gain.value = val;
     }
@@ -110,8 +111,10 @@ function set_gain(val){
 //gets my microphone gain
 function get_gain(){
     if(gainNode){
+        log("get_gain() -> "+gainNode.gain.value,3);
         return gainNode.gain.value;
     } else {
+        log("get_gain() -> null",3);
         return -1;
     }
 }

@@ -30,9 +30,9 @@ function send_ready(){
         //final decision up to the server
         msg.default_stream = sessionStorage.default_media_type;
     }
-    if(sessionStorage.room_password) {
+    if(sessionStorage.room_key) {
         //if has been set by previous page
-        msg.password = sessionStorage.room_password;
+        msg.key = sessionStorage.room_key;
     }
     if(!localStorage.browser_token) { 
         //to cancel echo for multiple same computer connections

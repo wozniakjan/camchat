@@ -30,9 +30,9 @@ function send_ready(){
         //final decision up to the server
         msg.default_stream = sessionStorage.default_media_type;
     }
-    if(sessionStorage.room_password) {
+    if(sessionStorage.room_key) {
         //if has been set by previous page
-        msg.password = sessionStorage.room_password;
+        msg.key = sessionStorage.room_key;
     }
     if(!localStorage.browser_token) { 
         //to cancel echo for multiple same computer connections
@@ -102,7 +102,7 @@ function get_volume(peer_id) {
 
 //sets my microphone gain
 function set_gain(val){
-    log("set_gain("+val+")",3);
+    log("set_gain("+val+") -> "+gainNode,3);
     if(gainNode){
         gainNode.gain.value = val;
     } else {
@@ -113,8 +113,10 @@ function set_gain(val){
 //gets my microphone gain
 function get_gain(){
     if(gainNode){
+        log("get_gain() -> "+gainNode.gain.value,3);
         return gainNode.gain.value;
     } else {
+        log("get_gain() -> null",3);
         return -1;
     }
 }

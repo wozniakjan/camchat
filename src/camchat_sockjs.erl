@@ -72,6 +72,10 @@ parse_msg(Conn, {[{<<"audio_energy">>, Energy}]}, connected) ->
     Id = rooms:get_user_id_by_conn(Conn),
     send_peers(Conn, jiffy:encode({[{<<"audio_energy">>, Energy}, {<<"id">>, Id}]})),
     {ok, connected};
+parse_msg(Conn, {[{<<"room_update">>, Type} | Settings]}, connected) ->
+    rooms:room_update(Conn, Settings),
+    send_peers(Conn, jiffy:encode({[{<<"room_update">>, Type}]})),
+    {ok, connected};
 parse_msg(Conn, {[{<<"select_stream">>, Stream}, StreamType]}, connected) ->
     Id = rooms:get_user_id_by_conn(Conn),
     send_peers(Conn, jiffy:encode({[{<<"select_stream">>, Stream}, {<<"id">>, Id}, StreamType]})),

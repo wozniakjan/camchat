@@ -1,4 +1,4 @@
-#settings_window, #message_window, #ask_password_window {
+#settings_window, #message_window, #ask_key_window {
     z-index: 10;
     opacity: 0.95;
     box-shadow:0px 0px 10px #000000; 
@@ -12,17 +12,17 @@
     border-radius: 3px;
     font-size: 13px;
 }
-#message_window, #ask_password_window {
+#message_window, #ask_key_window {
     top: 50%;
     left: 50%;
     margin-top: -60px;
     margin-left: -140px;
     width: 280px;
 }
-#ask_password_window {
+#ask_key_window {
     padding-top: 10px;
 }
-#ask_password_window input {
+#ask_key_window input {
     padding: 2px;
     margin: 10px;
 }

@@ -194,8 +194,8 @@ function init_settings_widgets() {
             "/settings_widgets/media.html", 
             media_open); 
     settings_widgets["Room Settings"] = new Settings_widget("Room Settings", 
-            ["settings", "admin", "password", "room", "kick"],
-            "administrate this room, set up password", 
+            ["settings", "admin", "key", "room", "kick"],
+            "administrate this room, set up key", 
             "/settings_widgets/admin.html", 
             room_open); 
 };
@@ -350,8 +350,17 @@ function media_open() {
 function room_open() {
     function process_change(div){
         log('process_change('+div.context.id+')', 3);
-        if(div.context.id == 'lock_switch') {
-            div.children().toggleClass('toggler_on');
+        switch(div.context.id) {
+            case 'lock_switch' :
+                if($('#lock_switch > .toggler_left').hasClass('toggler_on')){
+                    send({room_update: 'unset_key', key: ''});
+                } else {
+                    send({room_update: 'set_key', key: 'test'});
+                }
+                div.children().toggleClass('toggler_on');
+                break;
+            default :
+                log('room_open() -> process_change() unknown div', 3);
         }
     }
     $('.toggler').unbind('mousedown').mousedown(function(){
@@ -361,7 +370,11 @@ function room_open() {
     });
     $('.toggler_on').removeClass('toggler_on');
     $('.disabled').removeClass('disabled');
-    $('#lock_switch > .toggler_left').addClass('toggler_on');
+    if(sessionStorage.room_key) {
+        $('#lock_switch > .toggler_left').addClass('toggler_on');
+    } else {
+        $('#lock_switch > .toggler_right').addClass('toggler_on');
+    }
 };
 
 init_control_panel();

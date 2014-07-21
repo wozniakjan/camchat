@@ -88,7 +88,7 @@ function send_audio_worker(msg){
 };
 
 //bring popups to front on click
-$('#settings_window, #message_window, #ask_password_window').mousedown(function(){
+$('#settings_window, #message_window, #ask_key_window').mousedown(function(){
     bring_to_front($(this));
 });
 
@@ -131,8 +131,10 @@ sock.onmessage = function(e) {
         init_video(json_msg.init_stream);
     } else if(json_msg.select_stream) {
         change_peer_stream(json_msg.id, json_msg.select_stream, json_msg.stream_name);
-    } else if(json_msg.error == "wrong_password") {
-        ask_password();
+    } else if(json_msg.error == "wrong_key") {
+        ask_key();
+    } else if(json_msg.room_update == 'set_key' || json_msg.room_update == 'unset_key') {
+        key_flag(json_msg.room_update);
     } else {
         log("sock.onmessage() -- unknown message",2);
         log(json_msg,2);
@@ -222,28 +224,39 @@ function hide_message(text, time) {
     $("#message_window").fadeOut(time);
 }
 
-//ask for password
-function ask_password(){
-    log("ask_password",0);
-    var ask_password = $("<div>", {id: "ask_password_window"});
+//ask for key
+function ask_key(){
+    log("ask_key",0);
+    var ask_key = $("<div>", {id: "ask_key_window"});
     var description = $("<div>", {class: "description"});
-    description.html("Password needed");
+    description.html("Knock or unlock with key");
     var input_div = $("<div>");
-    var input = $("<input>", {id: "ask_password", class: 'password', maxlength:"20"});
+    var input = $("<input>", {id: "ask_key", class: 'key', maxlength:"20"});
     input.change(function(){this.value = this.value.replace(/\W/g, '')});
     var button = $("<div>", {class: "button"});
     button.html("ok");
     
-    ask_password.append(description);
+    ask_key.append(description);
     input_div.append(input);
-    ask_password.append(input_div);
-    ask_password.append(button);
+    ask_key.append(input_div);
+    ask_key.append(button);
     
     button.click(function(){
-        sessionStorage.setItem("room_password", $("#ask_password").val());
+        sessionStorage.setItem("room_key", $("#ask_key").val());
         var settings_window = $(this).parent();
         settings_window.fadeOut("fast", function(){$(this).remove()});
         send_ready();
     });
-    $("body").append(ask_password);
+    $("body").append(ask_key);
+}
+
+function key_flag(flag) {
+    switch (flag) {
+        case 'set_key':
+            sessionStorage.setItem("room_key", 'unknown_key');
+            break;
+        case 'unset_key':
+            sessionStorage.removeItem("room_key");
+            break;
+    }
 }

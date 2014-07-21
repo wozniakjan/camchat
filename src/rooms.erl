@@ -3,6 +3,7 @@
          edit_user/3]).
 -export([get_conn_by_user_id/1, get_user_id_by_conn/1, get_room_default_stream/1]).
 -export([get_random/0, get_empty/0]).
+-export([room_update/2]).
 
 -include("types.hrl").
 
@@ -43,18 +44,33 @@ parse_room_params(RoomId, ConnectionId, Params) ->
         fun(Param, Room) -> 
             case Param of
                 {<<"default_stream">>, P} -> Room#room{default_stream = P};
-                {<<"password">>, P} -> Room#room{password = P};
+                {<<"key">>, P} -> Room#room{key = P};
                 _ -> Room  % unknown room parameter
             end
         end,
         #room{room_id=RoomId, user_list=[ConnectionId]},
         Params).
 
-match_password(#room{password = Pwd}, _) when Pwd == no_password -> ok;
-match_password(#room{password = Pwd}, Params) ->
-    case lists:keyfind(<<"password">>, 1, Params) of
+room_update(ConnectionId, Params) ->
+    [User] = ets:lookup(users, ConnectionId),
+    Room = User#user.room_id,
+    lists:map(
+        fun(Param) -> 
+            case Param of
+                {<<"default_stream">>, P} -> 
+                    ets:update_element(rooms, Room, {?DEFAULT_STREAM_POS, P});
+                {<<"key">>, P} -> 
+                    ets:update_element(rooms, Room, {?KEY_POS, P});
+                _ -> ok  % unknown room parameter
+            end
+        end,
+        Params).
+
+match_key(#room{key = Pwd}, _) when Pwd == <<"">> -> ok;
+match_key(#room{key = Pwd}, Params) ->
+    case lists:keyfind(<<"key">>, 1, Params) of
         {_, Pwd} -> ok;
-        _ -> throw({error, <<"wrong_password">>})
+        _ -> throw({error, <<"wrong_key">>})
     end.
 
 connect(RoomId, ConnectionId, Params) ->
@@ -64,7 +80,7 @@ connect(RoomId, ConnectionId, Params) ->
             ets:insert(rooms, Room),
             new_room;
         [ExistingRoom] ->
-            match_password(ExistingRoom, Params),
+            match_key(ExistingRoom, Params),
             RoomId = ExistingRoom#room.room_id,
             UserList = ExistingRoom#room.user_list,
             ets:update_element(rooms, RoomId, {?USER_LIST_POS, [ConnectionId | UserList]}),

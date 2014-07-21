@@ -4,20 +4,20 @@ function join_room(default_type) {
     var address = "";
     if(default_type == "camera"){
         address = $("#chat_with_friends .room_name").val();
-        save_password($("#chat_with_friends .password"));
+        save_key($("#chat_with_friends .key"));
     } else if (default_type == "screen") {
         address = $("#share_screen .room_name").val();
-        save_password($("#share_screen .password"));
+        save_key($("#share_screen .key"));
     }
     connect_room(address, default_type);
 }
 
-function save_password(div) {
-    var password = div.val();
-    if(password != "set password..." && password != ""){
-        sessionStorage.setItem("room_password", password);
+function save_key(div) {
+    var key = div.val();
+    if(key != "set key..." && key != ""){
+        sessionStorage.setItem("room_key", key);
     } else {
-        sessionStorage.removeItem("room_password");
+        sessionStorage.removeItem("room_key");
     }
 }
 
@@ -80,10 +80,10 @@ $(document).ready (function(){
     })
     room_name.focus(function() {$(this).addClass("active"), $(this).val('');});
     room_name.change(function() {this.value = this.value.replace(/\W/g, '');});
-    var password = $(".password");
-    password.blur(function() {if ($(this).val('')) {$(this).val('set password...');}});
-    password.focus(function() {if ($(this).val('set password...')) {$(this).val('');}});
-    password.change(function() {$(this).val($(this).val().replace(/\W/g, ''))});
+    var key = $(".key");
+    key.blur(function() {if ($(this).val() == '') {$(this).val('set key...');}});
+    key.focus(function() {if ($(this).val('set key...')) {$(this).val('');}});
+    key.change(function() {$(this).val($(this).val().replace(/\W/g, ''))});
     
     $(window).scroll(function(){
         $(".room_name").each(function() {

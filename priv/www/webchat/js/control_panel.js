@@ -211,7 +211,6 @@ function change_slider(slider, e, user_id) {
     var x = Math.min(right, Math.max(left, e.pageX));
     slide.width(x - left);
     var val = (x-left) / (right-left);
-    console.log(val);
     switch(slider.parent()[0].id){
         case 'volume':
             set_volume(slider_user_id, val);
@@ -228,7 +227,6 @@ function change_slider(slider, e, user_id) {
 function set_slider(slider, user_id) {
     log("set_slider("+slider.parent()[0].id+", "+user_id+")",3);
     var val;
-    console.log();
     switch(slider.parent()[0].id){
         case 'volume':
             val = get_volume(user_id);

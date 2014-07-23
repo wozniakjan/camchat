@@ -246,19 +246,21 @@ input:hover + .input_label {
     transform:rotate(7deg);
     -webkit-transform:rotate(7deg);
     position: absolute;
-    width: 256px;
-    height: 256px;
+    width: 200px;
+    height: 200px;
     border-radius: 15px;
     transition: all 750ms ease;
+    left: 50%;
+    margin-left: -100px;
 }
 .background {
     opacity: 0.1;
     background-color: white;
-    box-shadow:0px 10px 55px #000000; 
+    box-shadow:0px 0px 55px #000000; 
 }
 .picture {
     opacity: 0.35;
-    background-size: 180px 195px;
+    background-size: 120px 135px;
     background-repeat: no-repeat;
     background-position: center;
 }

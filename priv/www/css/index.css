@@ -57,9 +57,12 @@
     opacity:0.9;
 }
 
-.panel:hover .picture {
+.panel:hover .picture, .panel:hover .background {
     transform:rotate(0);
     -webkit-transform:rotate(0);
+}
+.panel:hover .picture {
+    opacity: 1.0;
 }
 
 .label {
@@ -72,6 +75,7 @@
 }
 
 .inner_panel{
+    position: relative;
     padding-left: 15px;
     text-align: justify;
     height: 45%;
@@ -129,12 +133,15 @@
 }
 
 .detail_description .logo {
-    opacity: 0.1;
-    width: 256px;
-    height: 256px;
+    opacity: 0.35;
+    width: 256px !important; 
+    height: 256px !important;
     background-color: white;
     transition: all 750ms ease;
     border-radius: 15px;
+    background-size: 180px 195px;
+    background-repeat: no-repeat;
+    background-position: center;
 }
 .input_wrap{
     position: relative;
@@ -209,6 +216,7 @@ input:hover + .input_label {
     border-radius: 5px;
     border-color: #dadada;
     font-size: 13px;
+    max-width: 400px !important;
 }
 
 .button_box button {
@@ -234,15 +242,34 @@ input:hover + .input_label {
     background-color: #B13F66;
 }
 
-.picture {
-    opacity: 0.1;
-    width: 256px;
-    height: 256px;
-    background-color: white;
+.background, .picture {
     transform:rotate(7deg);
     -webkit-transform:rotate(7deg);
-    transition: all 750ms ease;
+    position: absolute;
+    width: 256px;
+    height: 256px;
     border-radius: 15px;
+    transition: all 750ms ease;
+}
+.background {
+    opacity: 0.1;
+    background-color: white;
+    box-shadow:0px 10px 55px #000000; 
+}
+.picture {
+    opacity: 0.35;
+    background-size: 180px 195px;
+    background-repeat: no-repeat;
+    background-position: center;
+}
+.rh_pic {
+    background-image: url("/webchat/images/random_hookup.png");
+}
+.ch_pic {
+    background-image: url("/webchat/images/chat_friends.png");
+}
+.bw_pic {
+    background-image: url("/webchat/images/browsers.png");
 }
 
 #footer {

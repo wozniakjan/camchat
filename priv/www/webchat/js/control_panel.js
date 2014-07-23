@@ -353,7 +353,7 @@ function room_open() {
         switch(div.context.id) {
             case 'lock_switch' :
                 if($('#lock_switch > .toggler_left').hasClass('toggler_on')){
-                    send({room_update: 'unset_key', key: ''});
+                    send({room_update: 'set_key', key: ''});
                 } else {
                     send({room_update: 'set_key', key: 'test'});
                 }

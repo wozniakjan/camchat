@@ -54,8 +54,8 @@ $(document).ready(function() {
             change_slider(slide, e);
         }
     });
-
 });
+
 function error_callback(error) {
     var click_settings = '<div class="click_link" onclick="draw_settings_div(\'Audio & Video Settings\')">see settings</div>';
     if(error.name == "PermissionDeniedError") {
@@ -88,11 +88,12 @@ function send_audio_worker(msg){
 };
 
 //bring popups to front on click
-$('#settings_window, #message_window, #ask_key_window').mousedown(function(){
+$('#settings_window, #message_window').mousedown(function(){
     bring_to_front($(this));
 });
 
 function bring_to_front(window_div) {
+    log("bring_to_front()", 5);
     if( !window_div.is(front_window) ){
         front_window = window_div;
         window_div.parent().append(window_div);
@@ -133,10 +134,14 @@ sock.onmessage = function(e) {
         change_peer_stream(json_msg.id, json_msg.select_stream, json_msg.stream_name);
     } else if(json_msg.error == "wrong_key") {
         ask_key();
-    } else if(json_msg.room_update == 'set_key' || json_msg.room_update == 'unset_key') {
-        key_flag(json_msg.room_update);
+    } else if(json_msg.room_update == 'set_key') {
+        key_flag(json_msg.key);
+    } else if(json_msg.let_in) {
+        $('#ask_key_window').fadeOut();
+        key_flag(json_msg.let_in);
+        send_ready();
     } else if(json_msg.knock) {
-        somebody_knocks(json_msg.username);
+        somebody_knocks(json_msg.knock, json_msg.username);
     } else {
         log("sock.onmessage() -- unknown message",2);
         log(json_msg,2);
@@ -230,61 +235,90 @@ function hide_message(text, time) {
 function ask_key(){
     log("ask_key()",0);
     var ask_key = $("<div>", {id: "ask_key_window"});
-    var drag = $('<div>', {class: 'draggable'})
+    var drag_div = $('<div>', {class: 'draggable'})
     var description = $("<div>", {class: "description"});
-    description.html("Knock or unlock with key");
+    description.html("Enter key or wait 'till someone lets you in");
     var input_div = $("<div>");
     var input = $("<input>", {id: "ask_key", class: 'key', maxlength:"20"});
     input.change(function(){this.value = this.value.replace(/\W/g, '')});
     var button = $("<div>", {class: "button"});
-    button.html("ok");
+    button.html("knock");
    
-    ask_key.append(drag);
+    ask_key.append(drag_div);
     ask_key.append(description);
     input_div.append(input);
     ask_key.append(input_div);
     ask_key.append(button);
-    
-    button.click(function(){
+    button.mousedown(function(){
         sessionStorage.setItem("room_key", $("#ask_key").val());
         var settings_window = $(this).parent();
         settings_window.fadeOut("fast", function(){$(this).remove()});
         send_ready();
     });
-    $("body").append(ask_key);
+    drag_div.mousedown(function(e) {
+        drag = ask_key;
+        if(e.offsetX==undefined){
+            x = e.pageX-target.offset().left;
+            y = e.pageY-target.offset().top;
+        }else{
+            x = e.offsetX;
+            y = e.offsetY;
+        };
+    });
+    ask_key.mousedown(function(){
+        bring_to_front($(this));
+    });
+    $("#screen").append(ask_key);
 }
 
 //show dialog whether to let knocking person in
-function somebody_knocks(username) {
+function somebody_knocks(id, username) {
     log("somebody_knocks("+username+")",1);
-    var div = $('<div>', {class: 'dialog_window'});
-    var drag = $('<div>', {class: 'draggable'})
-    var description = $('<div>', {class: 'description'});
-    description.html(username + " is knocking");
-    var ok = $("<div>", {class: "button"});
-    ok.html("let in");
-    var ignore = $("<div>", {class: "button"});
-    ignore.html("ignore");
-    
-    ignore.click(function(){
-        var settings_window = $(this).parent();
-        settings_window.fadeOut("fast", function(){$(this).remove()});
-    });
-   
-    div.append(drag);
-    div.append(description);
-    div.append(ok);
-    div.append(ignore);
-    $("body").append(div);
+    if($('#knock').length == 0) { //check for existance
+        var div = $('<div>', {id: 'knock'+id, class: 'dialog_window'});
+        var drag_div = $('<div>', {class: 'draggable'});
+        var description = $('<div>', {class: 'description'});
+        description.html(username + " is knocking");
+        var ok = $("<div>", {class: "button"});
+        ok.html("let in");
+        var ignore = $("<div>", {class: "button"});
+        ignore.html("ignore");
+
+        div.append(drag_div);
+        div.append(description);
+        div.append(ok);
+        div.append(ignore);
+        
+        ignore.mousedown(function(){
+            var settings_window = $(this).parent();
+            settings_window.fadeOut("fast", function(){$(this).remove()});
+        });
+        ok.mousedown(function(){
+            var settings_window = $(this).parent();
+            settings_window.fadeOut("fast", function(){$(this).remove()});
+            send({let_in: id});
+        });
+        drag_div.mousedown(function(e) {
+            drag = div;
+            if(e.offsetX==undefined){
+                x = e.pageX-target.offset().left;
+                y = e.pageY-target.offset().top;
+            }else{
+                x = e.offsetX;
+                y = e.offsetY;
+            };
+        });
+        div.mousedown(function(){
+            bring_to_front($(this));
+        });
+        $("#screen").append(div);
+    }
 }
 
-function key_flag(flag) {
-    switch (flag) {
-        case 'set_key':
-            sessionStorage.setItem("room_key", 'unknown_key');
-            break;
-        case 'unset_key':
-            sessionStorage.removeItem("room_key");
-            break;
+function key_flag(new_key) {
+    if(new_key != '') {
+        sessionStorage.setItem("room_key", new_key);
+    } else {
+        sessionStorage.removeItem("room_key");
     }
 }

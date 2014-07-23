@@ -14,7 +14,6 @@ camchat_sockjs(Conn, closed, _State) ->
         TypeOfError:Exception ->
             lager:error("Disconnection ~p: ~p",[TypeOfError, Exception])
     end;
-
 camchat_sockjs(Conn, {recv, Data}, State) ->
     Msg = jiffy:decode(Data),
     try_parse_msg(Conn, Msg, State).
@@ -34,17 +33,7 @@ parse_msg(Conn, {[{<<"connect">>, Room}]}, init) ->
 parse_msg(Conn, {[{<<"ready">>, Room} | Params]}, waiting_for_params) ->
     case rooms:connect(Room, Conn, Params) of
         {ok, RoomStatus, User} -> 
-            UserId = User#user.user_id,
-            UN = User#user.username,
-            Token = User#user.browser_token,
-            PeerMsg = {[{peer_connected, UserId}, {name, UN}, {browser_token, Token}]},
-            PeerList = send_peers(Conn, jiffy:encode(PeerMsg)),
-            UserList = lists:map(fun(X)-> 
-                {X#user.user_id, 
-                    {[{user_name, X#user.username}, {browser_token, X#user.browser_token}]}} 
-            end, PeerList),
-            Reply = [{user_id, UserId}, {user_name, UN}, {peer_list, {UserList}}],
-            Conn:send(jiffy:encode({[{connected, RoomStatus} | Reply]})),
+            connect_reply(User, RoomStatus),
             {ok, connected};
         {error, wrong_key, User} ->
             Conn:send(jiffy:encode({[{error, <<"wrong_key">>}]})),
@@ -79,10 +68,11 @@ parse_msg(Conn, {[{<<"audio_energy">>, Energy}]}, connected) ->
     {ok, connected};
 parse_msg(Conn, {[{<<"room_update">>, Type} | Settings]}, connected) ->
     rooms:room_update(Conn, Settings),
-    send_peers(Conn, jiffy:encode({[{<<"room_update">>, Type}]})),
+    send_peers(Conn, jiffy:encode({[{<<"room_update">>, Type} | Settings]})),
     {ok, connected};
-parse_msg(_Conn, {[{<<"let_in">>, KnockId} | Params]}, connected) ->
-    rooms:let_in(KnockId, Params),
+parse_msg(_Conn, {[{<<"let_in">>, KnockId}]}, connected) ->
+    {ok, Key, KConn} = rooms:let_in(KnockId),
+    KConn:send(jiffy:encode({[{<<"let_in">>, Key}]})),
     {ok, connected};
 parse_msg(Conn, {[{<<"select_stream">>, Stream}, StreamType]}, connected) ->
     Id = rooms:get_user_id_by_conn(Conn),
@@ -96,6 +86,20 @@ gracefully_close(Conn) ->
 
 broadcast(Room, Msg) ->
     lists:map(fun(C)-> (C#user.connection_id):send(jiffy:encode(Msg)) end, rooms:get_users(Room)).
+
+connect_reply(User, RoomStatus) ->
+    UserId = User#user.user_id,
+    UN = User#user.username,
+    Token = User#user.browser_token,
+    Conn = User#user.connection_id,
+    PeerMsg = {[{peer_connected, UserId}, {name, UN}, {browser_token, Token}]},
+    PeerList = send_peers(Conn, jiffy:encode(PeerMsg)),
+    UserList = lists:map(fun(X)-> 
+                {X#user.user_id, 
+                    {[{user_name, X#user.username}, {browser_token, X#user.browser_token}]}} 
+        end, PeerList),
+    Reply = [{user_id, UserId}, {user_name, UN}, {peer_list, {UserList}}],
+    Conn:send(jiffy:encode({[{connected, RoomStatus} | Reply]})).
 
 send_peers(Conn, Msg) ->
     Peers = rooms:get_peers(Conn),

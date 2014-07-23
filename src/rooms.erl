@@ -6,9 +6,13 @@
 -export([connect/3, disconnect/1, get_users/1, get_peers/1, edit_user/3]).
 -export([get_conn_by_user_id/1, get_user_id_by_conn/1, get_room_default_stream/1]).
 -export([get_random/0, get_empty/0]).
+-export([let_in/1]).
 -export([room_update/2]).
 
 -include("types.hrl").
+
+%% TODO
+%% 1) collect garbage from ets hall
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%                                   init                                        %%%
@@ -63,21 +67,6 @@ room_update(ConnectionId, Params) ->
         end,
         Params).
 
-%%move to private
-connect_room(RoomId, ConnectionId, Params) ->
-    case ets:lookup(rooms, RoomId) of
-        [] -> 
-            Room = parse_room_params(RoomId, ConnectionId, Params),
-            ets:insert(rooms, Room),
-            new_room;
-        [ExistingRoom] ->
-            match_key(ExistingRoom, Params),
-            RoomId = ExistingRoom#room.room_id,
-            UserList = ExistingRoom#room.user_list,
-            ets:update_element(rooms, RoomId, {?USER_LIST_POS, [ConnectionId | UserList]}),
-            existing_room
-    end.
-
 connect(RoomId, ConnectionId, Params) ->
     try connect_room(RoomId, ConnectionId, Params) of
         RoomStatus -> 
@@ -88,7 +77,7 @@ connect(RoomId, ConnectionId, Params) ->
         catch
             {error, Reason} -> 
                 User = create_user(ConnectionId, RoomId, Params),
-                ets:insert(hall, {User#user.user_id, ConnectionId, User}),
+                ets:insert(hall, {User#user.user_id, RoomId, ConnectionId}),
                 {error, Reason, User}
     end.
             
@@ -132,9 +121,29 @@ get_user_id_by_conn(Conn) ->
 
 edit_user(ConnectionId, Attr, Val) ->
     ets:update_element(users, ConnectionId, {Attr, Val}).
+
+let_in(KnockId) ->
+    [{KnockId, RoomId, ConnId}] = ets:lookup(hall, KnockId),
+    [Room] = ets:lookup(rooms, RoomId),
+    {ok, Room#room.key, ConnId}.
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%                               private functions                               %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+connect_room(RoomId, ConnectionId, Params) ->
+    case ets:lookup(rooms, RoomId) of
+        [] -> 
+            Room = parse_room_params(RoomId, ConnectionId, Params),
+            ets:insert(rooms, Room),
+            new_room;
+        [ExistingRoom] ->
+            match_key(ExistingRoom, Params),
+            RoomId = ExistingRoom#room.room_id,
+            UserList = ExistingRoom#room.user_list,
+            ets:update_element(rooms, RoomId, {?USER_LIST_POS, [ConnectionId | UserList]}),
+            existing_room
+    end.
+
 create_id() ->
     %TODO: check for global uid collision
     {_, T} = lists:split(5, erlang:ref_to_list(make_ref())),

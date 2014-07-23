@@ -32,7 +32,7 @@ parse_msg(Conn, {[{<<"connect">>, Room}]}, init) ->
     Conn:send(jiffy:encode({[{<<"init_stream">>, DefaultStream}]})),
     {ok, waiting_for_params};
 parse_msg(Conn, {[{<<"ready">>, Room} | Params]}, waiting_for_params) ->
-    try rooms:connect(Room, Conn, Params) of
+    case rooms:connect(Room, Conn, Params) of
         {ok, RoomStatus, User} -> 
             UserId = User#user.user_id,
             UN = User#user.username,
@@ -45,8 +45,13 @@ parse_msg(Conn, {[{<<"ready">>, Room} | Params]}, waiting_for_params) ->
             end, PeerList),
             Reply = [{user_id, UserId}, {user_name, UN}, {peer_list, {UserList}}],
             Conn:send(jiffy:encode({[{connected, RoomStatus} | Reply]})),
-            {ok, connected}
-    catch
+            {ok, connected};
+        {error, wrong_key, User} ->
+            Conn:send(jiffy:encode({[{error, <<"wrong_key">>}]})),
+            UserId = User#user.user_id,
+            Username = User#user.username,
+            broadcast(User#user.room_id, {[{knock, UserId}, {username, Username}]}),
+            {ok, waiting_for_params};
         {error, Reason} ->
             Conn:send(jiffy:encode({[{error, Reason}]})),
             {ok, waiting_for_params}
@@ -76,6 +81,9 @@ parse_msg(Conn, {[{<<"room_update">>, Type} | Settings]}, connected) ->
     rooms:room_update(Conn, Settings),
     send_peers(Conn, jiffy:encode({[{<<"room_update">>, Type}]})),
     {ok, connected};
+parse_msg(_Conn, {[{<<"let_in">>, KnockId} | Params]}, connected) ->
+    rooms:let_in(KnockId, Params),
+    {ok, connected};
 parse_msg(Conn, {[{<<"select_stream">>, Stream}, StreamType]}, connected) ->
     Id = rooms:get_user_id_by_conn(Conn),
     send_peers(Conn, jiffy:encode({[{<<"select_stream">>, Stream}, {<<"id">>, Id}, StreamType]})),
@@ -85,6 +93,9 @@ gracefully_close(Conn) ->
     {User, Peers} = rooms:disconnect(Conn),
     Reply = jiffy:encode({[{peer_disconnected, User#user.user_id}]}),
     lists:map(fun(Peer)-> Peer:send(Reply) end, Peers), ok.
+
+broadcast(Room, Msg) ->
+    lists:map(fun(C)-> (C#user.connection_id):send(jiffy:encode(Msg)) end, rooms:get_users(Room)).
 
 send_peers(Conn, Msg) ->
     Peers = rooms:get_peers(Conn),

@@ -3,7 +3,7 @@
 %% init
 -export([start/0, stop/0]).
 %% public functions
--export([connect/3, disconnect/1, get_peers/1, get_peers/2, edit_user/3]).
+-export([connect/3, disconnect/1, get_users/1, get_peers/1, edit_user/3]).
 -export([get_conn_by_user_id/1, get_user_id_by_conn/1, get_room_default_stream/1]).
 -export([get_random/0, get_empty/0]).
 -export([room_update/2]).
@@ -16,12 +16,14 @@
 start() ->
     ets:new(rooms, [ordered_set, named_table, public, {keypos, ?ROOM_ID_POS}]),
     ets:new(uid_lookup, [ordered_set, named_table, public]),
-    ets:new(users, [ordered_set, named_table, public, {keypos, ?CONNECTION_ID_POS}]).
+    ets:new(users, [ordered_set, named_table, public, {keypos, ?CONNECTION_ID_POS}]),
+    ets:new(hall, [ordered_set, named_table, public]).
 
 stop() ->
     ets:delete(rooms),
     ets:delete(uid_lookup),
-    ets:delete(users).
+    ets:delete(users),
+    ets:delete(hall).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%                             public functions                                  %%%
@@ -61,8 +63,9 @@ room_update(ConnectionId, Params) ->
         end,
         Params).
 
-connect(RoomId, ConnectionId, Params) ->
-    RoomStatus = case ets:lookup(rooms, RoomId) of
+%%move to private
+connect_room(RoomId, ConnectionId, Params) ->
+    case ets:lookup(rooms, RoomId) of
         [] -> 
             Room = parse_room_params(RoomId, ConnectionId, Params),
             ets:insert(rooms, Room),
@@ -73,29 +76,29 @@ connect(RoomId, ConnectionId, Params) ->
             UserList = ExistingRoom#room.user_list,
             ets:update_element(rooms, RoomId, {?USER_LIST_POS, [ConnectionId | UserList]}),
             existing_room
-    end,
-    User = create_user(ConnectionId, RoomId, Params),
-    ets:insert(users, User),
-    ets:insert(uid_lookup, {User#user.user_id, User#user.connection_id}),
-    {ok, RoomStatus, User}.
+    end.
+
+connect(RoomId, ConnectionId, Params) ->
+    try connect_room(RoomId, ConnectionId, Params) of
+        RoomStatus -> 
+            User = create_user(ConnectionId, RoomId, Params),
+            ets:insert(users, User),
+            ets:insert(uid_lookup, {User#user.user_id, User#user.connection_id}),
+            {ok, RoomStatus, User}
+        catch
+            {error, Reason} -> 
+                User = create_user(ConnectionId, RoomId, Params),
+                ets:insert(hall, {User#user.user_id, ConnectionId, User}),
+                {error, Reason, User}
+    end.
             
 disconnect(ConnectionId) ->
     [User] = ets:lookup(users, ConnectionId),
     {User, disconnect(User#user.room_id, ConnectionId)}.
-    
-disconnect(RoomId, ConnectionId) ->
+
+get_users(RoomId) ->
     [Room] = ets:lookup(rooms, RoomId),
-    UpdatedList = lists:delete(ConnectionId, Room#room.user_list),
-    case UpdatedList of
-        [] -> 
-            ets:delete(rooms, RoomId);
-        _ ->
-            ets:update_element(rooms, RoomId, {?USER_LIST_POS, UpdatedList})
-    end,
-    [User] = ets:lookup(users, ConnectionId),
-    ets:delete(users, ConnectionId),
-    ets:delete(uid_lookup, User#user.user_id),
-    UpdatedList.
+    lists:map(fun(U)-> [C]=ets:lookup(users, U), C end, Room#room.user_list).
 
 get_peers(ConnectionId) ->
     [User] = ets:lookup(users, ConnectionId),
@@ -155,7 +158,7 @@ match_key(#room{key = Pwd}, _) when Pwd == <<"">> -> ok;
 match_key(#room{key = Pwd}, Params) ->
     case lists:keyfind(<<"key">>, 1, Params) of
         {_, Pwd} -> ok;
-        _ -> throw({error, <<"wrong_key">>})
+        _ -> throw({error, wrong_key})
     end.
 
 get_nth(N, Prev) when N =< 1 -> Prev;
@@ -165,3 +168,17 @@ get_random_helper() ->
     random:seed(now()),
     Index = random:uniform(ets:info(rooms, size)),
     get_nth(Index, ets:first(rooms)).
+
+disconnect(RoomId, ConnectionId) ->
+    [Room] = ets:lookup(rooms, RoomId),
+    UpdatedList = lists:delete(ConnectionId, Room#room.user_list),
+    case UpdatedList of
+        [] -> 
+            ets:delete(rooms, RoomId);
+        _ ->
+            ets:update_element(rooms, RoomId, {?USER_LIST_POS, UpdatedList})
+    end,
+    [User] = ets:lookup(users, ConnectionId),
+    ets:delete(users, ConnectionId),
+    ets:delete(uid_lookup, User#user.user_id),
+    UpdatedList.

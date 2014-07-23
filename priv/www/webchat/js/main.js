@@ -135,6 +135,8 @@ sock.onmessage = function(e) {
         ask_key();
     } else if(json_msg.room_update == 'set_key' || json_msg.room_update == 'unset_key') {
         key_flag(json_msg.room_update);
+    } else if(json_msg.knock) {
+        somebody_knocks(json_msg.username);
     } else {
         log("sock.onmessage() -- unknown message",2);
         log(json_msg,2);
@@ -226,8 +228,9 @@ function hide_message(text, time) {
 
 //ask for key
 function ask_key(){
-    log("ask_key",0);
+    log("ask_key()",0);
     var ask_key = $("<div>", {id: "ask_key_window"});
+    var drag = $('<div>', {class: 'draggable'})
     var description = $("<div>", {class: "description"});
     description.html("Knock or unlock with key");
     var input_div = $("<div>");
@@ -235,7 +238,8 @@ function ask_key(){
     input.change(function(){this.value = this.value.replace(/\W/g, '')});
     var button = $("<div>", {class: "button"});
     button.html("ok");
-    
+   
+    ask_key.append(drag);
     ask_key.append(description);
     input_div.append(input);
     ask_key.append(input_div);
@@ -248,6 +252,30 @@ function ask_key(){
         send_ready();
     });
     $("body").append(ask_key);
+}
+
+//show dialog whether to let knocking person in
+function somebody_knocks(username) {
+    log("somebody_knocks("+username+")",1);
+    var div = $('<div>', {class: 'dialog_window'});
+    var drag = $('<div>', {class: 'draggable'})
+    var description = $('<div>', {class: 'description'});
+    description.html(username + " is knocking");
+    var ok = $("<div>", {class: "button"});
+    ok.html("let in");
+    var ignore = $("<div>", {class: "button"});
+    ignore.html("ignore");
+    
+    ignore.click(function(){
+        var settings_window = $(this).parent();
+        settings_window.fadeOut("fast", function(){$(this).remove()});
+    });
+   
+    div.append(drag);
+    div.append(description);
+    div.append(ok);
+    div.append(ignore);
+    $("body").append(div);
 }
 
 function key_flag(flag) {

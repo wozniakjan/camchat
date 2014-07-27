@@ -284,6 +284,9 @@ function media_open() {
         } else {
             $('#stream_switch > .toggler_right').addClass('toggler_on');
         }
+        if(webrtcDetectedBrowser != 'chrome'){
+            $('#stream_switch').addClass('disabled');
+        }
         //2. recording video & audio
         $('#record_switch > .toggler_right').addClass('toggler_on');
         $('#record_switch').addClass('disabled');

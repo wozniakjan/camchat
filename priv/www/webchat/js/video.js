@@ -333,22 +333,24 @@ function toggle_peer_stream(peer_id, on_success) {
 
 //switch stream of selected per
 function change_peer_stream(peer_id, stream_id, stream_type){
-    log("change_peer_stream(" + peer_id + ", " + stream_id+")", 1);
-    var selected_remote_stream = get_stream_by_id(peer_id, stream_id);
+    if(webrtcDetectedBrowser === 'chrome'){
+        log("change_peer_stream(" + peer_id + ", " + stream_id+")", 1);
+        var selected_remote_stream = get_stream_by_id(peer_id, stream_id);
 
-    peer[peer_id].last_change_stream = stream_id;
-    if(selected_remote_stream != undefined) {
-        var current_main = $("#main_video").attr("peer_id");
-        var video_elem = undefined;
-        if(current_main == peer_id){
-            video_elem = $("#main_video > .big_video")[0];
-        } else {
-            video_elem = $("#peer"+peer_id+" > .small_video")[0];
-        }
-        attachMediaStream(video_elem, selected_remote_stream);
-        video_elem.play();
-        peer[peer_id].stream_name = stream_type;
-    } 
+        peer[peer_id].last_change_stream = stream_id;
+        if(selected_remote_stream != undefined) {
+            var current_main = $("#main_video").attr("peer_id");
+            var video_elem = undefined;
+            if(current_main == peer_id){
+                video_elem = $("#main_video > .big_video")[0];
+            } else {
+                video_elem = $("#peer"+peer_id+" > .small_video")[0];
+            }
+            attachMediaStream(video_elem, selected_remote_stream);
+            video_elem.play();
+            peer[peer_id].stream_name = stream_type;
+        } 
+    }
 }
 
 //switch main video div and small video div with specific id

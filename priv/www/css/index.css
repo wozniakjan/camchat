@@ -159,6 +159,7 @@ input:hover + .input_label {
     opacity: 0.1;
 }
 .detail_description input {
+    margin: 2px;
     padding-left:15px;
     font-size: inherit;
     width: 400px;
@@ -217,6 +218,10 @@ input:hover + .input_label {
     border-color: #dadada;
     font-size: 13px;
     max-width: 400px !important;
+}
+
+button {
+    margin: 2px;
 }
 
 .button_box button {

@@ -73,7 +73,7 @@ function error_callback(error) {
 }
 
 var pc_config = webrtcDetectedBrowser === 'firefox' ?
-    {'iceServers': [{'url': 'stun:23.21.150.121'}]} : // number IP
+    {'iceServers': [{'url': 'stun:23.21.150.121'}]} : 
     {'iceServers': [{'url': 'stun:stun.l.google.com:19302'}]};
 
 $.getScript("/webchat/js/control_panel.js");
@@ -154,6 +154,10 @@ sock.onclose = function() {
 
 function parse_offer(json_msg){
     var pc = peer[json_msg.caller].connection;
+    if(webrtcDetectedBrowser != 'chrome' && pc.remoteDescription){
+        log("renegotiation available only on chrome", 0);
+        return;
+    }
     pc.setRemoteDescription(new RTCSessionDescription(json_msg.offer), function() {
         pc.createAnswer(function(answer) {
             pc.setLocalDescription(new RTCSessionDescription(answer), function() {
@@ -178,15 +182,24 @@ function setup_peer_connection(id, remote_video) {
         } 
     }
     pc.onaddstream = function(event) {
+        if(webrtcDetectedBrowser != 'chrome'){
+            if(peer[id].has_stream){
+                return;
+            }
+            peer[id].has_stream = true;
+        }
         log('pc.onaddstream', 2);
         if(peer[id].last_change_stream == event.stream.id || 
            peer[id].last_change_stream == undefined){
             peer[id].last_change_stream = event.stream.id;
-            attachMediaStream(remote_video, event.stream);
-            remote_video.play();
+        attachMediaStream(remote_video, event.stream);
+        remote_video.play();
         }
     }
     pc.onremovestream = function(event) {
+        if(webrtcDetectedBrowser != 'chrome'){
+            peer[id].has_stream = false;
+        }
         log('pc.onremovestream', 2);
     }
 

@@ -37,39 +37,36 @@
 
 .bottom_panel_item {
     padding-top: 5px;
+    padding-left: 10px;
+    padding-right: 10px;
     float: left;
     height: 35px;
-    width: 20%;
     transition: all 500ms ease;
     text-align: center;
 }
 
 .bottom_panel_icon {
+    float: left;
     width: 30px;
     height: 30px;
-    display: inline-block;
     background-size: 25px 25px;
     background-repeat: no-repeat;
     background-position: center;
 }
 
 .bottom_panel_detail {
-    display: inline-block;
+    padding-top: 7px;
+    padding-left: 10px;
+    float: left;
     width: 0px;
     transition: all 500ms ease 0s;
     overflow: hidden;
 }
-#bottom_panel:hover .bottom_panel_item {
-    width: 18%;
-}
-#bottom_panel:hover .bottom_panel_item:hover {
-    width: 28%;
-}
 .bottom_panel_item:hover .bottom_panel_detail.wide {
-    width: 95px;
+    width: 105px;
 }
 .bottom_panel_item:hover .bottom_panel_detail.narrow {
-    width: 65px;
+    width: 75px;
 }
 
 #bottom_gain > .bottom_panel_icon {

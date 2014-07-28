@@ -17,7 +17,7 @@ start(_StartType, _StartArgs) ->
     TransOpts    = [{port, Port}],
     ProtoOpts    = [{env, [{dispatch, Dispatch}]}],
     NumAcceptors = 100,
-    start(https, NumAcceptors, TransOpts, ProtoOpts),
+    start(http, NumAcceptors, TransOpts, ProtoOpts),
     camchat_sup:start_link().
 
 start(http, NumAcceptors, TransOpts, ProtoOpts) ->

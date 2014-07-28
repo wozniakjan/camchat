@@ -13,6 +13,9 @@ var drag = undefined;
 var slide = undefined;
 var x, y;
 
+var pc_config = webrtcDetectedBrowser === 'firefox' ?
+    {'iceServers': [{'url': 'stun:23.21.150.121'}]} : 
+    {'iceServers': [{'url': 'stun:stun.l.google.com:19302'}]};
 
 function log(string, priority) {
     if(priority < LOG_LEVEL) {
@@ -20,14 +23,18 @@ function log(string, priority) {
     }
 };
 
-audio_worker.onmessage = function(event) { 
-    log("audio_worker.onmessage" + event.data, 3);
-    if(event.data.set_main){
-        switch_main(event.data.set_main);
-    }
-};
-
 $(document).ready(function() {
+    audio_worker.onmessage = function(event) { 
+        log("audio_worker.onmessage" + event.data, 3);
+        if(event.data.set_main){
+            switch_main(event.data.set_main);
+        }
+    };
+    //bring popups to front on click
+    $('#settings_window, #message_window').mousedown(function(){
+        bring_to_front($(this));
+    });
+
     $('.draggable').mousedown(function(e) {
         drag = $(this).parent()
         if(e.offsetX==undefined){
@@ -54,6 +61,9 @@ $(document).ready(function() {
             change_slider(slide, e);
         }
     });
+
+    //load_bottom_panel();
+    sock_callbacks();
 });
 
 function error_callback(error) {
@@ -72,9 +82,6 @@ function error_callback(error) {
     }
 }
 
-var pc_config = webrtcDetectedBrowser === 'firefox' ?
-    {'iceServers': [{'url': 'stun:23.21.150.121'}]} : 
-    {'iceServers': [{'url': 'stun:stun.l.google.com:19302'}]};
 
 $.getScript("/webchat/js/control_panel.js");
 $.getScript("/webchat/js/video.js");
@@ -87,10 +94,6 @@ function send_audio_worker(msg){
     audio_worker.postMessage(msg);
 };
 
-//bring popups to front on click
-$('#settings_window, #message_window').mousedown(function(){
-    bring_to_front($(this));
-});
 
 function bring_to_front(window_div) {
     log("bring_to_front()", 5);
@@ -99,58 +102,59 @@ function bring_to_front(window_div) {
         window_div.parent().append(window_div);
     }
 };
+function sock_callbacks(){
+    sock.onopen = function() {
+        sock.send(JSON.stringify({'connect': room}));
+    };
 
-sock.onopen = function() {
-    sock.send(JSON.stringify({'connect': room}));
-};
+    sock.onmessage = function(e) {
+        var json_msg = jQuery.parseJSON(e.data);
 
-sock.onmessage = function(e) {
-    var json_msg = jQuery.parseJSON(e.data);
-   
-    if(json_msg.audio_energy){
-        send_audio_worker(json_msg);
-    } else if(json_msg.peer_connected) {
-        add_peer(json_msg.peer_connected, json_msg.name, json_msg.browser_token);
-    } else if(json_msg.connected){
-        setup_videos(json_msg.user_id, json_msg.user_name, 
-                json_msg.peer_list, json_msg.connected);
-    } else if(json_msg.peer_disconnected) {
-        remove_peer(json_msg.peer_disconnected);
-    } else if(json_msg.offer){
-        parse_offer(json_msg);
-    } else if(json_msg.answer){
-        var pc = peer[json_msg.callee].connection;
-        pc.setRemoteDescription(new RTCSessionDescription(json_msg.answer));
-    } else if(json_msg.ice_candidate){
-        var pc = peer[json_msg.caller].connection;
-        var candidate = new RTCIceCandidate({sdpMLineIndex:json_msg.ice_candidate.label,
-                                            candidate:json_msg.ice_candidate.candidate});
-        pc.addIceCandidate(candidate);
-    } else if(json_msg.change_name){
-        change_name(json_msg.change_name, json_msg.id);
-    } else if(json_msg.init_stream) {
-        init_video(json_msg.init_stream);
-    } else if(json_msg.select_stream) {
-        change_peer_stream(json_msg.id, json_msg.select_stream, json_msg.stream_name);
-    } else if(json_msg.error == "wrong_key") {
-        ask_key();
-    } else if(json_msg.room_update == 'set_key') {
-        key_flag(json_msg.key);
-    } else if(json_msg.let_in) {
-        $('#ask_key_window').fadeOut();
-        key_flag(json_msg.let_in);
-        send_ready();
-    } else if(json_msg.knock) {
-        somebody_knocks(json_msg.knock, json_msg.username);
-    } else {
-        log("sock.onmessage() -- unknown message",2);
-        log(json_msg,2);
-    }
-};
+        if(json_msg.audio_energy){
+            send_audio_worker(json_msg);
+        } else if(json_msg.peer_connected) {
+            add_peer(json_msg.peer_connected, json_msg.name, json_msg.browser_token);
+        } else if(json_msg.connected){
+            setup_videos(json_msg.user_id, json_msg.user_name, 
+                    json_msg.peer_list, json_msg.connected);
+        } else if(json_msg.peer_disconnected) {
+            remove_peer(json_msg.peer_disconnected);
+        } else if(json_msg.offer){
+            parse_offer(json_msg);
+        } else if(json_msg.answer){
+            var pc = peer[json_msg.callee].connection;
+            pc.setRemoteDescription(new RTCSessionDescription(json_msg.answer));
+        } else if(json_msg.ice_candidate){
+            var pc = peer[json_msg.caller].connection;
+            var candidate = new RTCIceCandidate({sdpMLineIndex:json_msg.ice_candidate.label,
+                candidate:json_msg.ice_candidate.candidate});
+            pc.addIceCandidate(candidate);
+        } else if(json_msg.change_name){
+            change_name(json_msg.change_name, json_msg.id);
+        } else if(json_msg.init_stream) {
+            init_video(json_msg.init_stream);
+        } else if(json_msg.select_stream) {
+            change_peer_stream(json_msg.id, json_msg.select_stream, json_msg.stream_name);
+        } else if(json_msg.error == "wrong_key") {
+            ask_key();
+        } else if(json_msg.room_update == 'set_key') {
+            key_flag(json_msg.key);
+        } else if(json_msg.let_in) {
+            $('#ask_key_window').fadeOut();
+            key_flag(json_msg.let_in);
+            send_ready();
+        } else if(json_msg.knock) {
+            somebody_knocks(json_msg.knock, json_msg.username);
+        } else {
+            log("sock.onmessage() -- unknown message",2);
+            log(json_msg,2);
+        }
+    };
 
-sock.onclose = function() {
-    show_message("Disconnected");
-};
+    sock.onclose = function() {
+        show_message("Disconnected");
+    };
+}
 
 function parse_offer(json_msg){
     var pc = peer[json_msg.caller].connection;

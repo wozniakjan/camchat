@@ -32,7 +32,7 @@
 }
 
 #settings_window .content {
-    width: 450px;
+    width: 300px;
     text-align: left;
     padding-left: 20px;
     padding-right: 20px;
@@ -116,6 +116,7 @@
 
 .toggler_left, .toggler_right {
     text-align: center;
+    font-size: 8pt;
     height: 100%;
     float: left;
     overflow: hidden;

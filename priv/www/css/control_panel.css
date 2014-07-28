@@ -56,6 +56,7 @@
     height: 18px;
     transition: all 500ms ease;
     font-size: 13px;
+    overflow: hidden;
 }
 
 .rollout_item .description {
@@ -65,8 +66,9 @@
 
 .active_rollout_item {
     transition: all 500ms ease;
-    opacity: 0.99;
+    opacity: 1;
     height: 45px;
+    overflow: hidden;
 }
 
 table {

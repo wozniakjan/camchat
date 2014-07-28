@@ -322,14 +322,14 @@ function media_open() {
     }
     function draw_settings(user_id){
         log('draw_settings('+user_id+')', 3);
-        $('.toggler').unbind('mousedown').mousedown(function(){
+        $('#settings_window .toggler').unbind('mousedown').mousedown(function(){
             if( !$(this).hasClass('disabled') ){
                 process_change(user_id, $(this));
             }
         });
-        $('.toggler_on').removeClass('toggler_on');
-        $('.disabled').removeClass('disabled');
-        $('.slider').unbind('mousedown').mousedown(function(e) {
+        $('#settings_window .toggler_on').removeClass('toggler_on');
+        $('#settings_window .disabled').removeClass('disabled');
+        $('#settings_window .slider').unbind('mousedown').mousedown(function(e) {
             if( !$(this).hasClass('disabled') ){
                 change_slider($(this).children('.control'), e, user_id);
             }
@@ -366,13 +366,13 @@ function room_open() {
                 log('room_open() -> process_change() unknown div', 3);
         }
     }
-    $('.toggler').unbind('mousedown').mousedown(function(){
+    $('#settings_window .toggler').unbind('mousedown').mousedown(function(){
         if( !$(this).hasClass('disabled') ){
             process_change($(this));
         }
     });
-    $('.toggler_on').removeClass('toggler_on');
-    $('.disabled').removeClass('disabled');
+    $('#settings_window .toggler_on').removeClass('toggler_on');
+    $('#settings_window .disabled').removeClass('disabled');
     if(sessionStorage.room_key) {
         $('#lock_switch > .toggler_left').addClass('toggler_on');
     } else {

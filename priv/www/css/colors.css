@@ -1,0 +1,73 @@
+html, body, #curtain {
+    background-color: #222222;
+}
+.chosen_container, .chosen_drop {
+    background-color: #222222 !important;
+}
+.small_video, 
+#settings_window,
+#control_panel input,
+#settings_window, 
+#message_window, 
+#ask_key_window, 
+#rollout_menu,
+#bottom_panel,
+.dialog_window {
+    background-color: #444444;
+    color: #BBBBBB; 
+    box-shadow:0px 0px 7px #222222; 
+    opacity: 0.95;
+}
+
+#control_panel input {
+    border: none;
+    background-color: #444444;
+    color: #BBBBBB; 
+}
+
+#bottom_panel,
+.active_rollout_item,
+.button {
+    background-color: #555555;
+    color: #DDDDDD; 
+}
+.button,
+.toggler, .slider {
+    border: solid 1px #777777;
+}
+.label{
+    opacity: 0.9;
+    background-color: #444444;
+    color: #BBBBBB; 
+}
+#myself .label:hover {
+    opacity: 1;
+    background-color: #555555;
+    color: #DDDDDD; 
+}
+
+.click_link {
+    border-bottom: 1px #BBBBBB dotted;
+}
+.button:hover,
+.toggler {
+    background-color: #666666;
+}
+.select_set:hover, .switch:hover {
+    background-color: #100010;
+}
+.slider,
+.toggler_right {
+    background: #774477;
+}
+.slider .control,
+.toggler_left {
+    background: #335555;
+}
+#control_panel {
+    background-color: transparent;
+}
+
+.disabled {
+    opacity: 0.3;
+}

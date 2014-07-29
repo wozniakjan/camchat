@@ -3,7 +3,6 @@ html, body {
     width: 100%;
     padding: 0px;
     margin: 0px;
-    background-color: #222222;
 }
 
 body{
@@ -28,7 +27,6 @@ body{
     position: fixed;
     height: 100%;
     width: 100%;
-    background-color: #222222;
     z-index: 9;
 }
 
@@ -62,8 +60,6 @@ body{
     padding: 2px;
     bottom: 5px;
     right: 5px;
-    background-color: white;
-    opacity: 0.85;
     z-index: 1;
     margin: 0px;
     padding: 2px;
@@ -81,7 +77,6 @@ body{
     cursor: default;
 }
 #myself .label:hover {
-    opacity: 1;
     cursor: text;
 }
 
@@ -89,14 +84,10 @@ body{
     margin: 0px;
     padding: 0px;
     z-index: 0;
-    border: solid;
-    border-width: 1px;
-    border-color: black;
 }
 
 .click_link {
     padding-top: 10px;
-    border-bottom: 1px black dotted;
     display: inline-block; /*not expand width*/
 }
 

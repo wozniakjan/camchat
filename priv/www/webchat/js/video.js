@@ -403,7 +403,7 @@ function setup_videos(id, user_name, peer_list, type){
         } else{
             $(this).attr("size",Math.max($(this).val().length,1))}
     });
-    update_message("<b>Waiting for others...</b><br><br>send this link:<br>" + window.location);
+    show_initial_message();
     if(type == 'existing_room') {
         $.each(peer_list, function(peer_id, attr) {
             add_peer(peer_id, attr.user_name, attr.browser_token);

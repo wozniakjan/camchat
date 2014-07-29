@@ -339,3 +339,23 @@ function key_flag(new_key) {
         sessionStorage.removeItem("room_key");
     }
 }
+
+function select_text() {
+    _this = $("#message_window .flag")[0];
+    if(document.body.createTextRange){
+        var range = document.body.createTextRange();
+        range.moveToElementText(_this);
+        range.select();
+    } else if (window.getSelection) {
+        var selection = window.getSelection();
+        var range = document.createRange();
+        range.selectNodeContents(_this);
+        selection.removeAllRanges();
+        selection.addRange(range);
+    }
+}
+
+function show_initial_message() {
+    var loc = "<div class=flag onclick='select_text()'>" +  window.location + "</div>";
+    update_message("Waiting for others...","send this link:<br>" + loc);
+}

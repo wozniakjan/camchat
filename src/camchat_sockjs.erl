@@ -92,11 +92,15 @@ connect_reply(User, RoomStatus) ->
     UN = User#user.username,
     Token = User#user.browser_token,
     Conn = User#user.connection_id,
-    PeerMsg = {[{peer_connected, UserId}, {name, UN}, {browser_token, Token}]},
+    Browser = User#user.browser,
+    PeerMsg = {[{peer_connected, UserId}, {name, UN}, 
+                {browser_token, Token}, {browser, Browser}]},
     PeerList = send_peers(Conn, jiffy:encode(PeerMsg)),
     UserList = lists:map(fun(X)-> 
                 {X#user.user_id, 
-                    {[{user_name, X#user.username}, {browser_token, X#user.browser_token}]}} 
+                    {[{user_name, X#user.username}, 
+                      {browser_token, X#user.browser_token},
+                      {browser, X#user.browser}]}} 
         end, PeerList),
     Reply = [{user_id, UserId}, {user_name, UN}, {peer_list, {UserList}}],
     Conn:send(jiffy:encode({[{connected, RoomStatus} | Reply]})).

@@ -2,7 +2,11 @@ window.AudioContext = window.AudioContext||window.webkitAudioContext;
 var AUDIO_BUFFER_SIZE = 16384; 
 var constraints = {};
 constraints["camera"] = {video: true, audio: true};
-constraints["screen"] = {video: {mandatory: { chromeMediaSource: 'screen'}}, audio: false};
+if(webrtcDetectedBrowser === 'chrome'){
+    constraints["screen"] = {video: {mandatory: { chromeMediaSource: 'screen'}}, audio: false};
+} else { //streaming screen available only on chrome
+    constraints["screen"] = {video: true, audio: true};
+}
 var current_stream;
 var stream_id = {};
 var gainNode = null;
@@ -42,6 +46,7 @@ function send_ready(){
         });
         localStorage.browser_token = guid;
     }
+    msg.browser = webrtcDetectedBrowser;
     msg.browser_token = localStorage.browser_token;
     send(msg);
 }
@@ -259,7 +264,7 @@ function setup_myself() {
 }
 
 //when peer connects, create his video div
-function add_peer(id, name, browser_token) {
+function add_peer(id, name, browser_token, browser) {
     log("add_peer("+id+", "+name+", "+browser_token+")", 3);
     var new_peer = $("<div>", {id: "peer"+id, class: "small_video_frame"});
     var label = $("<div>", {class: "label", text: name});
@@ -269,7 +274,9 @@ function add_peer(id, name, browser_token) {
         peer_attr.muted = "muted";
     }
     var video = $("<video>", peer_attr);
-    peer[id] = {'name': name, 'video': video[0], 'label': label, 'attr': peer_attr};
+    peer[id] = {'name': name, 'video': video[0], 
+        'label': label, 'attr': peer_attr,
+        'browser': browser};
     new_peer.append(video);
     new_peer.append(label);
     $("#video_buff").append(new_peer);
@@ -406,7 +413,7 @@ function setup_videos(id, user_name, peer_list, type){
     show_initial_message();
     if(type == 'existing_room') {
         $.each(peer_list, function(peer_id, attr) {
-            add_peer(peer_id, attr.user_name, attr.browser_token);
+            add_peer(peer_id, attr.user_name, attr.browser_token, attr.browser);
         });
     }
     //hide curtain

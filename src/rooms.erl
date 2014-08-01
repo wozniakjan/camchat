@@ -40,6 +40,7 @@ create_user(ConnectionId, RoomId, Params) ->
             case Param of
                 {<<"browser_token">>, P} -> User#user{browser_token = P};
                 {<<"user_name">>, P} -> User#user{username = P};
+                {<<"browser">>, P} -> User#user{browser = P};
                 _ -> User  % unknown user parameter
             end
         end,

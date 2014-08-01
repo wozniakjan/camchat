@@ -113,7 +113,10 @@ function sock_callbacks(){
         if(json_msg.audio_energy){
             send_audio_worker(json_msg);
         } else if(json_msg.peer_connected) {
-            add_peer(json_msg.peer_connected, json_msg.name, json_msg.browser_token);
+            add_peer(json_msg.peer_connected, 
+                    json_msg.name, 
+                    json_msg.browser_token,
+                    json_msg.browser);
         } else if(json_msg.connected){
             setup_videos(json_msg.user_id, json_msg.user_name, 
                     json_msg.peer_list, json_msg.connected);

@@ -18,9 +18,9 @@
 %%%                                   init                                        %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 start() ->
-    ets:new(rooms, [ordered_set, named_table, public, {keypos, ?ROOM_ID_POS}]),
+    ets:new(rooms, [ordered_set, named_table, public, {keypos, #room.room_id}]),
     ets:new(uid_lookup, [ordered_set, named_table, public]),
-    ets:new(users, [ordered_set, named_table, public, {keypos, ?CONNECTION_ID_POS}]),
+    ets:new(users, [ordered_set, named_table, public, {keypos, #user.connection_id}]),
     ets:new(hall, [ordered_set, named_table, public]).
 
 stop() ->
@@ -59,9 +59,9 @@ room_update(ConnectionId, Params) ->
         fun(Param) -> 
             case Param of
                 {<<"default_stream">>, P} -> 
-                    ets:update_element(rooms, Room, {?DEFAULT_STREAM_POS, P});
+                    ets:update_element(rooms, Room, {#room.default_stream, P});
                 {<<"key">>, P} -> 
-                    ets:update_element(rooms, Room, {?KEY_POS, P});
+                    ets:update_element(rooms, Room, {#room.key, P});
                 _ -> ok  % unknown room parameter
             end
         end,
@@ -140,7 +140,7 @@ connect_room(RoomId, ConnectionId, Params) ->
             match_key(ExistingRoom, Params),
             RoomId = ExistingRoom#room.room_id,
             UserList = ExistingRoom#room.user_list,
-            ets:update_element(rooms, RoomId, {?USER_LIST_POS, [ConnectionId | UserList]}),
+            ets:update_element(rooms, RoomId, {#room.user_list, [ConnectionId | UserList]}),
             existing_room
     end.
 
@@ -185,7 +185,7 @@ disconnect(RoomId, ConnectionId) ->
         [] -> 
             ets:delete(rooms, RoomId);
         _ ->
-            ets:update_element(rooms, RoomId, {?USER_LIST_POS, UpdatedList})
+            ets:update_element(rooms, RoomId, {#room.user_list, UpdatedList})
     end,
     [User] = ets:lookup(users, ConnectionId),
     ets:delete(users, ConnectionId),

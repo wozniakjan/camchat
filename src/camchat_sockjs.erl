@@ -58,7 +58,7 @@ parse_msg(_Conn, {[{<<"ice_candidate">>, IC}, {<<"caller">>, From}, {<<"callee">
     ToConn:send(jiffy:encode({[{<<"ice_candidate">>, IC}, {<<"caller">>, From}, {<<"callee">>, To}]})),
     {ok, connected};
 parse_msg(Conn, {[{<<"change_name">>, NewName}]}, connected) ->
-    rooms:edit_user(Conn, ?USERNAME_POS, NewName),
+    rooms:edit_user(Conn, #user.username, NewName),
     Id = rooms:get_user_id_by_conn(Conn),
     send_peers(Conn, jiffy:encode({[{<<"change_name">>, NewName}, {<<"id">>, Id}]})),
     {ok, connected};

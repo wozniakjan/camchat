@@ -2,12 +2,12 @@ window.AudioContext = window.AudioContext||window.webkitAudioContext;
 var AUDIO_BUFFER_SIZE = 16384; 
 var constraints = {};
 constraints["camera"] = {video: true, audio: true};
-if(webrtcDetectedBrowser === 'chrome'){
-    constraints["screen"] = {video: {mandatory: { chromeMediaSource: 'screen'}}, audio: false};
-} else { //streaming screen available only on chrome
-    constraints["screen"] = {video: true, audio: true};
-}
+constraints["screen"] = {video: {mandatory: { chromeMediaSource: 'screen'}}, audio: false};
 var current_stream;
+if(webrtcDetectedBrowser != 'chrome'){
+    //streaming screen available only on chrome
+    current_stream = "camera"
+}
 var stream_id = {};
 var gainNode = null;
 var master_volume = 1.0;
@@ -186,11 +186,18 @@ function set_my_media(media_type, on_success) {
 function init_video(media_type) {
     log("init_video("+media_type+")", 1);
     var video_elem = setup_myself();
-    if(media_type == "screen" || media_type == "camera"){
-        current_stream = media_type;
-    } else if(sessionStorage.default_media_type) {
-        current_stream = sessionStorage.default_media_type;
-    } else { 
+    if(webrtcDetectedBrowser === 'chrome'){
+        if(media_type == "screen" || media_type == "camera"){
+            current_stream = media_type;
+        } else if(sessionStorage.default_media_type) {
+            current_stream = sessionStorage.default_media_type;
+        } else { 
+            current_stream = "camera";
+        }
+    } else {
+        if(media_type != 'camera'){
+            log("only chrome supports screen sharing",0);
+        }
         current_stream = "camera";
     }
     set_my_media(current_stream);
@@ -339,12 +346,12 @@ function toggle_peer_stream(peer_id, on_success) {
 }
 
 //switch stream of selected per
-function change_peer_stream(peer_id, stream_id, stream_type){
+function change_peer_stream(peer_id, remote_stream_id, stream_type){
+    log("change_peer_stream(" + peer_id + ", " + remote_stream_id+")", 1);
     if(webrtcDetectedBrowser === 'chrome'){
-        log("change_peer_stream(" + peer_id + ", " + stream_id+")", 1);
-        var selected_remote_stream = get_stream_by_id(peer_id, stream_id);
+        var selected_remote_stream = get_stream_by_id(peer_id, remote_stream_id);
 
-        peer[peer_id].last_change_stream = stream_id;
+        peer[peer_id].last_change_stream = remote_stream_id;
         if(selected_remote_stream != undefined) {
             var current_main = $("#main_video").attr("peer_id");
             var video_elem = undefined;
@@ -357,6 +364,8 @@ function change_peer_stream(peer_id, stream_id, stream_type){
             video_elem.play();
             peer[peer_id].stream_name = stream_type;
         } 
+    } else {
+        log("change_peer_stream() supported on chrome only", 1);
     }
 }
 

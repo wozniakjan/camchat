@@ -87,6 +87,8 @@ $.getScript("/webchat/js/control_panel.js");
 $.getScript("/webchat/js/video.js");
 
 function send(json_msg){
+    console.log("send()");
+    console.log(json_msg);
     sock.send(JSON.stringify(json_msg));
 };
 
@@ -189,18 +191,20 @@ function setup_peer_connection(id, remote_video) {
         } 
     }
     pc.onaddstream = function(event) {
+        log('pc.onaddstream()', 2);
         if(webrtcDetectedBrowser != 'chrome'){
             if(peer[id].has_stream){
+                log('pc.onaddstream() -> non-chrome has stream already', 3);
                 return;
             }
             peer[id].has_stream = true;
         }
-        log('pc.onaddstream', 2);
         if(peer[id].last_change_stream == event.stream.id || 
            peer[id].last_change_stream == undefined){
+            log('pc.onaddstream() -> attachMediaStream '+peer[id].last_change_stream, 3);
             peer[id].last_change_stream = event.stream.id;
-        attachMediaStream(remote_video, event.stream);
-        remote_video.play();
+            attachMediaStream(remote_video, event.stream);
+            remote_video.play();
         }
     }
     pc.onremovestream = function(event) {
@@ -214,7 +218,6 @@ function setup_peer_connection(id, remote_video) {
         pc.addStream(local_stream[i]);
     }
     negotiate_connection(id);
-    send({'select_stream': stream_id[current_stream], 'stream_name':current_stream});
 }
 
 function negotiate_connection(remote_id, force){

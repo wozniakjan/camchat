@@ -22,6 +22,39 @@ function log(string, priority) {
         console.log(string);
     }
 };
+function error_callback(error) {
+    var click_settings = '<div class="click_link" onclick="draw_settings_div(\'Audio & Video Settings\')">see settings</div>';
+    if(error.name == "PermissionDeniedError") {
+        var hint = "did you allow your browser to use camera and mic?<br>";        
+        show_message("Can't get audio & video", hint + click_settings);
+    } else if(error.name == "DevicesNotFoundError") {
+        var hint = "do you have any camera or mic connected?<br>";
+        show_message("Can't get audio & video", hint + click_settings);
+    } else if(error.name == "InvalidStateError") {
+        var hint = "are you connected via https?<br>";
+        show_message("Can't get audio & video", hint + click_settings);
+    } else {
+        console.log(error, 0);
+    }
+}
+
+function send(json_msg){
+    //console.log("send()");
+    //console.log(json_msg);
+    sock.send(JSON.stringify(json_msg));
+};
+
+function send_audio_worker(msg){
+    audio_worker.postMessage(msg);
+};
+
+
+/**
+ * Load other scripts
+ */
+$.getScript("/webchat/js/control_panel.js");
+$.getScript("/webchat/js/video.js");
+$.getScript("/webchat/js/bottom_panel.js");
 
 $(document).ready(function() {
     audio_worker.onmessage = function(event) { 
@@ -62,40 +95,8 @@ $(document).ready(function() {
         }
     });
 
-    //load_bottom_panel();
     sock_callbacks();
 });
-
-function error_callback(error) {
-    var click_settings = '<div class="click_link" onclick="draw_settings_div(\'Audio & Video Settings\')">see settings</div>';
-    if(error.name == "PermissionDeniedError") {
-        var hint = "did you allow your browser to use camera and mic?<br>";        
-        show_message("Can't get audio & video", hint + click_settings);
-    } else if(error.name == "DevicesNotFoundError") {
-        var hint = "do you have any camera or mic connected?<br>";
-        show_message("Can't get audio & video", hint + click_settings);
-    } else if(error.name == "InvalidStateError") {
-        var hint = "are you connected via https?<br>";
-        show_message("Can't get audio & video", hint + click_settings);
-    } else {
-        console.log(error, 0);
-    }
-}
-
-
-$.getScript("/webchat/js/control_panel.js");
-$.getScript("/webchat/js/video.js");
-
-function send(json_msg){
-    console.log("send()");
-    console.log(json_msg);
-    sock.send(JSON.stringify(json_msg));
-};
-
-function send_audio_worker(msg){
-    audio_worker.postMessage(msg);
-};
-
 
 function bring_to_front(window_div) {
     log("bring_to_front()", 5);

@@ -30,8 +30,7 @@
 }
 
 .bottom_panel_item {
-    padding-top: 5px;
-    padding-left: 20px;
+    padding: 5px 10px;
     float: left;
     height: 35px;
     transition: all 500ms ease;
@@ -45,6 +44,7 @@
     background-size: 25px 25px;
     background-repeat: no-repeat;
     background-position: center;
+    transition: all 500ms ease 0s;
 }
 
 .bottom_panel_detail {
@@ -61,10 +61,41 @@
 .bottom_panel_item:hover .bottom_panel_detail.narrow {
     width: 75px;
 }
+.right_align {
+    float: right;
+}
 
 #bottom_gain > .bottom_panel_icon {
     background-image: url("/webchat/images/microphone.png");
 }
+#bottom_gain:hover > .bottom_panel_icon {
+    background-image: url("/webchat/images/microphone_hover.png");
+}
+
 #bottom_volume > .bottom_panel_icon {
     background-image: url("/webchat/images/volume.png");
+}
+#bottom_volume:hover > .bottom_panel_icon {
+    background-image: url("/webchat/images/volume_hover.png");
+}
+
+#bottom_lock > .bottom_panel_icon {
+    background-image: url("/webchat/images/lock.png");
+}
+#bottom_lock:hover > .bottom_panel_icon {
+    background-image: url("/webchat/images/lock_hover.png");
+}
+
+#bottom_cut > .bottom_panel_icon {
+    background-image: url("/webchat/images/cut.png");
+}
+#bottom_cut:hover > .bottom_panel_icon {
+    background-image: url("/webchat/images/cut_hover.png");
+}
+#fullscreen > .bottom_panel_icon {
+    background-image: url("/webchat/images/fullscreen.png");
+}
+#fullscreen:hover > .bottom_panel_icon {
+    background-image: url("/webchat/images/fullscreen_hover.png");
+    cursor: pointer;
 }

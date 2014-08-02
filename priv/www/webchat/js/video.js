@@ -436,3 +436,27 @@ function change_name(name, id){
     peer[id].name = name;
     $("#peer"+id+" > .label").html(name);
 }
+
+function launchFullscreen() {
+    element = $("#screen")[0];
+    log("launchFullscreen()",3);
+    if(element.requestFullscreen) {
+        element.requestFullscreen();
+    } else if(element.mozRequestFullScreen) {
+        element.mozRequestFullScreen();
+    } else if(element.webkitRequestFullscreen) {
+        element.webkitRequestFullscreen();
+    } else if(element.msRequestFullscreen) {
+        element.msRequestFullscreen();
+    }
+}
+function exitFullscreen() {
+    log("exitFullScreen()",3);
+    if(document.exitFullscreen) {
+        document.exitFullscreen();
+    } else if(document.mozCancelFullScreen) {
+        document.mozCancelFullScreen();
+    } else if(document.webkitExitFullscreen) {
+        document.webkitExitFullscreen();
+    }
+}

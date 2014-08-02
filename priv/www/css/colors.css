@@ -1,4 +1,11 @@
-html, body, #curtain {
+html, body, #curtain, #screen{
+    background-color: #222222;
+}
+:-webkit-full-screen,
+:-moz-full-screen,
+:-ms-fullscreen,
+:full-screen,
+:fullscreen{ 
     background-color: #222222;
 }
 .chosen_container, .chosen_drop {

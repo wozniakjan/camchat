@@ -9,7 +9,7 @@ function join_room(default_type) {
         address = $("#share_screen .room_name").val();
         save_key($("#share_screen .key"));
     }
-    connect_room(address, default_type);
+    connect_room(address, "camera");
 }
 
 function save_key(div) {

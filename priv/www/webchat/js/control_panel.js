@@ -202,36 +202,34 @@ function init_settings_widgets() {
 
 //set slider and change its effective value
 function change_slider(slider, e, user_id) {
+    log("change_slider",3);
     if(user_id != undefined){
         slider_user_id = user_id;
     }
-    slide = slider;
-    var left = slide.parent().offset().left;
-    var right = left+slide.parent().width();
+    var left = slider.parent().offset().left;
+    var right = left+slider.parent().width();
     var x = Math.min(right, Math.max(left, e.pageX));
-    slide.width(x - left);
     var val = (x-left) / (right-left);
-    switch(slider.parent()[0].id){
-        case 'volume':
-            set_volume(slider_user_id, val);
-            break;
-        case 'microphone':
-            set_gain(val);
-            break;
-        default:
-            log("setting wrong slider",3);
+    if(slider.parent().hasClass('volume')){
+        set_volume(slider_user_id, val);
+        set_slider('volume', user_id);
+    } else if(slider.parent().hasClass('gain')){
+        set_gain(val);
+        set_slider('gain', user_id);
+    } else {
+        log("setting wrong slider",3);
     }
 }
 
 //set slider width
 function set_slider(slider, user_id) {
-    log("set_slider("+slider.parent()[0].id+", "+user_id+")",3);
+    log("set_slider("+slider+", "+user_id+")",3);
     var val;
-    switch(slider.parent()[0].id){
+    switch(slider){
         case 'volume':
             val = get_volume(user_id);
             break;
-        case 'microphone':
+        case 'gain':
             if(user_id=='myself'){
                 val = get_gain();
             } else { //unable to set peer micro
@@ -241,7 +239,7 @@ function set_slider(slider, user_id) {
         default:
             log("setting wrong slider",3);
     }
-    slider.width(slider.parent().width()*val);
+    $('.'+slider+' > .control').each(function() {$(this).width($(this).parent().width()*val)});
 }
 
 //callbacks
@@ -291,10 +289,10 @@ function media_open() {
         $('#record_switch > .toggler_right').addClass('toggler_on');
         $('#record_switch').addClass('disabled');
         //3. volume
-        set_slider($('#volume > .control'), 'myself');
-        set_slider($('#microphone > .control'), 'myself');
+        set_slider('volume', 'myself');
+        set_slider('gain', 'myself');
         if(get_gain() == -1) {
-            $('#microphone').addClass('disabled');
+            $('.gain').addClass('disabled');
         }
         //4. directors cut
         $('#auto_cut > .toggler_left').addClass('toggler_on');
@@ -313,9 +311,9 @@ function media_open() {
         $('#record_switch > .toggler_right').addClass('toggler_on');
         $('#record_switch').addClass('disabled');
         //3. volume
-        set_slider($('#volume > .control'), user_id);
-        set_slider($('#microphone > .control'), user_id);
-        $('#microphone').addClass('disabled');
+        set_slider('volume', user_id);
+        set_slider('gain', user_id);
+        $('.gain').addClass('disabled');
         //4. directors cut
         $('#auto_cut > .toggler_left').addClass('toggler_on');
         $('#auto_cut').addClass('disabled');

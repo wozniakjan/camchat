@@ -52,8 +52,8 @@ function send_audio_worker(msg){
 /**
  * Load other scripts
  */
-$.getScript("/webchat/js/control_panel.js");
 $.getScript("/webchat/js/video.js");
+$.getScript("/webchat/js/control_panel.js");
 $.getScript("/webchat/js/bottom_panel.js");
 
 $(document).ready(function() {

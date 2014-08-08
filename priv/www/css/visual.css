@@ -1,0 +1,65 @@
+path {
+    stroke: black;
+    stroke-width: 1;
+    fill: none;
+}
+
+.queue {
+    stroke: steelblue;
+    stroke-width: 1;
+    fill: none;
+}
+
+.grid .tick {
+    stroke: lightgrey;
+    opacity: 0.7;
+    stroke-dasharray: 1 2;
+}
+
+.grid path {
+    stroke-width: 0;
+}
+
+.tick {
+    font-size: 10px;
+}
+
+.graph {
+    width: 660px;
+    height: 320px;
+}
+
+.label{
+    text-align: center;
+    padding-bottom: 10px;
+}
+
+.graph > .x_axis{
+    width: calc(100% - 20px);
+    height: 20px;
+    float: right;
+}
+.graph > .y_axis{
+    height: 100%;
+    width: 20px;
+    float: left;
+    text-align: center;
+}
+.graph > .data {
+    background-color: #FFFFF0;
+    float: left;
+    width: calc(100% - 20px);
+    height: calc(100% - 20px);
+}
+
+.y_axis > .row {
+    font: 10px sans-serif;
+    color: steelblue;
+}
+
+.x_axis > .col {
+    font: 10px sans-serif;
+    color: steelblue;
+    float: right;
+    text-align: right;
+}

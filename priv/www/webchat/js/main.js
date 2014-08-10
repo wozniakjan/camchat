@@ -7,6 +7,7 @@ var audio_worker = new Worker("/webchat/js/audio_energy_worker.js");
 var number_of_peers = 0;
 var LOG_LEVEL = 9;
 var front_window;
+var audio_worker_active = true;
 
 //drag & drop
 var drag = undefined;
@@ -48,6 +49,15 @@ function send_audio_worker(msg){
     audio_worker.postMessage(msg);
 };
 
+function set_audio_worker(status){
+    send_audio_worker({'work': status});
+    audio_worker_active = status;
+    $('.auto_cut').children().toggleClass('toggler_on');
+}
+
+function is_audio_worker_active(){
+    return audio_worker_active;
+}
 
 /**
  * Load other scripts

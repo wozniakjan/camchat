@@ -173,11 +173,10 @@
                     video.toggle_local_stream(on_success);
                 } else if(div.context.id == 'auto_cut') {
                     if(div.children('.toggler_on').hasClass('toggler_left')){
-                        send_audio_worker({'work': false});
+                        set_audio_worker(false);
                     } else {
-                        send_audio_worker({'work': true});
+                        set_audio_worker(true);
                     }
-                    div.children().toggleClass('toggler_on');
                 } else if(div.context.id == 'record_switch'){
                     show_message("Not yet implemented");
                     div.children().toggleClass('toggler_on');
@@ -212,7 +211,12 @@
                 $('.gain').addClass('disabled');
             }
             //4. directors cut
-            $('#auto_cut > .toggler_left').addClass('toggler_on');
+            $('#auto_cut > .toggler_on').removeClass('toggler_on');
+            if(is_audio_worker_active()){
+                $('#auto_cut > .toggler_left').addClass('toggler_on');
+            } else {
+                $('#auto_cut .toggler_right').addClass('toggler_on');
+            }
         }
         function draw_user_settings(user_id){
             //1. stream selection
@@ -295,10 +299,9 @@
         }
     };
     
-    /**
-     * public API
-     */
-
+/******************************************************************************
+ * Public API                                                                 *
+ ******************************************************************************/
     //set slider and change its effective value
     control_panel.change_slider = function(slider, e, user_id) {
         log("change_slider",3);

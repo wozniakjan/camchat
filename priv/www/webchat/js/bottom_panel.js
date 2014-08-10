@@ -9,7 +9,12 @@
             $('#bottom_gain').addClass('disabled');
         }
         //3. directors cut
-        $('#bottom_cut .toggler_left').addClass('toggler_on');
+        $('#bottom_cut .toggler_on').removeClass('toggler_on');
+        if(is_audio_worker_active()){
+            $('#bottom_cut .toggler_left').addClass('toggler_on');
+        } else {
+            $('#bottom_cut .toggler_right').addClass('toggler_on');
+        }
         //4. lock
         if(sessionStorage.room_key) {
             $('#bottom_lock .toggler_left').addClass('toggler_on');
@@ -26,6 +31,13 @@
             }
         })});
         //3. directors cut
+        $('#bottom_cut .toggler').click(function() {
+            if($(this).children('.toggler_on').hasClass('toggler_left')){
+                set_audio_worker(false);
+            } else {
+                set_audio_worker(true);
+            }
+        });
         //4. lock
         //5. fullscreen
         $("#fullscreen").click(function(){

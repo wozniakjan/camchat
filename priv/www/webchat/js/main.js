@@ -60,7 +60,7 @@ $(document).ready(function() {
     audio_worker.onmessage = function(event) { 
         log("audio_worker.onmessage" + event.data, 3);
         if(event.data.set_main){
-            switch_main(event.data.set_main);
+            video.switch_main(event.data.set_main);
         }
     };
     //bring popups to front on click
@@ -91,7 +91,7 @@ $(document).ready(function() {
             });
         } 
         if(slide) {
-            change_slider(slide, e);
+            control_panel.change_slider(slide, e);
         }
     });
 
@@ -116,15 +116,15 @@ function sock_callbacks(){
         if(json_msg.audio_energy){
             send_audio_worker(json_msg);
         } else if(json_msg.peer_connected) {
-            add_peer(json_msg.peer_connected, 
+            video.add_peer(json_msg.peer_connected, 
                     json_msg.name, 
                     json_msg.browser_token,
                     json_msg.browser);
         } else if(json_msg.connected){
-            setup_videos(json_msg.user_id, json_msg.user_name, 
+            video.init_peers(json_msg.user_id, json_msg.user_name, 
                     json_msg.peer_list, json_msg.connected);
         } else if(json_msg.peer_disconnected) {
-            remove_peer(json_msg.peer_disconnected);
+            video.remove_peer(json_msg.peer_disconnected);
         } else if(json_msg.offer){
             parse_offer(json_msg);
         } else if(json_msg.answer){
@@ -138,9 +138,9 @@ function sock_callbacks(){
         } else if(json_msg.change_name){
             change_name(json_msg.change_name, json_msg.id);
         } else if(json_msg.init_stream) {
-            init_video(json_msg.init_stream);
+            video.init(json_msg.init_stream);
         } else if(json_msg.select_stream) {
-            change_peer_stream(json_msg.id, json_msg.select_stream, json_msg.stream_name);
+            video.change_peer_stream(json_msg.id, json_msg.select_stream, json_msg.stream_name);
         } else if(json_msg.error == "wrong_key") {
             ask_key();
         } else if(json_msg.room_update == 'set_key') {
@@ -148,7 +148,7 @@ function sock_callbacks(){
         } else if(json_msg.let_in) {
             $('#ask_key_window').fadeOut();
             key_flag(json_msg.let_in);
-            send_ready();
+            video.send_ready();
         } else if(json_msg.knock) {
             somebody_knocks(json_msg.knock, json_msg.username);
         } else {
@@ -277,7 +277,7 @@ function ask_key(){
         sessionStorage.setItem("room_key", $("#ask_key").val());
         var settings_window = $(this).parent();
         settings_window.fadeOut("fast", function(){$(this).remove()});
-        send_ready();
+        video.send_ready();
     });
     drag_div.mousedown(function(e) {
         drag = ask_key;

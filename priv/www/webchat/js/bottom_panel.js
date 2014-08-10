@@ -1,6 +1,7 @@
 (function(bottom_panel) {
     function init_values() {
         console.log("init()");
+        $('#bottom_panel .toggler_on').removeClass('toggler_on');
         //1. volume 
         $('#bottom_volume .control').width($("#bottom_volume .slider").width()*video.get_volume('myself'));
         //2. gain
@@ -9,7 +10,6 @@
             $('#bottom_gain').addClass('disabled');
         }
         //3. directors cut
-        $('#bottom_cut .toggler_on').removeClass('toggler_on');
         if(is_audio_worker_active()){
             $('#bottom_cut .toggler_left').addClass('toggler_on');
         } else {
@@ -39,6 +39,13 @@
             }
         });
         //4. lock
+        $('#bottom_lock .toggler').click(function() {
+            if($(this).children('toggler_on').hasClass('toggler_left')){
+                set_key('test_key', true);
+            } else {
+                set_key('', true);
+            }
+        });
         //5. fullscreen
         $("#fullscreen").click(function(){
             if(!document.fullscreenElement && 

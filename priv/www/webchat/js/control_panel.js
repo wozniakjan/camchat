@@ -275,11 +275,10 @@
             switch(div.context.id) {
                 case 'lock_switch' :
                     if($('#lock_switch > .toggler_left').hasClass('toggler_on')){
-                    send({room_update: 'set_key', key: ''});
-                } else {
-                    send({room_update: 'set_key', key: 'test'});
-                }
-                div.children().toggleClass('toggler_on');
+                        set_key('', true);
+                    } else {
+                        set_key('test_key', true);
+                    }
                 break;
                 default :
                     log('room_open() -> process_change() unknown div', 3);

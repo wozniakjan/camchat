@@ -55,6 +55,9 @@ function set_audio_worker(status){
     $('.auto_cut').children().toggleClass('toggler_on');
 }
 
+function set_password(password){
+}
+
 function is_audio_worker_active(){
     return audio_worker_active;
 }
@@ -154,10 +157,10 @@ function sock_callbacks(){
         } else if(json_msg.error == "wrong_key") {
             ask_key();
         } else if(json_msg.room_update == 'set_key') {
-            key_flag(json_msg.key);
+            set_key(json_msg.key);
         } else if(json_msg.let_in) {
             $('#ask_key_window').fadeOut();
-            key_flag(json_msg.let_in);
+            set_key(json_msg.let_in);
             video.send_ready();
         } else if(json_msg.knock) {
             somebody_knocks(json_msg.knock, json_msg.username);
@@ -349,12 +352,16 @@ function somebody_knocks(id, username) {
     }
 }
 
-function key_flag(new_key) {
+function set_key(new_key, send_flag) {
     if(new_key != '') {
         sessionStorage.setItem("room_key", new_key);
     } else {
         sessionStorage.removeItem("room_key");
     }
+    if(send_flag){
+        send({room_update: 'set_key', key: 'test'});
+    }
+    $('.lock').children().toggleClass('toggler_on');
 }
 
 function select_text() {

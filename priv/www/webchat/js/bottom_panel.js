@@ -67,5 +67,3 @@
         init_callbacks();
     }
 })(window.bottom_panel = window.bottom_panel || {});
-
-bottom_panel.init();

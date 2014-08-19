@@ -22,20 +22,28 @@ function log(string, priority) {
     if(priority < LOG_LEVEL) {
         console.log(string);
     }
-};
+}
+
 function error_callback(error) {
-    var click_settings = '<div class="click_link" onclick="draw_settings_div(\'Audio & Video Settings\')">see settings</div>';
+    var click_settings = $('<div>', {class: 'click_link'});
+    click_settings.click(function(){control_panel.draw_settings_div('Audio & Video Settings')});
+    click_settings.html('see settings');
+    var hint = $('<div>')
     if(error.name == "PermissionDeniedError") {
-        var hint = "did you allow your browser to use camera and mic?<br>";        
+        hint.html("did you allow your browser to use camera and mic?");
+        hint.append(click_settings);
         show_message("Can't get audio & video", hint + click_settings);
     } else if(error.name == "DevicesNotFoundError") {
-        var hint = "do you have any camera or mic connected?<br>";
-        show_message("Can't get audio & video", hint + click_settings);
+        hint.html("do you have any camera or mic connected?");
+        hint.append(click_settings);
+        show_message("Can't get audio & video", hint);
     } else if(error.name == "InvalidStateError") {
-        var hint = "are you connected via https?<br>";
-        show_message("Can't get audio & video", hint + click_settings);
+        hint.html("are you connected via https?");
+        hint.append(click_settings);
+        show_message("Can't get audio & video", hint);
     } else {
-        console.log(error, 0);
+        hint.html(error);
+        show_message("Unknown message", hint)
     }
 }
 
@@ -43,11 +51,11 @@ function send(json_msg){
     //console.log("send()");
     //console.log(json_msg);
     sock.send(JSON.stringify(json_msg));
-};
+}
 
 function send_audio_worker(msg){
     audio_worker.postMessage(msg);
-};
+}
 
 function set_audio_worker(status){
     send_audio_worker({'work': status});
@@ -61,13 +69,6 @@ function set_password(password){
 function is_audio_worker_active(){
     return audio_worker_active;
 }
-
-/**
- * Load other scripts
- */
-$.getScript("/webchat/js/video.js");
-$.getScript("/webchat/js/control_panel.js");
-$.getScript("/webchat/js/bottom_panel.js");
 
 $(document).ready(function() {
     audio_worker.onmessage = function(event) { 
@@ -109,6 +110,8 @@ $(document).ready(function() {
     });
 
     sock_callbacks();
+    control_panel.init();
+    bottom_panel.init();
 });
 
 function bring_to_front(window_div) {
@@ -117,7 +120,8 @@ function bring_to_front(window_div) {
         front_window = window_div;
         window_div.parent().append(window_div);
     }
-};
+}
+
 function sock_callbacks(){
     sock.onopen = function() {
         sock.send(JSON.stringify({'connect': room}));
@@ -188,7 +192,7 @@ function parse_offer(json_msg){
             }, error_callback);
         }, error_callback);
     }, error_callback);
-};
+}
 
 function setup_peer_connection(id, remote_video) {
     log('setup_peer_connection(' + id + ')', 1);
@@ -255,7 +259,8 @@ function show_message(text, hint) {
 //updates message window over the screen with text if is visible
 function update_message(text, hint) {
     if(hint){
-        $("#message_window > .description").html('<b>'+text+'</b> <br>' + hint);
+        $("#message_window > .description").html('<b>'+text+'</b> <br>')
+            .append(hint);
     } else {
         $("#message_window > .description").html(text);
     }
@@ -380,6 +385,9 @@ function select_text() {
 }
 
 function show_initial_message() {
-    var loc = "<div class=flag onclick='select_text()'>" +  window.location + "</div>";
-    update_message("Waiting for others...","send this link:<br>" + loc);
+    var loc = $('<div>', {class: "flag", html: window.location.toString()});
+    loc.click(select_text);
+    var hint = $('<div>', {html: "send this link:"});
+    hint.append(loc);
+    update_message("Waiting for others...",hint);
 }

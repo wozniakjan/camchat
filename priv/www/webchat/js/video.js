@@ -465,5 +465,4 @@
         msg.browser_token = localStorage.browser_token;
         send(msg);
     }
-
 })(window.video = window.video || {});

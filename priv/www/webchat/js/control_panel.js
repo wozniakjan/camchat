@@ -70,20 +70,8 @@
     function draw_active_settings_div() {
         $('#control_panel > input').blur();
         var name = $('.active_rollout_item').attr('id').replace('rollout_item_','');
-        draw_settings_div(name);
+        control_panel.draw_settings_div(name);
     };
-
-    //draws settings window according to argument
-    function draw_settings_div(name) {
-        var settings_window = $('#settings_window');
-        settings_window.css('visibility','visible');
-        settings_window.fadeIn("fast");
-        $('#settings_window > .content').load(settings_widgets[name].url,
-                                              function() {
-                                                  settings_widgets[name].init_callback(); 
-                                                  bring_to_front(settings_window);
-                                              });
-    }
 
     //emphasize the actie rollout item
     function activate_rollout_item(div){
@@ -331,6 +319,18 @@
             $("#rollout_menu").hide(100);
         }
     }
+    
+    //draws settings window according to argument
+    control_panel.draw_settings_div = function (name) {
+        var settings_window = $('#settings_window');
+        settings_window.css('visibility','visible');
+        settings_window.fadeIn("fast");
+        $('#settings_window > .content').load(settings_widgets[name].url,
+                function() {
+                    settings_widgets[name].init_callback(); 
+                    bring_to_front(settings_window);
+                });
+    }
 
     //init function
     control_panel.init = function() {
@@ -387,5 +387,3 @@
                 });
     }
 })(window.control_panel = window.control_panel || {});
-
-control_panel.init();

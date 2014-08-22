@@ -238,7 +238,11 @@
             $('#settings_window .disabled').removeClass('disabled');
             $('#settings_window .slider').unbind('mousedown').mousedown(function(e) {
                 if( !$(this).hasClass('disabled') ){
-                    control_panel.change_slider($(this).children('.control'), e, user_id);
+                    var slider_element = $(this).children('.control');
+                    slide_callback = function(e) { 
+                        control_panel.change_slider(slider_element, e, user_id);
+                    };
+                    control_panel.change_slider(slider_element, e, user_id);
                 }
             });
             if(user_id == "myself"){

@@ -27,7 +27,11 @@
         //1. volume & 2. gain
         $('#bottom_panel .slider').each(function(){ $(this).mousedown(function(e) {
             if( !$(this).hasClass('disabled') ){
-                control_panel.change_slider($(this).children('.control'), e, 'myself');
+                var slider_element = $(this).children('.control');
+                slide_callback = function(e) { 
+                    control_panel.change_slider(slider_element, e, 'myself');
+                };
+                control_panel.change_slider(slider_element, e, 'myself');
             }
         })});
         //3. directors cut

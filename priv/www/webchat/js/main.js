@@ -11,7 +11,7 @@ var audio_worker_active = true;
 
 //drag & drop
 var drag = undefined;
-var slide = undefined;
+var slide_callback = undefined;
 var x, y;
 
 var pc_config = webrtcDetectedBrowser === 'firefox' ?
@@ -30,15 +30,15 @@ function error_callback(error) {
     click_settings.html('see settings');
     var hint = $('<div>')
     if(error.name == "PermissionDeniedError") {
-        hint.html("did you allow your browser to use camera and mic?");
+        hint.html("did you allow your browser to use camera and mic?<br>");
         hint.append(click_settings);
         show_message("Can't get audio & video", hint + click_settings);
     } else if(error.name == "DevicesNotFoundError") {
-        hint.html("do you have any camera or mic connected?");
+        hint.html("do you have any camera or mic connected?<br>");
         hint.append(click_settings);
         show_message("Can't get audio & video", hint);
     } else if(error.name == "InvalidStateError") {
-        hint.html("are you connected via https?");
+        hint.html("are you connected via https?<br>");
         hint.append(click_settings);
         show_message("Can't get audio & video", hint);
     } else {
@@ -95,7 +95,7 @@ $(document).ready(function() {
 
     $('body').mouseup(function(e) {
         drag = undefined;
-        slide = undefined;
+        slide_callback = undefined;
     });
     $('body').mousemove(function(e) {
         if (drag) {
@@ -104,8 +104,8 @@ $(document).ready(function() {
                 left: e.pageX - x
             });
         } 
-        if(slide) {
-            control_panel.change_slider(slide, e);
+        if(slide_callback) {
+            slide_callback(e);
         }
     });
 

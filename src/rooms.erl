@@ -8,6 +8,7 @@
 -export([get_random/0, get_empty/0]).
 -export([let_in/1]).
 -export([room_update/2]).
+-export([monitor_query/4]).
 
 -include("types.hrl").
 
@@ -128,9 +129,18 @@ let_in(KnockId) ->
     [Room] = ets:lookup(rooms, RoomId),
     {ok, Room#room.key, ConnId}.
 
+monitor_query(<<"users">>, Until, Count, IntervalLen) ->
+    monitor_parse(users, Until, Count, IntervalLen);
+monitor_query(<<"rooms">>, Until, Count, IntervalLen) ->
+    monitor_parse(rooms, Until, Count, IntervalLen).
+
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%                               private functions                               %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
+monitor_parse(Type, Until, Count, IntervalLength) ->
+    Val = ets:select_count(Type, []),
+    lists:map(fun() -> Val end, lists:seq(0, IntervalCount-1)).
+
 connect_room(RoomId, ConnectionId, Params) ->
     case ets:lookup(rooms, RoomId) of
         [] -> 

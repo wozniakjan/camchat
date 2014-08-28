@@ -9,8 +9,6 @@
 
     function get_data(graph, int_count, draw_callback) {
         function success_callback( received ) {
-            //console.log(received);
-
             for(var i = 0; i<int_count; i++){
                 if(data[graph]){
                     data[graph].shift();
@@ -24,15 +22,10 @@
             draw_callback(data[graph]);
         }
 
-        var json = {url: "/monitor",
-            type: "POST",
-            contentType: "application/json", 
-            data: JSON.stringify({"monitor-type":graph, 
-                  "interval-count": int_count, 
-                  "interval-length":interval, 
-                  "until":(new Date()).toJSON()}),
-                  success: success_callback,
-                  error: function() {console.log(data);}};
+        var json = {url: "/monitor/"+graph+"/"+(new Date()).toJSON()+"/"+int_count,
+            type: "GET",
+            success: success_callback,
+            error: function() {console.log(data);}};
         $.ajax(json)
     }
     
@@ -129,4 +122,6 @@
     }
 }(window.monitor = window.monitor || {}));
 
-monitor.display_graph("queue", 30, 10);		
+$(document).ready(function() {
+    monitor.display_graph("queue", 30, 10);
+});

@@ -137,9 +137,9 @@ monitor_query(<<"rooms">>, Until, Count, IntervalLen) ->
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%                               private functions                               %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
-monitor_parse(Type, Until, Count, IntervalLength) ->
+monitor_parse(Type, _Until, Count, _IntervalLength) ->
     Val = ets:select_count(Type, []),
-    lists:map(fun() -> Val end, lists:seq(0, IntervalCount-1)).
+    lists:map(fun() -> Val end, lists:seq(0, Count-1)).
 
 connect_room(RoomId, ConnectionId, Params) ->
     case ets:lookup(rooms, RoomId) of

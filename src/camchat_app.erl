@@ -55,7 +55,7 @@ routes() ->
                 {"/settings_widgets/[...]", cowboy_static, {dir, "priv/www/settings_widgets/"}},
                 {"/query/suggest_random_room", random_room_handler, []},
                 {"/query/suggest_empty_room", empty_room_handler, []},
-                {"/stats/", cowboy_static, {file, "priv/www/visual/index.html"}},
+                {"/monitor/stats/", cowboy_static, {file, "priv/www/visual/index.html"}},
                 {"/monitor/:type/:until/:count", monitor_handler, []},
                 {"/[...]", error_pages, []}
             ]

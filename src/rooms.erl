@@ -129,17 +129,20 @@ let_in(KnockId) ->
     [Room] = ets:lookup(rooms, RoomId),
     {ok, Room#room.key, ConnId}.
 
-monitor_query(<<"users">>, Until, Count, IntervalLen) ->
-    monitor_parse(users, Until, Count, IntervalLen);
-monitor_query(<<"rooms">>, Until, Count, IntervalLen) ->
-    monitor_parse(rooms, Until, Count, IntervalLen).
+monitor_query(Type, Until, Count, IntervalLen) ->
+    T = case Type of
+        <<"users">> -> users;
+        <<"rooms">> -> rooms
+    end,
+    monitor_parse(T, Until, Count, IntervalLen).
 
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 %%%                               private functions                               %%%
 %%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%%
 monitor_parse(Type, _Until, Count, _IntervalLength) ->
-    Val = ets:select_count(Type, []),
-    lists:map(fun() -> Val end, lists:seq(0, Count-1)).
+    %TODO: get better implementation
+    Val = length(ets:tab2list(Type)),
+    lists:map(fun(_X) -> Val end, lists:seq(0, Count)).
 
 connect_room(RoomId, ConnectionId, Params) ->
     case ets:lookup(rooms, RoomId) of

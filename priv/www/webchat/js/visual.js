@@ -3,7 +3,6 @@
      * Private Properties
      */
     var data = {};
-    var length = 30;
     var interval = 1000;
     var _Y_AXIS_STEPS = 10;
 
@@ -25,7 +24,7 @@
         var json = {url: "/monitor/"+graph+"/"+(new Date()).toJSON()+"/"+int_count,
             type: "GET",
             success: success_callback,
-            error: function() {console.log(data);}};
+            error: function(e) {console.log(e);}};
         $.ajax(json)
     }
     
@@ -123,5 +122,6 @@
 }(window.monitor = window.monitor || {}));
 
 $(document).ready(function() {
-    monitor.display_graph("queue", 30, 10);
+    monitor.display_graph("users", 60, 10);
+    monitor.display_graph("rooms", 60, 10);
 });

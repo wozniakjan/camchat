@@ -1,204 +1,178 @@
 <!DOCTYPE html>
 <html>
-<head>
+    <head>
 
-<meta name='viewport' content='width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1'>
-<base target='_blank'> 
-<link rel="stylesheet" type="text/css" href="/webchat/css/index.css">
-<title>Camchat</title>
-</head>
+        <meta name='viewport' content='width=device-width,initial-scale=1,minimum-scale=1,maximum-scale=1'>
+        <base target='_blank'> 
+        <link rel="stylesheet" type="text/css" href="/webchat/css/index.css">
+        <title>Camchat</title>
+    </head>
 
-<body>
-<div id="top_panel" onclick="window.location.href = '/'">
-    CAMCHAT
-</div>
-<div id="screen">
-<div class="wrap">
-<div class="panel" style="background-color:#54031C" onclick="window.location.href = '/#chat_with_friends'">
-    <div class="label">
-        <div class="text">
-        chat with friends
+    <body>
+        <div id="top_panel" onclick="window.location.href = '/'">
+            CAMCHAT
         </div>
-    </div>
-    <div class="inner_panel">
-        <div class="background"></div>
-        <div class="picture ch_pic"></div>
-    </div>
-    <div class="description">
-        <div class="text full">
-            simply create your own room, protect access with password, 
-            allow who can join and who can not. Easiest way to see your buddies
-            over the internet, all you need to do is share the link.
-        </div>
-        <div class="text short">
-            create own room and share the link with friends.
-        </div>
-    </div>
-</div>
-<div class="panel" style="background-color:#652639" onclick="window.location.href = '/#hook_me_up'">
-    <div class="label">
-        <div class="text">
-        hook me up!
-        </div>
-    </div>
-    <div class="inner_panel">
-        <div class="background"></div>
-        <div class="picture rh_pic"></div>
-    </div>
-    <div class="description">
-        <div class="text full">
-            in the mood for getting to know new people? Join random room 
-            and see whats up! No registration required, just get paired with 
-            strangers and make new friends in various conference rooms.
-        </div>
-        <div class="text short">
-            join random people in random chat rooms.
-        </div>
-    </div>
-</div>
-<div class="panel" style="background-color:#910F36" onclick="window.location.href = '/#share_screen'">
-    <div class="label">
-        <div class="text">
-        share screen
-        </div>
-    </div>
-    <div class="inner_panel">
-        <div class="background"></div>
-    </div>
-    <div class="description">
-        <div class="text full">
-            got a tricky problem and know people who could easily solve it, 
-            if they could only see what you see on the computer...
-            share your screen as video and your friend can guide you
-            to success!
-        </div>
-        <div class="text short">
-            share the screen easily through the browser.
-        </div>
-    </div>
-</div>
-<div class="panel" style="background-color:#49900F" onclick="window.location.href = '/#supported_software'">
-    <div class="label">
-        <div class="text">
-        supported software
-        </div>
-    </div>
-    <div class="inner_panel">
-        <div class="background"></div>
-        <div class="picture bw_pic"></div>
-    </div>
-    <div class="description">
-        <div class="text full">
-            this page uses technology called WebRTC. 
-            Current development team has limited
-            it's effort to support only the most convenient.
-            In order to get this working you'd need
-            latest of one of modern web browsers.
-        </div>
-        <div class="text short">
-            WebRTC compatible browsers are supported.
-        </div>
-    </div>
-</div>
-</div>
 
-<div id="white_panel">
-    Surely there are many applications and sites that allow you to chat over the net so why bother with
-    new one. Well the goal of this project is not only to have convenient means for communication without
-    any unnecessary registration, ready for you 24/7, but also absolute and full control over it. 
-    Either you may trust the fact that open source won't do you no harm or become part of the project yourself! 
-    
-    <BR>&nbsp;<BR> 
-    
-    Check the <a href="https://github.com/wozniakjan/camchat/">github</a>.
-</div>
-
-<div id="chat_with_friends" class="detail_description" style="background-color:#54031C">
-    <div class="inside">
-        <div class="middle_align">
-            <div class="logo ch_pic"></div>
-
-            <div class="padded">
-                share the link and talk to each other
-            </div>
-            <div class="middle_align padded">
-                <div class='input_wrap'>
-                    <input class='room_name' maxlength="30">
-                    <div class='input_label'>room</div>
+        <div id="screen">
+            <div class="wrap">
+                <div class="panel" style="background-color:#54031C" onclick="window.location.href = '/#chat_with_friends'">
+                    <div class="label">
+                        <div class="text">
+                            chat with friends
+                        </div>
+                    </div>
+                    <div class="inner_panel">
+                        <div class="background"></div>
+                        <div class="picture ch_pic"></div>
+                    </div>
+                    <div class="description">
+                        <div class="text full">
+                            simply create your own room, protect access with password, 
+                            allow who can join and who can not. Easiest way to see your buddies
+                            over the internet, all you need to do is share the link.
+                        </div>
+                        <div class="text short">
+                            create own room and share the link with friends.
+                        </div>
+                    </div>
                 </div>
-                <div class='input_wrap'>
-                    <input class='key' 
-                    maxlength="20"
-                    value='set key...'>
-                    <div class='input_label'>key</div>
+                <div class="panel" style="background-color:#652639" onclick="window.location.href = '/#chat_with_friends'">
+                    <div class="label">
+                        <div class="text">
+                            hook me up!
+                        </div>
+                    </div>
+                    <div class="inner_panel">
+                        <div class="background"></div>
+                        <div class="picture rh_pic"></div>
+                    </div>
+                    <div class="description">
+                        <div class="text full">
+                            in the mood for getting to know new people? Join random room 
+                            and see whats up! No registration required, just get paired with 
+                            strangers and make new friends in various conference rooms.
+                        </div>
+                        <div class="text short">
+                            join random people in random chat rooms.
+                        </div>
+                    </div>
+                </div>
+                <div class="panel" style="background-color:#910F36" onclick="window.location.href = '/#share_screen'">
+                    <div class="label">
+                        <div class="text">
+                            share screen
+                        </div>
+                    </div>
+                    <div class="inner_panel">
+                        <div class="background"></div>
+                    </div>
+                    <div class="description">
+                        <div class="text full">
+                            got a tricky problem and know people who could easily solve it, 
+                            if they could only see what you see on the computer...
+                            share your screen as video and your friend can guide you
+                            to success!
+                        </div>
+                        <div class="text short">
+                            share the screen easily through the browser.
+                        </div>
+                    </div>
+                </div>
+                <div class="panel" style="background-color:#49900F" onclick="window.location.href = '/#supported_software'">
+                    <div class="label">
+                        <div class="text">
+                            supported software
+                        </div>
+                    </div>
+                    <div class="inner_panel">
+                        <div class="background"></div>
+                        <div class="picture bw_pic"></div>
+                    </div>
+                    <div class="description">
+                        <div class="text full">
+                            this page uses technology called WebRTC. 
+                            Current development team has limited
+                            it's effort to support only the most convenient.
+                            In order to get this working you'd need
+                            latest of one of modern web browsers.
+                        </div>
+                        <div class="text short">
+                            WebRTC compatible browsers are supported.
+                        </div>
+                    </div>
                 </div>
             </div>
-            <div id='room_box' class='button_box padded'>
-                <button onclick="join_room('camera')">join this room</button>
+
+
+            <div id="white_panel">
+                Surely there are many applications and sites that allow you to chat over the net so why bother with
+                new one. Well the goal of this project is not only to have convenient means for communication without
+                any unnecessary registration, ready for you 24/7, but also absolute and full control over it. 
+                Either you may trust the fact that open source won't do you no harm or become part of the project yourself! 
+
+                <BR>&nbsp;<BR> 
+
+                Check the <a href="https://github.com/wozniakjan/camchat/">github</a>.
             </div>
+
+            <div id="chat_with_friends" class="detail_description" style="background-color:#54031C">
+                <div class="inside">
+                    <div class="middle_align">
+                        <div class="logo ch_pic"></div>
+
+                        <div class="padded">
+                            chat with friends
+                        </div>
+                        <div id='random_room_box' class='button_box padded'>
+                            <button onclick="random_room()">join random room</button>
+                            <button onclick="empty_room('camera')">create new room</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="share_screen" class="detail_description" style="background-color:#910F36">
+                <div class="inside">
+                    <div class="middle_align">
+                        <div class="logo"></div>
+
+                        <div class="padded middle_align">
+                            <div class="flag padded">
+                                chrome://flags/#enable-usermedia-screen-capture
+                            </div>
+                            <div>
+                                don't forget to check the flag
+                            </div>
+                        </div>
+                        <div class="middle_align padded">
+                            <div class='input_wrap'>
+                                <input class='room_name' maxlength="30">
+                                <div class='input_label'>room</div>
+                            </div>
+                            <div class='input_wrap'>
+                                <input class='key' 
+                                maxlength="20"
+                                value='set key...'>
+                                <div class='input_label'>key</div>
+                            </div>
+                        </div>
+                        <div class='button_box padded'>
+                            <button onclick="join_room('screen')">join this room</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div id="supported_software" class="detail_description" style="background-color:#49900F">
+            </div>
+
+            <div id="footer" onclick="window.location.href = '/'">
+                author: <a href="mailto:wozniak.jan@gmail.com?subject=camchat">wj</a> 
+                &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
+                source on <a href="https://github.com/wozniakjan/camchat/">github</a>.
+            </div>
+
         </div>
-    </div>
-</div>
-<div id="hook_me_up" class="detail_description" style="background-color:#652639">
-    <div class="inside">
-        <div class="middle_align">
-            <div class="logo rh_pic"></div>
 
-            <div class="padded">
-                talk to random people
-            </div>
-            <div id='random_room_box' class='button_box padded'>
-                <button onclick="random_room()">join random room</button>
-                <button onclick="empty_room('camera')">create random room</button>
-            </div>
-        </div>
-    </div>
-</div>
-<div id="share_screen" class="detail_description" style="background-color:#910F36">
-    <div class="inside">
-        <div class="middle_align">
-            <div class="logo"></div>
-
-            <div class="padded middle_align">
-                <div class="flag padded">
-                    chrome://flags/#enable-usermedia-screen-capture
-                </div>
-                <div>
-                    don't forget to check the flag
-                </div>
-            </div>
-            <div class="middle_align padded">
-                <div class='input_wrap'>
-                    <input class='room_name' maxlength="30">
-                    <div class='input_label'>room</div>
-                </div>
-                <div class='input_wrap'>
-                    <input class='key' 
-                    maxlength="20"
-                    value='set key...'>
-                    <div class='input_label'>key</div>
-                </div>
-            </div>
-            <div class='button_box padded'>
-                <button onclick="join_room('screen')">join this room</button>
-            </div>
-        </div>
-    </div>
-</div>
-<div id="supported_software" class="detail_description" style="background-color:#49900F">
-</div>
-
-<div id="footer" onclick="window.location.href = '/'">
-    author: <a href="mailto:wozniak.jan@gmail.com?subject=camchat">wj</a> 
-    &nbsp; &nbsp; &nbsp; &nbsp; &nbsp; &nbsp;
-    source on <a href="https://github.com/wozniakjan/camchat/">github</a>.
-</div>
-
-
-
-</div>
-
-<script src='/webchat/js/jquery-2.1.0.min.js'></script>
-<script src='/webchat/js/index.js'></script>
-</body>
+        <script src='/webchat/js/jquery-2.1.0.min.js'></script>
+        <script src='/webchat/js/index.js'></script>
+    </body>
 </html>

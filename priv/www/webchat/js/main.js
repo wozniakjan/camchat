@@ -28,7 +28,8 @@ function error_callback(error) {
     var click_settings = $('<div>', {class: 'click_link'});
     click_settings.click(function(){control_panel.draw_settings_div('Audio & Video Settings')});
     click_settings.html('see settings');
-    var hint = $('<div>')
+    var hint = $('<div>');
+    console.log(error);
     if(error.name == "PermissionDeniedError") {
         hint.html("did you allow your browser to use camera and mic?<br>");
         hint.append(click_settings);
@@ -43,13 +44,11 @@ function error_callback(error) {
         show_message("Can't get audio & video", hint);
     } else {
         hint.html(error);
-        show_message("Unknown message", hint)
+        show_message("Unknown error", hint)
     }
 }
 
 function send(json_msg){
-    //console.log("send()");
-    //console.log(json_msg);
     sock.send(JSON.stringify(json_msg));
 }
 

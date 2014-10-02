@@ -99,17 +99,18 @@
     background-image: url("/webchat/images/fullscreen_hover.png");
     cursor: pointer;
 }
-.bottom_panel_item  .hint {
+.bottom_panel_item .hint {
     font-size: 11px;
     position: absolute;
     border: solid 1px white;
     top: -30px;
     visibility: hidden;
     padding: 3px;
+    background-color: gray;
 }
-#fullscreen:hover > .hint {
+#fullscreen:hover .hint {
     right: 5px;
 }
-.bottom_panel_item:hover  .hint {
+.bottom_panel_item:hover .hint {
     visibility: visible;
 }

@@ -1,9 +1,9 @@
 var room = window.location.pathname.replace(/\//g,'');
-var sock = new SockJS('/sockjs/camchat');
+var sock;
+var audio_worker;
 var peer = {};
 var local_stream = {};
 var my_id;
-var audio_worker = new Worker("/webchat/js/audio_energy_worker.js");
 var number_of_peers = 0;
 var LOG_LEVEL = 9;
 var front_window;
@@ -104,6 +104,8 @@ function is_audio_worker_active(){
 }
 
 $(document).ready(function() {
+    sock = new SockJS('/sockjs/camchat');
+    audio_worker = new Worker("/webchat/js/audio_energy_worker.js");
     audio_worker.onmessage = function(event) { 
         log("audio_worker.onmessage" + event.data, 3);
         if(event.data.set_main){

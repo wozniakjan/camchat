@@ -106,7 +106,6 @@
     top: -30px;
     visibility: hidden;
     padding: 3px;
-    background-color: gray;
 }
 #fullscreen:hover .hint {
     right: 5px;

@@ -32,12 +32,14 @@ html, body, #curtain, #screen{
     color: #BBBBBB; 
 }
 
+.bottom_panel_item .hint,
 #bottom_panel,
 .active_rollout_item,
 .button {
     background-color: #555555;
     color: #DDDDDD; 
 }
+.bottom_panel_item .hint,
 .button,
 .toggler, .slider {
     border: solid 1px #777777;

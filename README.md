@@ -21,7 +21,7 @@ Some of the interesting features include:
 
 * **screen sharing** - you can turn it on via `search -> Audio & Video Settings -> stream`
         currently supported only on chrome v36 via `chrome://flags/#enable-usermedia-screen-capture`
-* **directors cut** - rooms are multi-user, which is usefull for conferences, 
+* **director's cut** - rooms are multi-user, which is usefull for conferences, 
         however, multiple, user means less space for everyone on the screen.
         This feature will select 'loudest talking' peer and display him on
         main screen (currently via sound signal energy computation).

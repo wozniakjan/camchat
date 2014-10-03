@@ -30,3 +30,5 @@ Some of the interesting features include:
 This project includes both back-end signaling and front-end app. Backend is
 implemented in Erlang, uses Cowboy web server and tries to adopt OTP principles.
 Frontend is jQuery and few jQuery plugins.
+
+more information soon to come, feel free to contact me with any questions and comments.

@@ -15,7 +15,7 @@ There is up and running camchat on heroku.com
 
 Once you enter the room, you should see something similar to this
 
-![Alt text](https://raw.githubusercontent.com/wozniakjan/camchat/master/priv/screenshots/main.png =320x240 "Example picture")
+![Alt text](https://raw.githubusercontent.com/wozniakjan/camchat/master/priv/screenshots/main.png "Example picture")
 
 Some of the interesting features include:
 

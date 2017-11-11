@@ -8,7 +8,7 @@ only Chrome for screen sharing feature, once the development in the field
 stabilizes a bit more, there is a plan for supporting features on all relevant
 browsers.
 
-###Intro
+### Intro
 There is up and running camchat on heroku.com 
     
     https://camchat.herokuapp.com
@@ -26,7 +26,7 @@ Some of the interesting features include:
         This feature will select 'loudest talking' peer and display him on
         main screen (currently via sound signal energy computation).
 
-###Implementation
+### Implementation
 This project includes both back-end signaling and front-end app. Backend is
 implemented in Erlang, uses Cowboy web server and tries to adopt OTP principles.
 Frontend is jQuery and few jQuery plugins.
